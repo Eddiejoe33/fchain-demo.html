@@ -238,35 +238,52 @@ input{
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-<div class="nav-btn" onclick="openHome()">Home</div>
-<div class="nav-btn" onclick="openPage('profile')">Profile</div>
-<div class="nav-btn" onclick="openPage('settings')">Settings</div>
+  <div class="nav-btn" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
+  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
 let historyStack=[];
 
+// Open any page (top buttons, bottom nav, or cards)
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   historyStack.push(id);
 }
 
+// Back button inside the app
 function goBack(){
-  historyStack.pop();
-  let last = historyStack.pop();
+  historyStack.pop(); // remove current
+  let last = historyStack.pop(); // get previous
   if(last) openPage(last);
   else openHome();
 }
 
+// Home shortcut
 function openHome(){
   historyStack=[];
   openPage("home");
 }
 
-function copyAddress(){
-  navigator.clipboard.writeText("bc1qfchainwalletdemo9987x");
-  alert("Address Copied!");
+// Example: deep navigation inside profile
+function openProfileDetail(section){
+  let detailId = section + "Detail";
+  if(!document.getElementById(detailId)){
+    // Create dynamically if needed
+    let div = document.createElement("div");
+    div.id = detailId;
+    div.className = "page";
+    div.innerHTML = `
+      <button class="back" onclick="goBack()">⬅ Back</button>
+      <h2>${section} Details</h2>
+      <div class="card">Info about ${section}</div>
+      <div class="card" onclick="openProfileDetail('More')">More Details</div>
+    `;
+    document.body.appendChild(div);
+  }
+  openPage(detailId);
 }
 </script>
 
