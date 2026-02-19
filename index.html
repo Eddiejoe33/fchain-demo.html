@@ -1,84 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #0f172a, #020617);
-  color: white;
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+  margin:0;
 }
-
-/* Pages */
-.page { display: none; padding: 20px; }
-.page.active { display: block; }
-
-h1,h2 { text-align: center; margin: 10px 0; }
-.card {
-  background: rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 12px;
-  margin: 10px 0;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.page{
+  display:none;
+  padding:15px;
 }
-.card:hover { background: rgba(255,255,255,0.15); }
-.btn {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 12px;
-  border: none;
-  background: #2563eb;
-  font-weight: bold;
-  font-size: 16px;
-  color: white;
-  cursor: pointer;
+.active{
+  display:block;
 }
-.back { background:none; border:none; color:#38bdf8; font-size:16px; cursor:pointer; margin-bottom:10px; }
-
-/* Bottom Nav */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  background: rgba(2,6,23,0.85);
-  border-top: 1px solid #1e293b;
-}
-.nav-btn {
-  flex:1;
+h2{
   text-align:center;
+  margin-top:10px;
+}
+.btn{
+  width:100%;
+  padding:14px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:white;
+  font-size:16px;
+  margin-top:10px;
+}
+.card{
+  background:#111827;
   padding:12px;
-  font-size:14px;
-  color:#94a3b8;
+  border-radius:12px;
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:16px;
   cursor:pointer;
 }
-.nav-btn.active { color:white; font-weight:bold; }
-.nav-btn:hover { color:white; }
-
-/* QR Box */
-.qr-box {
-  width:180px; height:180px;
-  background:#111;
-  border-radius:12px;
-  margin:20px auto;
-  display:flex; justify-content:center; align-items:center;
-  border:2px solid #333;
+.back{
+  background:none;
+  border:none;
+  color:#38bdf8;
+  font-size:16px;
 }
-
-/* Inputs */
-input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#111827; color:white; font-size:16px; }
-
-/* Loader */
-.loader { width:40px; height:40px; border:4px solid #2563eb; border-top:4px solid transparent; border-radius:50%; margin:20px auto; animation:spin 1s linear infinite; }
-@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  background:#020617;
+  border-top:1px solid #1e293b;
+}
+.nav-btn{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  color:#94a3b8;
+  font-size:14px;
+  cursor:pointer;
+}
+.nav-btn:hover{color:white;}
+.nav-btn.active{color:#60a5fa;transform:scale(1.1);}
+.qr-box{
+  width:180px;
+  height:180px;
+  background:#111;
+  border:2px solid #333;
+  margin:20px auto;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:12px;
+}
+.address{
+  text-align:center;
+  font-size:13px;
+  color:#94a3b8;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#111827;
+  color:white;
+  font-size:16px;
+}
+.loader{
+  width:40px;
+  height:40px;
+  border:4px solid #2563eb;
+  border-top:4px solid transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:20px auto;
+}
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+/* Live network map */
+#networkMap{
+  width:100%;
+  height:200px;
+  background:#111827;
+  border-radius:12px;
+  position:relative;
+  overflow:hidden;
+  margin-top:15px;
+}
+.node{
+  width:12px;
+  height:12px;
+  background:#38bdf8;
+  border-radius:50%;
+  position:absolute;
+  animation:move 6s linear infinite;
+}
+@keyframes move{
+  0%{transform:translate(0,0);}
+  50%{transform:translate(150px,100px);}
+  100%{transform:translate(0,0);}
+}
 </style>
 </head>
 <body>
@@ -164,98 +213,98 @@ input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none;
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Your BTC Address</h2>
 <div class="qr-box">QR CODE</div>
-<p style="text-align:center;">bc1qfchainwalletdemo9987x</p>
-<button class="btn" onclick="alert('Copied!')">Copy Address</button>
+<p class="address">bc1qfchainwalletdemo9987x</p>
+<button class="btn" onclick="copyAddress()">Copy Address</button>
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
 <div class="card">Name: FChain User</div>
 <div class="card">Wallet ID: #FCH99212</div>
-<div class="card" onclick="openPage('profileDetail')">More Details</div>
-</div>
-
-<div id="profileDetail" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Profile Details</h2>
-<div class="card">Email: demo@fchain.com</div>
-<div class="card" onclick="openPage('profileMore')">Even More Info</div>
-</div>
-
-<div id="profileMore" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Profile Extra</h2>
-<div class="card">2FA Enabled: Yes</div>
-<div class="card">Joined: Jan 2026</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openPage('security')">Security</div>
-<div class="card" onclick="openPage('backup')">Backup Wallet</div>
-<div class="card" onclick="openPage('network')">Network</div>
+<div class="card">Security</div>
+<div class="card">Backup Wallet</div>
+<div class="card">Network</div>
 </div>
 
-<div id="security" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Security</h2>
-<div class="card">Change PIN</div>
-<div class="card">Enable Biometrics</div>
-</div>
-
-<div id="backup" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Backup Wallet</h2>
-<div class="card">Backup Now</div>
-</div>
-
+<!-- FAKE NETWORK -->
 <div id="network" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Network</h2>
-<div class="card">Select Network</div>
+<h2>FChain Fake Bitcoin Network Demo</h2>
+
+<h3>📡 Fake Mempool</h3>
+<div class="card">TX: 4ght7gu89rc | 0.9037 BTC | Fee: 0.003554 BTC</div>
+<div class="card">TX: gnq7f51y736 | 0.3338 BTC | Fee: 0.006191 BTC</div>
+<div class="card">TX: vay5r2fiom | 0.7115 BTC | Fee: 0.007874 BTC</div>
+<div class="card">TX: hwk644pmoid | 0.8481 BTC | Fee: 0.001979 BTC</div>
+<div class="card">TX: 5mgebqe9b3e | 1.9741 BTC | Fee: 0.000236 BTC</div>
+
+<h3>📜 Transaction History</h3>
+<div class="card">✔ Confirmed: us5211kcmq | 0.5408 BTC</div>
+<div class="card">✔ Confirmed: bz2s1tihd6p | 1.2026 BTC</div>
+<div class="card">✔ Confirmed: 4gm4zgieux4 | 1.9442 BTC</div>
+<div class="card">✔ Confirmed: af6frduqwlf | 0.5186 BTC</div>
+<div class="card">✔ Confirmed: icxmygke0k | 0.4399 BTC</div>
+
+<h3>🌍 Live Network Map</h3>
+<div id="networkMap">
+  <div class="node" style="top:10px;left:20px;"></div>
+  <div class="node" style="top:50px;left:80px;"></div>
+  <div class="node" style="top:100px;left:30px;"></div>
+  <div class="node" style="top:150px;left:120px;"></div>
+</div>
 </div>
 
-<!-- Bottom Nav -->
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
-<div class="nav-btn active" onclick="openTab('home', this)">Home</div>
-<div class="nav-btn" onclick="openTab('profile', this)">Profile</div>
-<div class="nav-btn" onclick="openTab('settings', this)">Settings</div>
+  <div class="nav-btn active" onclick="openPage('home', this)">Home</div>
+  <div class="nav-btn" onclick="openPage('profile', this)">Profile</div>
+  <div class="nav-btn" onclick="openPage('settings', this)">Settings</div>
+  <div class="nav-btn" onclick="openPage('network', this)">Network</div>
 </div>
 
 <script>
-let historyStack = ["home"];
+let historyStack=[];
 
-// Open deep pages
-function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  if(historyStack[historyStack.length-1] !== id) historyStack.push(id);
-}
-
-// Bottom nav tabs (always clickable like real wallet)
-function openTab(id, btn){
+// Open any page (top buttons, bottom nav, or cards)
+function openPage(id, btn){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 
-  document.querySelectorAll(".nav-btn").forEach(n=>n.classList.remove("active"));
-  btn.classList.add("active");
-
-  historyStack = [id];
+  if(btn){
+    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+  historyStack.push(id);
 }
 
-// Back button
+// Back button inside the app
 function goBack(){
-  historyStack.pop();
-  let last = historyStack[historyStack.length-1] || "home";
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(last).classList.add("active");
+  historyStack.pop(); // remove current
+  let last = historyStack.pop(); // get previous
+  if(last) openPage(last);
+  else openHome();
 }
 
 // Home shortcut
-function openHome(){ historyStack=["home"]; openTab("home", document.querySelector(".nav-btn")); }
+function openHome(){
+  historyStack=[];
+  openPage("home");
+}
+
+// Copy address demo
+function copyAddress(){
+  alert("Address copied ✅");
+}
 </script>
+
 </body>
   </html>
