@@ -1,119 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FChain Terminal</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<title>FChain Demo Network</title>
 <style>
 body {
-background:black;
-color:#00ff9c;
-font-family: monospace;
-padding:10px;
+  background:black;
+  color:lime;
+  font-family: monospace;
 }
 .box {
-border:1px solid #00ff9c;
-padding:10px;
-margin:10px 0;
+  border:1px solid lime;
+  padding:10px;
+  margin:10px;
 }
-button {
-background:black;
-color:#00ff9c;
-border:1px solid #00ff9c;
-padding:8px;
-margin:3px;
-cursor:pointer;
+.map {
+  height:200px;
+  background:#001100;
+  position:relative;
+  overflow:hidden;
 }
-button:hover {
-background:#00ff9c;
-color:black;
-}
-input {
-background:black;
-color:#00ff9c;
-border:1px solid #00ff9c;
-padding:5px;
-width:100%;
-}
-#terminal {
-height:200px;
-overflow:auto;
-border:1px solid #00ff9c;
-padding:5px;
+.node {
+  width:6px;
+  height:6px;
+  background:red;
+  position:absolute;
+  border-radius:50%;
 }
 </style>
 </head>
 
 <body>
 
-<h2>⚡ FChain Hacker Terminal</h2>
+<h2>⚡ FChain Fake Bitcoin Network Demo</h2>
 
 <div class="box">
-Wallet Address: <span id="wallet"></span><br>
-Balance: <span id="balance"></span> FCH
+<h3>📡 Fake Mempool</h3>
+<div id="mempool"></div>
 </div>
 
 <div class="box">
-<h3>💰 Send Transaction</h3>
-<input id="to" placeholder="Recipient Address"><br><br>
-<input id="amount" placeholder="Amount"><br><br>
-<button onclick="sendTx()">SEND</button>
+<h3>📜 Transaction History</h3>
+<div id="history"></div>
 </div>
 
 <div class="box">
-<h3>⛏️ Mining</h3>
-<button onclick="mine()">START MINING</button>
-</div>
-
-<div class="box">
-<h3>🖥 Terminal Logs</h3>
-<div id="terminal"></div>
+<h3>🌍 Live Network Map</h3>
+<div class="map" id="map"></div>
 </div>
 
 <script>
-// Generate fake wallet
-let wallet = "FCH" + Math.random().toString(36).substring(2,12);
-document.getElementById("wallet").innerText = wallet;
 
-// Load balance
-let balance = localStorage.getItem("fchain_balance");
-if(!balance){ balance = 1000; }
-balance = parseFloat(balance);
-document.getElementById("balance").innerText = balance;
-
-function log(msg){
-let t = document.getElementById("terminal");
-t.innerHTML += "> " + msg + "<br>";
-t.scrollTop = t.scrollHeight;
+// Fake Transactions
+function randomTx() {
+  return {
+    hash: Math.random().toString(36).substring(2,15),
+    amount: (Math.random()*2).toFixed(4) + " BTC",
+    fee: (Math.random()*0.01).toFixed(6) + " BTC"
+  };
 }
 
-// Send transaction
-function sendTx(){
-let to = document.getElementById("to").value;
-let amt = parseFloat(document.getElementById("amount").value);
-if(!to || !amt){ log("ERROR: Invalid input"); return; }
-if(amt > balance){ log("ERROR: Insufficient funds"); return; }
-
-balance -= amt;
-localStorage.setItem("fchain_balance", balance);
-document.getElementById("balance").innerText = balance;
-
-let txid = "TX" + Math.random().toString(36).substring(2,10);
-log("TX SENT -> " + to + " | " + amt + " FCH | ID: " + txid);
+// Fake mempool
+function updateMempool() {
+  let mem = "";
+  for(let i=0;i<5;i++){
+    let tx = randomTx();
+    mem += `<div>TX: ${tx.hash} | ${tx.amount} | Fee: ${tx.fee}</div>`;
+  }
+  document.getElementById("mempool").innerHTML = mem;
 }
 
-// Fake mining
-function mine(){
-log("Mining started...");
-setTimeout(()=>{
-let reward = Math.random()*5 + 1;
-balance += reward;
-localStorage.setItem("fchain_balance", balance);
-document.getElementById("balance").innerText = balance;
-log("Block found! Reward: " + reward.toFixed(2) + " FCH");
-}, 3000);
+// Fake history
+function updateHistory() {
+  let hist = "";
+  for(let i=0;i<5;i++){
+    let tx = randomTx();
+    hist += `<div>✔ Confirmed: ${tx.hash} | ${tx.amount}</div>`;
+  }
+  document.getElementById("history").innerHTML = hist;
 }
+
+// Fake hacker network map
+function spawnNode() {
+  let map = document.getElementById("map");
+  let node = document.createElement("div");
+  node.className="node";
+  node.style.left = Math.random()*100 + "%";
+  node.style.top = Math.random()*100 + "%";
+  map.appendChild(node);
+
+  setTimeout(()=>node.remove(),3000);
+}
+
+// Live animation
+setInterval(updateMempool, 2000);
+setInterval(updateHistory, 4000);
+setInterval(spawnNode, 300);
+
 </script>
 
 </body>
-  </html>
+</html>
