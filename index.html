@@ -1,209 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
-  font-family: Arial;
-  background:#0b0f19;
-  color:white;
-  margin:0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg,#0b1220,#020617);
+  color: white;
 }
 
-.header {
-  padding:15px;
-  text-align:center;
-  font-size:20px;
-  background:#10172a;
+#app {
+  padding: 20px;
+  padding-bottom: 120px;
 }
 
-.balance-card {
-  margin:15px;
-  padding:20px;
-  background:#16213e;
-  border-radius:12px;
+/* Header */
+#title {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.balance {
-  font-size:28px;
-  font-weight:bold;
+/* Balance */
+.balance-box {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-.actions {
-  display:flex;
-  justify-content:space-around;
-  margin:15px;
+/* Buttons row */
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.action-row button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 
-.action-btn {
-  background:#1f3c88;
-  padding:12px 16px;
-  border-radius:10px;
-  text-align:center;
-  font-size:14px;
-  cursor:pointer;
+/* Cards */
+.card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 16px;
+  border-radius: 18px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(12px);
+  font-size: 18px;
+  cursor: pointer;
 }
 
-.token-list {
-  margin:15px;
+.card-content {
+  display: none;
+  margin-top: 10px;
+  font-size: 16px;
 }
 
-.token {
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  border-bottom:1px solid #222;
-  cursor:pointer;
-}
-
-.navbar {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#10172a;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-  font-size:14px;
-}
-
-/* Popup Screens */
-.screen {
-  display:none;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:#0b0f19;
-  padding:20px;
-  z-index:9999;
-}
-
-.close-btn {
-  background:red;
-  padding:8px 12px;
-  border-radius:8px;
-  border:none;
-  color:white;
-  cursor:pointer;
-}
+/* Inputs */
 input {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 8px;
 }
-button.main {
-  width:100%;
-  padding:12px;
-  background:#1f3c88;
-  color:white;
-  border:none;
-  border-radius:10px;
-  margin-top:10px;
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 94%;
+  background: rgba(37,99,235,0.25);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.bottom-nav span {
+  font-size: 22px;
+}
+
+.bottom-nav button.active {
+  color: #60a5fa;
+  transform: scale(1.15);
+}
+
+/* Sections */
+.section { display:none; }
+.section.active { display:block; }
 </style>
 </head>
 
 <body>
 
-<div class="header">FChain Wallet</div>
+<div id="app">
 
-<div class="balance-card">
-  <div>Total Balance</div>
-  <div class="balance">$12,450.22</div>
+<div id="title">FChain Wallet</div>
+
+<!-- HOME -->
+<div id="home" class="section active">
+
+  <div class="balance-box">$12,450.22</div>
+
+  <div class="action-row">
+    <button onclick="alert('Send feature demo')">Send</button>
+    <button onclick="alert('Receive feature demo')">Receive</button>
+    <button onclick="alert('Buy feature demo')">Buy</button>
+    <button onclick="alert('Swap feature demo')">Swap</button>
+  </div>
+
+  <div class="card">Bitcoin (BTC) — 0.054 BTC</div>
+  <div class="card">Ethereum (ETH) — 2.4 ETH</div>
+  <div class="card">FChain Token — 12,000 FCH</div>
+
 </div>
 
-<div class="actions">
-  <div class="action-btn" onclick="openScreen('sendScreen')">Send</div>
-  <div class="action-btn" onclick="openScreen('receiveScreen')">Receive</div>
-  <div class="action-btn" onclick="openScreen('buyScreen')">Buy</div>
-  <div class="action-btn" onclick="openScreen('swapScreen')">Swap</div>
+<!-- WALLET DETAIL -->
+<div id="wallet" class="section">
+
+  <div class="card" onclick="toggleCard('mempool')">
+    📡 Mempool Transactions
+    <div id="mempool" class="card-content">
+      TX1 0.54 BTC<br>
+      TX2 1.22 BTC<br>
+      TX3 0.12 BTC
+    </div>
+  </div>
+
+  <div class="card" onclick="toggleCard('history')">
+    📜 Transaction History
+    <div id="history" class="card-content">
+      ✔ Sent 0.02 BTC<br>
+      ✔ Received 1.10 BTC<br>
+      ✔ Swap ETH → BTC
+    </div>
+  </div>
+
 </div>
 
-<div class="token-list">
-  <div class="token" onclick="openScreen('btcScreen')"><span>Bitcoin (BTC)</span><span>0.054 BTC</span></div>
-  <div class="token" onclick="openScreen('ethScreen')"><span>Ethereum (ETH)</span><span>2.4 ETH</span></div>
-  <div class="token" onclick="openScreen('fchScreen')"><span>FChain Token</span><span>12,000 FCH</span></div>
+<!-- BROWSER -->
+<div id="browser" class="section">
+  <div class="card">🌍 Web3 Browser Demo</div>
+  <div class="card">Open DApps here (demo)</div>
 </div>
 
-<div class="navbar">
-  <div>Home</div>
-  <div>Wallet</div>
-  <div>Browser</div>
-  <div>Settings</div>
+<!-- SETTINGS -->
+<div id="settings" class="section">
+  <div class="card">🔐 Security Settings</div>
+  <div class="card">🌐 Network Settings</div>
+  <div class="card">⚙️ Wallet Preferences</div>
 </div>
 
-<!-- SEND SCREEN -->
-<div id="sendScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Send Crypto</h2>
-  <input placeholder="Recipient Address">
-  <input placeholder="Amount">
-  <button class="main">Send Transaction</button>
 </div>
 
-<!-- RECEIVE SCREEN -->
-<div id="receiveScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Your Wallet Address</h2>
-  <p>fchain1q9xk2m9a0fakeaddress12345</p>
-  <p>[ QR CODE DEMO ]</p>
-</div>
-
-<!-- BUY SCREEN -->
-<div id="buyScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Buy Crypto</h2>
-  <input placeholder="Amount USD">
-  <button class="main">Buy Now</button>
-</div>
-
-<!-- SWAP SCREEN -->
-<div id="swapScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Swap Tokens</h2>
-  <input placeholder="From Token">
-  <input placeholder="To Token">
-  <button class="main">Swap</button>
-</div>
-
-<!-- TOKEN HISTORY -->
-<div id="btcScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Bitcoin History</h2>
-  <p>+0.034 BTC Received</p>
-  <p>-0.010 BTC Sent</p>
-</div>
-
-<div id="ethScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>Ethereum History</h2>
-  <p>+1.2 ETH Received</p>
-  <p>-0.5 ETH Sent</p>
-</div>
-
-<div id="fchScreen" class="screen">
-  <button class="close-btn" onclick="closeScreens()">Back</button>
-  <h2>FChain Token History</h2>
-  <p>+5000 FCH Airdrop</p>
-  <p>-2000 FCH Swap</p>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="active" onclick="showSection('home',this)"><span>🏠</span>Home</button>
+  <button onclick="showSection('wallet',this)"><span>💰</span>Wallet</button>
+  <button onclick="showSection('browser',this)"><span>🌍</span>Browser</button>
+  <button onclick="showSection('settings',this)"><span>⚙️</span>Set</button>
 </div>
 
 <script>
-function openScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-  document.getElementById(id).style.display="block";
+function showSection(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
-function closeScreens(){
-  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+function toggleCard(id){
+  let el = document.getElementById(id);
+  el.style.display = (el.style.display==="block") ? "none" : "block";
 }
 </script>
 
 </body>
-  </html>
+    </html>
