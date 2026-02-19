@@ -18,15 +18,6 @@ body{
 
 h2{text-align:center;margin-top:10px;}
 
-.top-coins{
-  display:flex;
-  justify-content:space-around;
-  background:#020617;
-  padding:10px;
-  font-size:13px;
-  border-bottom:1px solid #1e293b;
-}
-
 .btn{
   width:100%;
   padding:14px;
@@ -44,273 +35,217 @@ h2{text-align:center;margin-top:10px;}
   border-radius:12px;
   margin-top:10px;
   display:flex;
-  align-items:center;
-  gap:10px;
+  justify-content:space-between;
   font-size:16px;
-  cursor:pointer;
 }
 
 .back{
-  background:none;
-  border:none;
-  color:#38bdf8;
-  font-size:16px;
-  cursor:pointer;
+  background:none;border:none;color:#38bdf8;font-size:16px;
 }
 
 .bottom-nav{
-  position:fixed;
-  bottom:20px;
-  width:100%;
-  display:flex;
-  background:#020617;
+  position:fixed;bottom:0;width:100%;
+  display:flex;background:#020617;
   border-top:1px solid #1e293b;
 }
 
 .nav-btn{
-  flex:1;
-  text-align:center;
-  padding:10px;
-  color:#94a3b8;
-  font-size:14px;
-  cursor:pointer;
+  flex:1;text-align:center;padding:10px;
+  color:#94a3b8;font-size:14px;
 }
 .nav-btn:hover{color:white;}
 
-.network-bar{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#020617;
-  padding:3px;
-  font-size:12px;
-  text-align:center;
-  border-top:1px solid #1e293b;
-  color:#38bdf8;
-}
-
 .qr-box{
-  width:180px;height:180px;
-  background:#111;
-  border:2px solid #333;
-  margin:20px auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  width:180px;height:180px;background:#111;
+  border:2px solid #333;margin:20px auto;
+  display:flex;justify-content:center;align-items:center;
   border-radius:12px;
 }
 
 .address{text-align:center;font-size:13px;color:#94a3b8;}
 
 input{
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:none;
-  background:#111827;
-  color:white;
-  font-size:16px;
+  width:100%;padding:12px;border-radius:8px;
+  border:none;background:#111827;color:white;font-size:16px;
 }
 
 .loader{
-  width:40px;height:40px;
-  border:4px solid #2563eb;
-  border-top:4px solid transparent;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-  margin:20px auto;
+  width:40px;height:40px;border:4px solid #2563eb;
+  border-top:4px solid transparent;border-radius:50%;
+  animation:spin 1s linear infinite;margin:20px auto;
 }
 
 @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+/* price flash */
+.up{color:#22c55e;}
+.down{color:#ef4444;}
+
+/* fake network bar */
+.netbar{
+  width:100%;height:6px;background:#111827;border-radius:10px;
+  overflow:hidden;margin-top:5px;
+}
+.netfill{
+  height:100%;background:#22c55e;width:20%;
+  transition:width 1s;
+}
 </style>
 </head>
 
 <body>
 
-<!-- TOP COINS -->
-<div class="top-coins">
-  <div>BTC $62,140</div>
-  <div>ETH $3,220</div>
-  <div>FCH $0.012</div>
-</div>
-
 <!-- HOME -->
 <div id="home" class="page active">
 <h2>FChain Wallet</h2>
-<h1>$12,450.22</h1>
 
-<div class="card">BTC: 0.054</div>
-<div class="card">ETH: 2.4</div>
-<div class="card">FCH: 12,000</div>
+<h1 id="totalBalance">$12,450.22</h1>
+<p id="syncText">🔄 Syncing blockchain...</p>
+
+<div class="card">BTC: <span id="btcBal">0.054000</span></div>
+<div class="card">ETH: <span id="ethBal">2.4000</span></div>
+<div class="card">FCH: <span id="fchBal">12000</span></div>
+
+<div class="netbar"><div id="netFill" class="netfill"></div></div>
 
 <button class="btn" onclick="openPage('send')">Send</button>
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<!-- SEND -->
-<div id="send" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Send Crypto</h2>
-<div class="card" onclick="openPage('sendForm')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('sendForm')">Ethereum (ETH)</div>
-</div>
-
-<div id="sendForm" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Send BTC</h2>
-<input placeholder="Recipient Address">
-<input type="number" placeholder="Amount">
-<button class="btn" onclick="openPage('sendConfirm')">Next</button>
-</div>
-
-<div id="sendConfirm" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Confirm Transaction</h2>
-<p>Gas Fee: $2.40</p>
-<button class="btn" onclick="openPage('sendProcessing')">Send Now</button>
-</div>
-
-<div id="sendProcessing" class="page">
-<h2>Sending...</h2>
-<div class="loader"></div>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<!-- BUY -->
-<div id="buy" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Buy Crypto</h2>
-<div class="card" onclick="openPage('buyPay')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('buyPay')">Ethereum (ETH)</div>
-</div>
-
-<div id="buyPay" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Payment Method</h2>
-<div class="card" onclick="openPage('buyAmount')">Credit Card</div>
-<div class="card" onclick="openPage('buyAmount')">Bank Transfer</div>
-</div>
-
-<div id="buyAmount" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Enter Amount</h2>
-<input type="number" placeholder="$50">
-<button class="btn" onclick="openPage('buyDone')">Continue</button>
-</div>
-
-<div id="buyDone" class="page">
-<h2>Processing Payment</h2>
-<div class="loader"></div>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<!-- RECEIVE -->
-<div id="receive" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('receiveBTC')">Ethereum (ETH)</div>
-</div>
-
-<div id="receiveBTC" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Your BTC Address</h2>
-<div class="qr-box">QR CODE</div>
-<p class="address">bc1qfchainwalletdemo9987x</p>
-<button class="btn" onclick="alert('Address Copied')">Copy Address</button>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
 <!-- PROFILE -->
 <div id="profile" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-<div class="card" onclick="openPage('profileDetail')">Wallet Info</div>
+
+<div class="card" onclick="openPage('profileSecurity')">Security</div>
+<div class="card" onclick="openPage('profileBackup')">Backup Wallet</div>
+<div class="card" onclick="openPage('profileInfo')">Wallet Info</div>
 </div>
 
-<div id="profileDetail" class="page">
+<div id="profileSecurity" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Security Settings</h2>
+<div class="card">Change PIN</div>
+<div class="card">Biometrics</div>
+<div class="card">Auto Lock</div>
+</div>
+
+<div id="profileBackup" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Backup Wallet</h2>
+<div class="card">View Recovery Phrase</div>
+<div class="card">Export Private Keys</div>
+</div>
+
+<div id="profileInfo" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Wallet Info</h2>
-<div class="card">User: FChain User</div>
-<div class="card">Wallet ID: #FCH99212</div>
+<div class="card">Wallet ID: FCH-99212</div>
+<div class="card">Version: 1.0.0</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openPage('security')">Security</div>
-<div class="card" onclick="openPage('network')">Network</div>
-<div class="card" onclick="openPage('backup')">Backup Wallet</div>
+
+<div class="card" onclick="openPage('setNetwork')">Network</div>
+<div class="card" onclick="openPage('setCurrency')">Currency</div>
+<div class="card" onclick="openPage('setTheme')">Theme</div>
 </div>
 
-<div id="security" class="page">
+<div id="setNetwork" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Security Settings</h2>
-<div class="card" onclick="openPage('securityMore')">PIN Code</div>
-<div class="card">Biometrics</div>
-</div>
-
-<div id="securityMore" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>PIN Settings</h2>
-<div class="card">Change PIN</div>
-<div class="card">Auto Lock</div>
-</div>
-
-<div id="network" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Network</h2>
+<h2>Networks</h2>
 <div class="card">Ethereum Mainnet</div>
-<div class="card">BSC Smart Chain</div>
-<div class="card">Polygon</div>
+<div class="card">Bitcoin Network</div>
+<div class="card">FChain Mainnet</div>
 </div>
 
-<div id="backup" class="page">
+<div id="setCurrency" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Backup Wallet</h2>
-<div class="card">Show Recovery Phrase</div>
+<h2>Currency</h2>
+<div class="card">USD</div>
+<div class="card">EUR</div>
+<div class="card">NGN</div>
 </div>
+
+<div id="setTheme" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Theme</h2>
+<div class="card">Dark Mode</div>
+<div class="card">Light Mode</div>
+</div>
+
+<!-- SEND / BUY / RECEIVE SIMPLE -->
+<div id="send" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Send Crypto</h2></div>
+<div id="buy" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Buy Crypto</h2></div>
+<div id="receive" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Receive Crypto</h2></div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-btn" onclick="openHome()">Home</div>
+  <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
   <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
-<!-- NETWORK LIVE BAR -->
-<div class="network-bar" id="networkStatus">Network: Ethereum Mainnet • 32ms • Online</div>
-
 <script>
-let historyStack = [];
+let historyStack=[];
 
+// navigation system
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   historyStack.push(id);
 }
-
 function goBack(){
   historyStack.pop();
-  let prev = historyStack.pop();
-  if(prev) openPage(prev);
-  else openHome();
+  let last = historyStack.pop();
+  if(last) openPage(last);
+  else openPage("home");
 }
 
-function openHome(){
-  historyStack=[];
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById("home").classList.add("active");
+// FAKE BLOCKCHAIN LIVE SYSTEM
+let btc=0.054, eth=2.4, fch=12000;
+let btcPrice=62000, ethPrice=3200, fchPrice=0.012;
+
+function fakeBlockchain(){
+  let oldTotal=parseFloat(document.getElementById("totalBalance").innerText.replace("$",""));
+
+  btc += (Math.random()-0.5)*0.0002;
+  eth += (Math.random()-0.5)*0.01;
+  fch += (Math.random()-0.5)*40;
+
+  btcPrice += (Math.random()-0.5)*50;
+  ethPrice += (Math.random()-0.5)*10;
+  fchPrice += (Math.random()-0.5)*0.0001;
+
+  btc=Math.max(btc,0); eth=Math.max(eth,0); fch=Math.max(fch,0);
+
+  document.getElementById("btcBal").innerText=btc.toFixed(6);
+  document.getElementById("ethBal").innerText=eth.toFixed(4);
+  document.getElementById("fchBal").innerText=Math.floor(fch);
+
+  let total=(btc*btcPrice)+(eth*ethPrice)+(fch*fchPrice);
+  let balEl=document.getElementById("totalBalance");
+  balEl.innerText="$"+total.toFixed(2);
+
+  if(total>oldTotal){balEl.className="up";}
+  else{balEl.className="down";}
+
+  // network speed bar
+  document.getElementById("netFill").style.width=(10+Math.random()*90)+"%";
 }
 
-// Fake live network ping
+// syncing text animation
+let dots=0;
 setInterval(()=>{
-  let ping = Math.floor(Math.random()*50)+10;
-  document.getElementById("networkStatus").innerText =
-    "Network: Ethereum Mainnet • " + ping + "ms • Online";
-}, 2000);
+  dots=(dots+1)%4;
+  document.getElementById("syncText").innerText="🔄 Syncing blockchain"+ ".".repeat(dots);
+},500);
+
+setInterval(fakeBlockchain,2000);
 </script>
 
 </body>
