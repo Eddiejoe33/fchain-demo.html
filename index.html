@@ -3,161 +3,182 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
+
 <style>
-body {margin:0;font-family:Arial;background:#0c1c2e;color:white;}
-.screen {padding:15px;height:100vh;display:none;}
-.active {display:block;}
-button {padding:12px;width:100%;margin-top:10px;font-size:16px;border:none;border-radius:8px;background:#1e90ff;color:white;}
-input {width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:6px;border:none;}
-.bottom-nav {position:fixed;bottom:0;width:100%;background:#081524;display:flex;justify-content:space-around;padding:10px 0;}
-.bottom-nav button {background:none;border:none;color:white;font-size:14px;}
-.backbtn {background:#333;width:auto;padding:8px 12px;}
+body {margin:0;font-family:Arial;background:#0b1b2b;color:white;}
+.page {display:none;padding:15px;height:100vh;overflow:auto;}
+.show {display:block;}
+.header {font-size:22px;font-weight:bold;margin-bottom:10px;}
+.card {background:#132c44;padding:15px;border-radius:12px;margin-bottom:10px;}
+.btn {background:#1e90ff;border:none;padding:12px;width:100%;border-radius:8px;color:white;font-size:16px;margin-top:10px;}
+input {width:100%;padding:10px;border-radius:8px;border:none;margin-top:10px;font-size:16px;}
+.back {background:#333;padding:8px;border-radius:6px;border:none;color:white;margin-bottom:10px;}
+.bottom {position:fixed;bottom:0;width:100%;background:#071423;display:flex;justify-content:space-around;padding:10px 0;}
+.bottom div {text-align:center;font-size:13px;color:white;}
+.bottom div:hover {color:#1e90ff;cursor:pointer;}
+.fade {animation:fade .2s;}
+@keyframes fade {from{opacity:0;}to{opacity:1;}}
 </style>
 </head>
 
 <body>
 
 <!-- HOME -->
-<div id="home" class="screen active">
-<h2>FChain Wallet</h2>
+<div id="home" class="page show fade">
+<div class="header">FChain Wallet</div>
+<div class="card">
 <h1>$12,450.22</h1>
+<div style="display:flex;gap:10px;">
+<button class="btn" onclick="openPage('send1')">Send</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
+<div style="display:flex;gap:10px;">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('swap')">Swap</button>
+</div>
+</div>
 
-<button onclick="showScreen('send1')">Send</button>
-<button onclick="showScreen('receive')">Receive</button>
-<button onclick="showScreen('buy')">Buy</button>
-<button onclick="showScreen('swap')">Swap</button>
-
+<div class="card">
 <h3>Assets</h3>
-<p>BTC: 0.054</p>
-<p>ETH: 2.4</p>
-<p>FCH: 12,000</p>
+<p>Bitcoin (BTC) — 0.054 BTC</p>
+<p>Ethereum (ETH) — 2.4 ETH</p>
+<p>FChain Token (FCH) — 12,000 FCH</p>
+</div>
 </div>
 
 <!-- SEND FLOW -->
-<div id="send1" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<div id="send1" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
-<button onclick="showScreen('send2')">Continue</button>
+<button class="btn" onclick="openPage('send2')">Continue</button>
 </div>
 
-<div id="send2" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<div id="send2" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Recipient Address</h2>
-<input id="addr" placeholder="Wallet address">
-<button onclick="showScreen('send3')">Next</button>
+<input id="addr" placeholder="Wallet Address">
+<button class="btn" onclick="openPage('send3')">Next</button>
 </div>
 
-<div id="send3" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
-<h2>Enter Amount</h2>
-<input id="amt" type="number" placeholder="0.00 BTC">
-<button onclick="showConfirm()">Next</button>
+<div id="send3" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Amount</h2>
+<input id="amt" placeholder="0.00 BTC">
+<button class="btn" onclick="confirmSend()">Next</button>
 </div>
 
-<div id="send4" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
-<h2>Confirm Transaction</h2>
-<p id="confirmBox"></p>
-<button onclick="showScreen('send5')">Send</button>
+<div id="send4" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Confirm</h2>
+<p id="confirmText"></p>
+<button class="btn" onclick="finishSend()">Send</button>
 </div>
 
-<div id="send5" class="screen">
-<h2>✅ Transaction Sent</h2>
-<p>TX Hash: <span id="txhash"></span></p>
-<button onclick="showHome()">Return Home</button>
+<div id="send5" class="page fade">
+<h2>✅ Sent Successfully</h2>
+<p>TX Hash:</p>
+<p id="hash"></p>
+<button class="btn" onclick="openHome()">Done</button>
 </div>
 
 <!-- RECEIVE -->
-<div id="receive" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<div id="receive" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
+<div class="card">
 <p>Your Address:</p>
 <input value="fchain1qxy2z3abc123" readonly>
-<button onclick="alert('QR Code coming soon')">Show QR Code</button>
+<button class="btn">Show QR Code</button>
+</div>
 </div>
 
 <!-- BUY -->
-<div id="buy" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<div id="buy" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<p>Select payment method:</p>
-<button>Credit Card</button>
-<button>Bank Transfer</button>
-<button>Mobile Money</button>
+<div class="card">
+<button class="btn">Credit Card</button>
+<button class="btn">Bank Transfer</button>
+<button class="btn">Mobile Money</button>
+</div>
 </div>
 
 <!-- SWAP -->
-<div id="swap" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
-<h2>Swap Crypto</h2>
-<input placeholder="From: BTC">
-<input placeholder="To: ETH">
-<button>Swap Now</button>
+<div id="swap" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Swap</h2>
+<input placeholder="From BTC">
+<input placeholder="To ETH">
+<button class="btn">Swap Now</button>
 </div>
 
-<!-- WALLET TAB -->
-<div id="wallet" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
-<h2>Your Wallet</h2>
+<!-- WALLET -->
+<div id="wallet" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Wallet Details</h2>
 <p>Address: fchain1qxy2z3abc123</p>
-<p>Private Key: ***********</p>
+<p>Balance: $12,450.22</p>
 </div>
 
-<!-- BROWSER TAB -->
-<div id="browser" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<!-- BROWSER -->
+<div id="browser" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>DApp Browser</h2>
-<p>No DApps connected</p>
+<p>No DApps Connected</p>
 </div>
 
-<!-- SETTINGS TAB -->
-<div id="settings" class="screen">
-<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<!-- SETTINGS -->
+<div id="settings" class="page fade">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
 <p>Security</p>
-<p>Backup</p>
+<p>Backup Wallet</p>
 <p>About FChain</p>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-<button onclick="showHome()">Home</button>
-<button onclick="showScreen('wallet')">Wallet</button>
-<button onclick="showScreen('browser')">Browser</button>
-<button onclick="showScreen('settings')">Settings</button>
+<!-- BOTTOM TAB BAR -->
+<div class="bottom">
+<div onclick="openHome()">🏠<br>Home</div>
+<div onclick="openPage('wallet')">💼<br>Wallet</div>
+<div onclick="openPage('browser')">🌐<br>Browser</div>
+<div onclick="openPage('settings')">⚙️<br>Settings</div>
 </div>
 
 <script>
-let historyStack=[];
+let stack=[];
 
-function showScreen(id){
- document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- historyStack.push(id);
+function openPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+ document.getElementById(id).classList.add('show');
+ stack.push(id);
 }
 
-function showHome(){
- document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
- document.getElementById("home").classList.add("active");
- historyStack=[];
+function openHome(){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+ document.getElementById('home').classList.add('show');
+ stack=[];
 }
 
 function goBack(){
- historyStack.pop();
- let last=historyStack.pop();
- if(last) showScreen(last);
- else showHome();
+ stack.pop();
+ let last = stack.pop();
+ if(last) openPage(last);
+ else openHome();
 }
 
-function showConfirm(){
+function confirmSend(){
  let a=document.getElementById("addr").value;
  let b=document.getElementById("amt").value;
- document.getElementById("confirmBox").innerHTML="Send "+b+" BTC to<br>"+a;
- showScreen("send4");
+ document.getElementById("confirmText").innerHTML="Send "+b+" BTC to<br>"+a;
+ openPage("send4");
 }
 
-document.getElementById("txhash").innerText=Math.random().toString(36).substring(2,15);
+function finishSend(){
+ document.getElementById("hash").innerText=Math.random().toString(36).substring(2,15);
+ openPage("send5");
+}
 </script>
 
 </body>
-  </html>
+ </html>
+ 
