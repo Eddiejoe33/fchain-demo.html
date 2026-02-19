@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>FChain Demo Network</title>
+<title>⚡ FChain Fake Bitcoin Network Demo</title>
 <style>
 body {
   background:black;
-  color:lime;
+  color:#00ffcc;
   font-family: monospace;
 }
-.box {
-  border:1px solid lime;
+h1 { color:#00ffaa; }
+.panel {
+  border:1px solid #00ffcc;
   padding:10px;
   margin:10px;
 }
 .map {
+  width:100%;
   height:200px;
-  background:#001100;
+  background:#001;
   position:relative;
   overflow:hidden;
 }
@@ -31,55 +33,48 @@ body {
 
 <body>
 
-<h2>⚡ FChain Fake Bitcoin Network Demo</h2>
+<h1>⚡ FChain Fake Bitcoin Network Demo</h1>
 
-<div class="box">
-<h3>📡 Fake Mempool</h3>
+<div class="panel">
+<h2>📡 Fake Mempool</h2>
 <div id="mempool"></div>
 </div>
 
-<div class="box">
-<h3>📜 Transaction History</h3>
+<div class="panel">
+<h2>📜 Transaction History</h2>
 <div id="history"></div>
 </div>
 
-<div class="box">
-<h3>🌍 Live Network Map</h3>
+<div class="panel">
+<h2>🌍 Live Network Map</h2>
 <div class="map" id="map"></div>
 </div>
 
 <script>
-
-// Fake Transactions
-function randomTx() {
-  return {
-    hash: Math.random().toString(36).substring(2,15),
-    amount: (Math.random()*2).toFixed(4) + " BTC",
-    fee: (Math.random()*0.01).toFixed(6) + " BTC"
-  };
+// Fake random TX generator
+function randomTX() {
+  return Math.random().toString(36).substring(2,12);
 }
 
-// Fake mempool
+// Generate mempool
 function updateMempool() {
-  let mem = "";
+  let html = "";
   for(let i=0;i<5;i++){
-    let tx = randomTx();
-    mem += `<div>TX: ${tx.hash} | ${tx.amount} | Fee: ${tx.fee}</div>`;
+    html += `TX: ${randomTX()} | ${(Math.random()*2).toFixed(4)} BTC | Fee: ${(Math.random()*0.01).toFixed(6)} BTC<br>`;
   }
-  document.getElementById("mempool").innerHTML = mem;
+  document.getElementById("mempool").innerHTML = html;
 }
 
-// Fake history
+// Generate history
 function updateHistory() {
-  let hist = "";
+  let html = "";
   for(let i=0;i<5;i++){
-    let tx = randomTx();
-    hist += `<div>✔ Confirmed: ${tx.hash} | ${tx.amount}</div>`;
+    html += `✔ Confirmed: ${randomTX()} | ${(Math.random()*2).toFixed(4)} BTC<br>`;
   }
-  document.getElementById("history").innerHTML = hist;
+  document.getElementById("history").innerHTML = html;
 }
 
-// Fake hacker network map
+// Fake live network map
 function spawnNode() {
   let map = document.getElementById("map");
   let node = document.createElement("div");
@@ -87,15 +82,13 @@ function spawnNode() {
   node.style.left = Math.random()*100 + "%";
   node.style.top = Math.random()*100 + "%";
   map.appendChild(node);
-
-  setTimeout(()=>node.remove(),3000);
+  setTimeout(()=>node.remove(),5000);
 }
 
-// Live animation
+// Run updates
 setInterval(updateMempool, 2000);
-setInterval(updateHistory, 4000);
+setInterval(updateHistory, 5000);
 setInterval(spawnNode, 300);
-
 </script>
 
 </body>
