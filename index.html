@@ -3,63 +3,52 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
-
 <style>
 body {
   margin:0;
   font-family: Arial;
-  background:#0f172a;
+  background:#0c1c2e;
   color:white;
 }
 
-/* Screens */
 .screen {
-  display:none;
-  padding:20px;
-  padding-bottom:120px;
-}
-.screen.active { display:block; }
-
-/* Header */
-h1 { text-align:center; }
-
-/* Buttons */
-.top-actions {
-  display:flex;
-  justify-content:space-around;
-  margin-bottom:20px;
-}
-.top-actions button {
-  background:#2563eb;
-  border:none;
-  color:white;
-  padding:12px 18px;
-  border-radius:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-/* Cards */
-.card {
-  background:rgba(255,255,255,0.08);
   padding:15px;
-  border-radius:12px;
-  margin-bottom:10px;
+  height:100vh;
+  display:none;
 }
 
-/* Bottom Nav */
+.active {
+  display:block;
+}
+
+button {
+  padding:12px;
+  width:100%;
+  margin-top:10px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  background:#1e90ff;
+  color:white;
+}
+
+input {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  font-size:16px;
+  border-radius:6px;
+  border:none;
+}
+
 .bottom-nav {
   position:fixed;
-  bottom:10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:95%;
-  background:rgba(30,58,138,0.4);
-  backdrop-filter:blur(20px);
-  border-radius:30px;
+  bottom:0;
+  width:100%;
+  background:#081524;
   display:flex;
   justify-content:space-around;
-  padding:12px;
+  padding:10px 0;
 }
 
 .bottom-nav button {
@@ -67,111 +56,126 @@ h1 { text-align:center; }
   border:none;
   color:white;
   font-size:14px;
-  cursor:pointer;
-}
-
-.bottom-nav button.active {
-  color:#60a5fa;
-  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HOME SCREEN -->
+<!-- HOME -->
 <div id="home" class="screen active">
-  <h1>FChain Wallet</h1>
-  <h2>Total Balance: $12,450.22</h2>
+<h2>FChain Wallet</h2>
+<h1>$12,450.22</h1>
 
-  <div class="top-actions">
-    <button onclick="showScreen('send')">Send</button>
-    <button onclick="showScreen('receive')">Receive</button>
-    <button onclick="showScreen('buy')">Buy</button>
-    <button onclick="showScreen('swap')">Swap</button>
-  </div>
+<button onclick="showScreen('send1')">Send</button>
+<button onclick="alert('Receive Address: fchain123xyz')">Receive</button>
+<button onclick="alert('Buy coming soon')">Buy</button>
+<button onclick="alert('Swap coming soon')">Swap</button>
 
-  <div class="card">Bitcoin (BTC) – 0.054 BTC</div>
-  <div class="card">Ethereum (ETH) – 2.4 ETH</div>
-  <div class="card">FChain Token – 12,000 FCH</div>
+<h3>Assets</h3>
+<p>BTC: 0.054</p>
+<p>ETH: 2.4</p>
+<p>FCH: 12,000</p>
 </div>
 
-<!-- SEND SCREEN -->
-<div id="send" class="screen">
-  <h1>Send Crypto</h1>
-  <div class="card">
-    Address:<br>
-    <input style="width:100%" placeholder="Wallet Address">
-  </div>
-  <div class="card">
-    Amount:<br>
-    <input style="width:100%" placeholder="0.00 BTC">
-  </div>
-  <button style="width:100%;padding:12px;background:#22c55e;border:none;border-radius:10px;">Send</button>
+<!-- SEND FLOW -->
+<div id="send1" class="screen">
+<button onclick="goBack()">⬅ Back</button>
+<h2>Send Crypto</h2>
+<button onclick="showScreen('send2')">Continue</button>
 </div>
 
-<!-- RECEIVE SCREEN -->
-<div id="receive" class="screen">
-  <h1>Receive Crypto</h1>
-  <div class="card">Your BTC Address:</div>
-  <div class="card">1FChainReceiveDemoWalletAddress12345</div>
+<div id="send2" class="screen">
+<button onclick="goBack()">⬅ Back</button>
+<h2>Recipient Address</h2>
+<input id="addr" placeholder="Wallet address">
+<button onclick="showScreen('send3')">Next</button>
 </div>
 
-<!-- BUY SCREEN -->
-<div id="buy" class="screen">
-  <h1>Buy Crypto</h1>
-  <div class="card">Buy BTC with Card</div>
-  <div class="card">Buy ETH with Bank</div>
+<div id="send3" class="screen">
+<button onclick="goBack()">⬅ Back</button>
+<h2>Enter Amount</h2>
+<input id="amt" type="number" placeholder="0.00 BTC">
+<button onclick="showConfirm()">Next</button>
 </div>
 
-<!-- SWAP SCREEN -->
-<div id="swap" class="screen">
-  <h1>Swap Tokens</h1>
-  <div class="card">From: BTC</div>
-  <div class="card">To: ETH</div>
-  <button style="width:100%;padding:12px;background:#facc15;border:none;border-radius:10px;">Swap</button>
+<div id="send4" class="screen">
+<button onclick="goBack()">⬅ Back</button>
+<h2>Confirm</h2>
+<p id="confirmBox"></p>
+<button onclick="showScreen('send5')">Send</button>
 </div>
 
-<!-- WALLET SCREEN -->
+<div id="send5" class="screen">
+<h2>✅ Transaction Sent</h2>
+<p>TX Hash: <span id="txhash"></span></p>
+<button onclick="showHome()">Return Home</button>
+</div>
+
+<!-- WALLET TAB -->
 <div id="wallet" class="screen">
-  <h1>Your Wallet</h1>
-  <div class="card">BTC Wallet</div>
-  <div class="card">ETH Wallet</div>
-  <div class="card">FCH Wallet</div>
+<button onclick="goBack()">⬅ Back</button>
+<h2>Your Wallet</h2>
+<p>Address: fchain123xyz</p>
+<p>Private Key: ********</p>
 </div>
 
-<!-- BROWSER SCREEN -->
+<!-- BROWSER TAB -->
 <div id="browser" class="screen">
-  <h1>DApp Browser</h1>
-  <div class="card">Uniswap</div>
-  <div class="card">OpenSea</div>
+<button onclick="goBack()">⬅ Back</button>
+<h2>DApp Browser</h2>
+<p>No DApps connected</p>
 </div>
 
-<!-- SETTINGS / PROFILE -->
+<!-- SETTINGS TAB -->
 <div id="settings" class="screen">
-  <h1>Profile & Settings</h1>
-  <div class="card">Name: Eddie Joe</div>
-  <div class="card">Wallet ID: FCH-USER-001</div>
-  <div class="card">Security Settings</div>
+<button onclick="goBack()">⬅ Back</button>
+<h2>Settings</h2>
+<p>Security</p>
+<p>Backup</p>
+<p>About FChain</p>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <button class="active" onclick="showScreen('home', this)">Home</button>
-  <button onclick="showScreen('wallet', this)">Wallet</button>
-  <button onclick="showScreen('browser', this)">Browser</button>
-  <button onclick="showScreen('settings', this)">Profile</button>
+<button onclick="showHome()">Home</button>
+<button onclick="showScreen('wallet')">Wallet</button>
+<button onclick="showScreen('browser')">Browser</button>
+<button onclick="showScreen('settings')">Settings</button>
 </div>
 
 <script>
-function showScreen(id, btn){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+let historyStack = [];
 
-  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  historyStack.push(id);
 }
+
+function showHome(){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("home").classList.add("active");
+  historyStack=[];
+}
+
+function goBack(){
+  historyStack.pop();
+  let last = historyStack.pop();
+  if(last) showScreen(last);
+  else showHome();
+}
+
+function showConfirm(){
+  let a = document.getElementById("addr").value;
+  let b = document.getElementById("amt").value;
+  document.getElementById("confirmBox").innerHTML = "Send "+b+" BTC to<br>"+a;
+  showScreen("send4");
+}
+
+document.getElementById("txhash").innerText =
+  Math.random().toString(36).substring(2,15);
 </script>
 
 </body>
-    </html>
+  </html>
