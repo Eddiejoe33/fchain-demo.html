@@ -4,59 +4,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0c1c2e;
-  color:white;
-}
-
-.screen {
-  padding:15px;
-  height:100vh;
-  display:none;
-}
-
-.active {
-  display:block;
-}
-
-button {
-  padding:12px;
-  width:100%;
-  margin-top:10px;
-  font-size:16px;
-  border:none;
-  border-radius:8px;
-  background:#1e90ff;
-  color:white;
-}
-
-input {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  font-size:16px;
-  border-radius:6px;
-  border:none;
-}
-
-.bottom-nav {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#081524;
-  display:flex;
-  justify-content:space-around;
-  padding:10px 0;
-}
-
-.bottom-nav button {
-  background:none;
-  border:none;
-  color:white;
-  font-size:14px;
-}
+body {margin:0;font-family:Arial;background:#0c1c2e;color:white;}
+.screen {padding:15px;height:100vh;display:none;}
+.active {display:block;}
+button {padding:12px;width:100%;margin-top:10px;font-size:16px;border:none;border-radius:8px;background:#1e90ff;color:white;}
+input {width:100%;padding:12px;margin-top:10px;font-size:16px;border-radius:6px;border:none;}
+.bottom-nav {position:fixed;bottom:0;width:100%;background:#081524;display:flex;justify-content:space-around;padding:10px 0;}
+.bottom-nav button {background:none;border:none;color:white;font-size:14px;}
+.backbtn {background:#333;width:auto;padding:8px 12px;}
 </style>
 </head>
 
@@ -68,9 +23,9 @@ input {
 <h1>$12,450.22</h1>
 
 <button onclick="showScreen('send1')">Send</button>
-<button onclick="alert('Receive Address: fchain123xyz')">Receive</button>
-<button onclick="alert('Buy coming soon')">Buy</button>
-<button onclick="alert('Swap coming soon')">Swap</button>
+<button onclick="showScreen('receive')">Receive</button>
+<button onclick="showScreen('buy')">Buy</button>
+<button onclick="showScreen('swap')">Swap</button>
 
 <h3>Assets</h3>
 <p>BTC: 0.054</p>
@@ -80,28 +35,28 @@ input {
 
 <!-- SEND FLOW -->
 <div id="send1" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
 <button onclick="showScreen('send2')">Continue</button>
 </div>
 
 <div id="send2" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>Recipient Address</h2>
 <input id="addr" placeholder="Wallet address">
 <button onclick="showScreen('send3')">Next</button>
 </div>
 
 <div id="send3" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>Enter Amount</h2>
 <input id="amt" type="number" placeholder="0.00 BTC">
 <button onclick="showConfirm()">Next</button>
 </div>
 
 <div id="send4" class="screen">
-<button onclick="goBack()">⬅ Back</button>
-<h2>Confirm</h2>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Transaction</h2>
 <p id="confirmBox"></p>
 <button onclick="showScreen('send5')">Send</button>
 </div>
@@ -112,24 +67,52 @@ input {
 <button onclick="showHome()">Return Home</button>
 </div>
 
+<!-- RECEIVE -->
+<div id="receive" class="screen">
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<p>Your Address:</p>
+<input value="fchain1qxy2z3abc123" readonly>
+<button onclick="alert('QR Code coming soon')">Show QR Code</button>
+</div>
+
+<!-- BUY -->
+<div id="buy" class="screen">
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<p>Select payment method:</p>
+<button>Credit Card</button>
+<button>Bank Transfer</button>
+<button>Mobile Money</button>
+</div>
+
+<!-- SWAP -->
+<div id="swap" class="screen">
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
+<h2>Swap Crypto</h2>
+<input placeholder="From: BTC">
+<input placeholder="To: ETH">
+<button>Swap Now</button>
+</div>
+
 <!-- WALLET TAB -->
 <div id="wallet" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>Your Wallet</h2>
-<p>Address: fchain123xyz</p>
-<p>Private Key: ********</p>
+<p>Address: fchain1qxy2z3abc123</p>
+<p>Private Key: ***********</p>
 </div>
 
 <!-- BROWSER TAB -->
 <div id="browser" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>DApp Browser</h2>
 <p>No DApps connected</p>
 </div>
 
 <!-- SETTINGS TAB -->
 <div id="settings" class="screen">
-<button onclick="goBack()">⬅ Back</button>
+<button class="backbtn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
 <p>Security</p>
 <p>Backup</p>
@@ -145,36 +128,35 @@ input {
 </div>
 
 <script>
-let historyStack = [];
+let historyStack=[];
 
 function showScreen(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  historyStack.push(id);
+ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ historyStack.push(id);
 }
 
 function showHome(){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById("home").classList.add("active");
-  historyStack=[];
+ document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+ document.getElementById("home").classList.add("active");
+ historyStack=[];
 }
 
 function goBack(){
-  historyStack.pop();
-  let last = historyStack.pop();
-  if(last) showScreen(last);
-  else showHome();
+ historyStack.pop();
+ let last=historyStack.pop();
+ if(last) showScreen(last);
+ else showHome();
 }
 
 function showConfirm(){
-  let a = document.getElementById("addr").value;
-  let b = document.getElementById("amt").value;
-  document.getElementById("confirmBox").innerHTML = "Send "+b+" BTC to<br>"+a;
-  showScreen("send4");
+ let a=document.getElementById("addr").value;
+ let b=document.getElementById("amt").value;
+ document.getElementById("confirmBox").innerHTML="Send "+b+" BTC to<br>"+a;
+ showScreen("send4");
 }
 
-document.getElementById("txhash").innerText =
-  Math.random().toString(36).substring(2,15);
+document.getElementById("txhash").innerText=Math.random().toString(36).substring(2,15);
 </script>
 
 </body>
