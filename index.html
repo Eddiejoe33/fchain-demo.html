@@ -113,11 +113,108 @@ input{
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
+<!-- SEND FLOW -->
+<div id="send" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send Crypto</h2>
+<div class="card" onclick="openPage('sendBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('sendETH')">Ethereum (ETH)</div>
+</div>
+
+<div id="sendBTC" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send BTC</h2>
+<input placeholder="Recipient Address">
+<input type="number" placeholder="Amount BTC">
+<button class="btn" onclick="openPage('sendConfirm')">Next</button>
+</div>
+
+<div id="sendETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send ETH</h2>
+<input placeholder="Recipient Address">
+<input type="number" placeholder="Amount ETH">
+<button class="btn" onclick="openPage('sendConfirm')">Next</button>
+</div>
+
+<div id="sendConfirm" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Transaction</h2>
+<div class="card">Gas Fee: $2.40</div>
+<button class="btn" onclick="openPage('sendProcess')">Send Now</button>
+</div>
+
+<div id="sendProcess" class="page">
+<h2>Broadcasting Transaction...</h2>
+<div class="loader"></div>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<!-- BUY FLOW -->
+<div id="buy" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<div class="card" onclick="openPage('buyBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('buyETH')">Ethereum (ETH)</div>
+</div>
+
+<div id="buyBTC" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Buy BTC</h2>
+<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
+<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
+</div>
+
+<div id="buyETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Buy ETH</h2>
+<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
+<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
+</div>
+
+<div id="buyAmount" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Enter Amount</h2>
+<input type="number" placeholder="$100">
+<button class="btn" onclick="openPage('buyProcess')">Buy Now</button>
+</div>
+
+<div id="buyProcess" class="page">
+<h2>Processing Payment...</h2>
+<div class="loader"></div>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<!-- RECEIVE FLOW -->
+<div id="receive" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
+</div>
+
+<div id="receiveBTC" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Your BTC Address</h2>
+<div class="qr-box">QR CODE</div>
+<p class="address">bc1qfchainwallet9987</p>
+<button class="btn">Copy Address</button>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<div id="receiveETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Your ETH Address</h2>
+<div class="qr-box">QR CODE</div>
+<p class="address">0xFCHAIN99871233</p>
+<button class="btn">Copy Address</button>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
 <!-- PROFILE -->
 <div id="profile" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-
 <div class="card" onclick="openPage('profileSecurity')">Security</div>
 <div class="card" onclick="openPage('profileBackup')">Backup Wallet</div>
 <div class="card" onclick="openPage('profileInfo')">Wallet Info</div>
@@ -128,31 +225,26 @@ input{
 <h2>Security Settings</h2>
 <div class="card">Change PIN</div>
 <div class="card">Biometrics</div>
-<div class="card">Auto Lock</div>
 </div>
 
 <div id="profileBackup" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Backup Wallet</h2>
 <div class="card">View Recovery Phrase</div>
-<div class="card">Export Private Keys</div>
 </div>
 
 <div id="profileInfo" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Wallet Info</h2>
 <div class="card">Wallet ID: FCH-99212</div>
-<div class="card">Version: 1.0.0</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-
 <div class="card" onclick="openPage('setNetwork')">Network</div>
 <div class="card" onclick="openPage('setCurrency')">Currency</div>
-<div class="card" onclick="openPage('setTheme')">Theme</div>
 </div>
 
 <div id="setNetwork" class="page">
@@ -160,58 +252,49 @@ input{
 <h2>Networks</h2>
 <div class="card">Ethereum Mainnet</div>
 <div class="card">Bitcoin Network</div>
-<div class="card">FChain Mainnet</div>
 </div>
 
 <div id="setCurrency" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Currency</h2>
 <div class="card">USD</div>
-<div class="card">EUR</div>
 <div class="card">NGN</div>
 </div>
 
-<div id="setTheme" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Theme</h2>
-<div class="card">Dark Mode</div>
-<div class="card">Light Mode</div>
-</div>
-
-<!-- SEND / BUY / RECEIVE SIMPLE -->
-<div id="send" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Send Crypto</h2></div>
-<div id="buy" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Buy Crypto</h2></div>
-<div id="receive" class="page"><button class="back" onclick="goBack()">⬅ Back</button><h2>Receive Crypto</h2></div>
-
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-btn" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openHome()">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
   <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-let historyStack=[];
+let historyStack=["home"];
 
-// navigation system
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   historyStack.push(id);
 }
+
 function goBack(){
   historyStack.pop();
-  let last = historyStack.pop();
-  if(last) openPage(last);
-  else openPage("home");
+  let last=historyStack[historyStack.length-1] || "home";
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(last).classList.add("active");
 }
 
-// FAKE BLOCKCHAIN LIVE SYSTEM
+function openHome(){
+  historyStack=["home"];
+  openPage("home");
+}
+
+/* FAKE BLOCKCHAIN LIVE */
 let btc=0.054, eth=2.4, fch=12000;
 let btcPrice=62000, ethPrice=3200, fchPrice=0.012;
 
 function fakeBlockchain(){
-  let oldTotal=parseFloat(document.getElementById("totalBalance").innerText.replace("$",""));
+  let old=parseFloat(document.getElementById("totalBalance").innerText.replace("$",""));
 
   btc += (Math.random()-0.5)*0.0002;
   eth += (Math.random()-0.5)*0.01;
@@ -219,26 +302,19 @@ function fakeBlockchain(){
 
   btcPrice += (Math.random()-0.5)*50;
   ethPrice += (Math.random()-0.5)*10;
-  fchPrice += (Math.random()-0.5)*0.0001;
-
-  btc=Math.max(btc,0); eth=Math.max(eth,0); fch=Math.max(fch,0);
 
   document.getElementById("btcBal").innerText=btc.toFixed(6);
   document.getElementById("ethBal").innerText=eth.toFixed(4);
   document.getElementById("fchBal").innerText=Math.floor(fch);
 
   let total=(btc*btcPrice)+(eth*ethPrice)+(fch*fchPrice);
-  let balEl=document.getElementById("totalBalance");
-  balEl.innerText="$"+total.toFixed(2);
+  let el=document.getElementById("totalBalance");
+  el.innerText="$"+total.toFixed(2);
+  el.className = total>old ? "up" : "down";
 
-  if(total>oldTotal){balEl.className="up";}
-  else{balEl.className="down";}
-
-  // network speed bar
   document.getElementById("netFill").style.width=(10+Math.random()*90)+"%";
 }
 
-// syncing text animation
 let dots=0;
 setInterval(()=>{
   dots=(dots+1)%4;
