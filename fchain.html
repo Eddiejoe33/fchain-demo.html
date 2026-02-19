@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>⚡ FChain Fake Bitcoin Network</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+body {
+  background:black;
+  color:#00ff00;
+  font-family: monospace;
+}
+h2 { color:#0ff; }
+.box {
+  border:1px solid #00ff00;
+  padding:10px;
+  margin:10px;
+}
+#map {
+  height: 250px;
+  border:2px solid #00ff00;
+}
+</style>
+</head>
+
+<body>
+
+<h2>⚡ FChain Fake Bitcoin Network Demo</h2>
+
+<div class="box" id="mempool"></div>
+<div class="box" id="history"></div>
+
+<h3>🌍 Live Network Map</h3>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+// Fake random TX generator
+function randomTX() {
+  return Math.random().toString(36).substring(2,12);
+}
+function randBTC() {
+  return (Math.random()*2).toFixed(4);
+}
+
+// Update fake mempool
+function updateMempool() {
+  let html = "📡 Fake Mempool<br>";
+  for(let i=0;i<5;i++){
+    html += "TX: "+randomTX()+" | "+randBTC()+" BTC | Fee: "+(Math.random()*0.01).toFixed(6)+" BTC<br>";
+  }
+  document.getElementById("mempool").innerHTML = html;
+}
+
+// Update fake history
+function updateHistory() {
+  let html = "📜 Transaction History<br>";
+  for(let i=0;i<5;i++){
+    html += "✔ Confirmed: "+randomTX()+" | "+randBTC()+" BTC<br>";
+  }
+  document.getElementById("history").innerHTML = html;
+}
+
+// Map fake nodes
+var map = L.map('map').setView([0,0],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+function addFakeNodes() {
+  for(let i=0;i<10;i++){
+    let lat = (Math.random()*180)-90;
+    let lon = (Math.random()*360)-180;
+    L.marker([lat,lon]).addTo(map)
+      .bindPopup("Bitcoin Node Online<br>IP: 192.168."+Math.floor(Math.random()*255)+"."+Math.floor(Math.random()*255));
+  }
+}
+
+addFakeNodes();
+updateMempool();
+updateHistory();
+
+// Auto refresh hacker style
+setInterval(updateMempool, 3000);
+setInterval(updateHistory, 5000);
+</script>
+
+</body>
+  </html>
