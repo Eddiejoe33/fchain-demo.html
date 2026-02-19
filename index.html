@@ -18,7 +18,13 @@ body{
 .active{
   display:block;
 }
-h2{text-align:center;margin-top:10px;}
+h2{
+  text-align:center;
+  margin-top:10px;
+}
+h1{
+  text-align:center;
+}
 .btn{
   width:100%;
   padding:14px;
@@ -36,7 +42,7 @@ h2{text-align:center;margin-top:10px;}
   margin-top:10px;
   display:flex;
   align-items:center;
-  gap:10px;
+  justify-content:space-between;
   font-size:16px;
   cursor:pointer;
 }
@@ -45,6 +51,7 @@ h2{text-align:center;margin-top:10px;}
   border:none;
   color:#38bdf8;
   font-size:16px;
+  margin-bottom:10px;
 }
 .bottom-nav{
   position:fixed;
@@ -60,10 +67,8 @@ h2{text-align:center;margin-top:10px;}
   padding:10px;
   color:#94a3b8;
   font-size:14px;
-  cursor:pointer;
 }
 .nav-btn:hover{color:white;}
-.nav-btn.active{color:#60a5fa;transform:scale(1.1);}
 .qr-box{
   width:180px;
   height:180px;
@@ -75,10 +80,33 @@ h2{text-align:center;margin-top:10px;}
   align-items:center;
   border-radius:12px;
 }
-.address{text-align:center;font-size:13px;color:#94a3b8;}
-input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;color:white;font-size:16px;}
-.loader{width:40px;height:40px;border:4px solid #2563eb;border-top:4px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin:20px auto;}
-@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.address{
+  text-align:center;
+  font-size:13px;
+  color:#94a3b8;
+}
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#111827;
+  color:white;
+  font-size:16px;
+}
+.loader{
+  width:40px;
+  height:40px;
+  border:4px solid #2563eb;
+  border-top:4px solid transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:20px auto;
+}
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
 </style>
 </head>
 <body>
@@ -90,6 +118,7 @@ input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;c
 <div class="card">BTC: 0.054</div>
 <div class="card">ETH: 2.4</div>
 <div class="card">FCH: 12,000</div>
+
 <button class="btn" onclick="openPage('send')">Send</button>
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
@@ -99,22 +128,40 @@ input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;c
 <div id="send" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
-<div class="card" onclick="openPage('sendForm')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('sendForm')">Ethereum (ETH)</div>
+<div class="card" onclick="openPage('sendFormBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('sendFormETH')">Ethereum (ETH)</div>
 </div>
-<div id="sendForm" class="page">
+
+<div id="sendFormBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send BTC</h2>
 <input placeholder="Recipient Address">
 <input type="number" placeholder="Amount">
-<button class="btn" onclick="openPage('sendConfirm')">Next</button>
+<button class="btn" onclick="openPage('sendConfirmBTC')">Next</button>
 </div>
-<div id="sendConfirm" class="page">
+
+<div id="sendConfirmBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Confirm Transaction</h2>
+<h2>Confirm BTC Transaction</h2>
 <p>Gas Fee: $2.40</p>
 <button class="btn" onclick="openPage('sendProcessing')">Send Now</button>
 </div>
+
+<div id="sendFormETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send ETH</h2>
+<input placeholder="Recipient Address">
+<input type="number" placeholder="Amount">
+<button class="btn" onclick="openPage('sendConfirmETH')">Next</button>
+</div>
+
+<div id="sendConfirmETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Confirm ETH Transaction</h2>
+<p>Gas Fee: $1.50</p>
+<button class="btn" onclick="openPage('sendProcessing')">Send Now</button>
+</div>
+
 <div id="sendProcessing" class="page">
 <h2>Sending...</h2>
 <div class="loader"></div>
@@ -125,23 +172,46 @@ input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;c
 <div id="buy" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card" onclick="openPage('buyPay')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('buyPay')">Ethereum (ETH)</div>
+<div class="card" onclick="openPage('buyPayBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('buyPayETH')">Ethereum (ETH)</div>
 </div>
-<div id="buyPay" class="page">
+
+<div id="buyPayBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Payment Method</h2>
-<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
-<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
+<h2>Payment Method BTC</h2>
+<button class="btn" onclick="openPage('buyAmountBTC')">Credit Card</button>
+<button class="btn" onclick="openPage('buyAmountBTC')">Bank Transfer</button>
 </div>
-<div id="buyAmount" class="page">
+
+<div id="buyAmountBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Enter Amount</h2>
+<h2>Enter Amount BTC</h2>
 <input type="number" placeholder="$50">
-<button class="btn" onclick="openPage('buyDone')">Continue</button>
+<button class="btn" onclick="openPage('buyDoneBTC')">Continue</button>
 </div>
-<div id="buyDone" class="page">
-<h2>Processing Payment</h2>
+
+<div id="buyDoneBTC" class="page">
+<h2>Processing Payment BTC</h2>
+<div class="loader"></div>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<div id="buyPayETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Payment Method ETH</h2>
+<button class="btn" onclick="openPage('buyAmountETH')">Credit Card</button>
+<button class="btn" onclick="openPage('buyAmountETH')">Bank Transfer</button>
+</div>
+
+<div id="buyAmountETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Enter Amount ETH</h2>
+<input type="number" placeholder="$50">
+<button class="btn" onclick="openPage('buyDoneETH')">Continue</button>
+</div>
+
+<div id="buyDoneETH" class="page">
+<h2>Processing Payment ETH</h2>
 <div class="loader"></div>
 <button class="btn" onclick="openHome()">Done</button>
 </div>
@@ -151,8 +221,9 @@ input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;c
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
 <div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('receiveBTC')">Ethereum (ETH)</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
 </div>
+
 <div id="receiveBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Your BTC Address</h2>
@@ -162,79 +233,101 @@ input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;c
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
+<div id="receiveETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Your ETH Address</h2>
+<div class="qr-box">QR CODE</div>
+<p class="address">0xFChainDemoWallet12345</p>
+<button class="btn" onclick="copyAddress()">Copy Address</button>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
 <!-- PROFILE -->
 <div id="profile" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-<div class="card" onclick="openDeep('Name', 'FChain User')">Name: FChain User</div>
-<div class="card" onclick="openDeep('Wallet ID', '#FCH99212')">Wallet ID: #FCH99212</div>
+<div class="card" onclick="openProfileDetail('Name')">Name: FChain User</div>
+<div class="card" onclick="openProfileDetail('Wallet')">Wallet ID: #FCH99212</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openDeep('Security', 'Manage Passcode, Biometrics')">Security</div>
-<div class="card" onclick="openDeep('Backup Wallet', 'Backup phrases or export')">Backup Wallet</div>
-<div class="card" onclick="openDeep('Network', 'Select Mainnet/Testnet')">Network</div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="nav-btn active" onclick="openPage('home', this)">Home</div>
-  <div class="nav-btn" onclick="openPage('profile', this)">Profile</div>
-  <div class="nav-btn" onclick="openPage('settings', this)">Settings</div>
+<div class="card" onclick="openSettingsDetail('Security')">Security</div>
+<div class="card" onclick="openSettingsDetail('Backup')">Backup Wallet</div>
+<div class="card" onclick="openSettingsDetail('Network')">Network</div>
 </div>
 
 <script>
 let historyStack=[];
 
-// Open any page (top buttons, bottom nav, or cards)
-function openPage(id, btn){
+function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if(btn){
-    document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-  }
   historyStack.push(id);
 }
 
-// Back button inside the app
 function goBack(){
-  historyStack.pop(); // remove current
-  let last = historyStack.pop(); // get previous
+  historyStack.pop();
+  let last = historyStack.pop();
   if(last) openPage(last);
   else openHome();
 }
 
-// Home shortcut
 function openHome(){
   historyStack=[];
   openPage("home");
 }
 
-// Copy address demo
-function copyAddress(){alert("Address copied ✅");}
-
-// Dynamic deeper pages
-function openDeep(title, content){
-  let deepId = "deep_" + title.replace(/\s+/g,'');
-  if(!document.getElementById(deepId)){
+// Profile deep pages
+function openProfileDetail(section){
+  let detailId = "profile_" + section;
+  if(!document.getElementById(detailId)){
     let div = document.createElement("div");
-    div.id = deepId;
+    div.id = detailId;
     div.className = "page";
     div.innerHTML = `
       <button class="back" onclick="goBack()">⬅ Back</button>
-      <h2>${title}</h2>
-      <p style="padding:12px;background:#111827;border-radius:8px;">${content}</p>
-      <div class="card" onclick="openDeep('More ${title}','Extra info about ${title}')">More ${title}</div>
+      <h2>${section} Details</h2>
+      <div class="card">More info about ${section}</div>
+      <div class="card" onclick="openProfileDetail('More')">More Details</div>
     `;
     document.body.appendChild(div);
   }
-  openPage(deepId);
+  openPage(detailId);
+}
+
+// Settings deep pages
+function openSettingsDetail(section){
+  let detailId = "settings_" + section;
+  if(!document.getElementById(detailId)){
+    let div = document.createElement("div");
+    div.id = detailId;
+    div.className = "page";
+    div.innerHTML = `
+      <button class="back" onclick="goBack()">⬅ Back</button>
+      <h2>${section} Settings</h2>
+      <div class="card">Configure ${section}</div>
+      <div class="card" onclick="openSettingsDetail('Advanced')">Advanced Options</div>
+    `;
+    document.body.appendChild(div);
+  }
+  openPage(detailId);
+}
+
+// Copy address placeholder
+function copyAddress(){
+  alert("Address copied ✅");
 }
 </script>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-btn" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
+  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
+</div>
 
 </body>
   </html>
