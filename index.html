@@ -1,184 +1,274 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
 <title>FChain Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {margin:0;font-family:Arial;background:#0b1b2b;color:white;}
-.page {display:none;padding:15px;height:100vh;overflow:auto;}
-.show {display:block;}
-.header {font-size:22px;font-weight:bold;margin-bottom:10px;}
-.card {background:#132c44;padding:15px;border-radius:12px;margin-bottom:10px;}
-.btn {background:#1e90ff;border:none;padding:12px;width:100%;border-radius:8px;color:white;font-size:16px;margin-top:10px;}
-input {width:100%;padding:10px;border-radius:8px;border:none;margin-top:10px;font-size:16px;}
-.back {background:#333;padding:8px;border-radius:6px;border:none;color:white;margin-bottom:10px;}
-.bottom {position:fixed;bottom:0;width:100%;background:#071423;display:flex;justify-content:space-around;padding:10px 0;}
-.bottom div {text-align:center;font-size:13px;color:white;}
-.bottom div:hover {color:#1e90ff;cursor:pointer;}
-.fade {animation:fade .2s;}
-@keyframes fade {from{opacity:0;}to{opacity:1;}}
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+  margin:0;
+}
+
+.page{
+  display:none;
+  padding:15px;
+}
+
+.active{
+  display:block;
+}
+
+h2{
+  text-align:center;
+  margin-top:10px;
+}
+
+.btn{
+  width:100%;
+  padding:14px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:white;
+  font-size:16px;
+  margin-top:10px;
+}
+
+.card{
+  background:#111827;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:16px;
+}
+
+.back{
+  background:none;
+  border:none;
+  color:#38bdf8;
+  font-size:16px;
+}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  background:#020617;
+  border-top:1px solid #1e293b;
+}
+
+.nav-btn{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  color:#94a3b8;
+  font-size:14px;
+}
+
+.nav-btn:hover{color:white;}
+
+.qr-box{
+  width:180px;
+  height:180px;
+  background:#111;
+  border:2px solid #333;
+  margin:20px auto;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:12px;
+}
+
+.address{
+  text-align:center;
+  font-size:13px;
+  color:#94a3b8;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  background:#111827;
+  color:white;
+  font-size:16px;
+}
+
+.loader{
+  width:40px;
+  height:40px;
+  border:4px solid #2563eb;
+  border-top:4px solid transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:20px auto;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
 </style>
 </head>
 
 <body>
 
 <!-- HOME -->
-<div id="home" class="page show fade">
-<div class="header">FChain Wallet</div>
-<div class="card">
-<h1>$12,450.22</h1>
-<div style="display:flex;gap:10px;">
-<button class="btn" onclick="openPage('send1')">Send</button>
-<button class="btn" onclick="openPage('receive')">Receive</button>
-</div>
-<div style="display:flex;gap:10px;">
-<button class="btn" onclick="openPage('buy')">Buy</button>
-<button class="btn" onclick="openPage('swap')">Swap</button>
-</div>
-</div>
+<div id="home" class="page active">
+<h2>FChain Wallet</h2>
 
-<div class="card">
-<h3>Assets</h3>
-<p>Bitcoin (BTC) — 0.054 BTC</p>
-<p>Ethereum (ETH) — 2.4 ETH</p>
-<p>FChain Token (FCH) — 12,000 FCH</p>
-</div>
+<h1>$12,450.22</h1>
+
+<div class="card">BTC: 0.054</div>
+<div class="card">ETH: 2.4</div>
+<div class="card">FCH: 12,000</div>
+
+<button class="btn" onclick="openPage('send')">Send</button>
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
 <!-- SEND FLOW -->
-<div id="send1" class="page fade">
+<div id="send" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
-<button class="btn" onclick="openPage('send2')">Continue</button>
+
+<div class="card" onclick="openPage('sendForm')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('sendForm')">Ethereum (ETH)</div>
 </div>
 
-<div id="send2" class="page fade">
+<div id="sendForm" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Recipient Address</h2>
-<input id="addr" placeholder="Wallet Address">
-<button class="btn" onclick="openPage('send3')">Next</button>
+<h2>Send BTC</h2>
+
+<input placeholder="Recipient Address">
+<input type="number" placeholder="Amount">
+
+<button class="btn" onclick="openPage('sendConfirm')">Next</button>
 </div>
 
-<div id="send3" class="page fade">
+<div id="sendConfirm" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Amount</h2>
-<input id="amt" placeholder="0.00 BTC">
-<button class="btn" onclick="confirmSend()">Next</button>
+<h2>Confirm Transaction</h2>
+<p>Gas Fee: $2.40</p>
+<button class="btn" onclick="openPage('sendProcessing')">Send Now</button>
 </div>
 
-<div id="send4" class="page fade">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Confirm</h2>
-<p id="confirmText"></p>
-<button class="btn" onclick="finishSend()">Send</button>
-</div>
-
-<div id="send5" class="page fade">
-<h2>✅ Sent Successfully</h2>
-<p>TX Hash:</p>
-<p id="hash"></p>
+<div id="sendProcessing" class="page">
+<h2>Sending...</h2>
+<div class="loader"></div>
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
-<!-- RECEIVE -->
-<div id="receive" class="page fade">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Receive Crypto</h2>
-<div class="card">
-<p>Your Address:</p>
-<input value="fchain1qxy2z3abc123" readonly>
-<button class="btn">Show QR Code</button>
-</div>
-</div>
-
-<!-- BUY -->
-<div id="buy" class="page fade">
+<!-- BUY FLOW -->
+<div id="buy" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card">
-<button class="btn">Credit Card</button>
-<button class="btn">Bank Transfer</button>
-<button class="btn">Mobile Money</button>
-</div>
+
+<div class="card" onclick="openPage('buyPay')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('buyPay')">Ethereum (ETH)</div>
 </div>
 
-<!-- SWAP -->
-<div id="swap" class="page fade">
+<div id="buyPay" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Swap</h2>
-<input placeholder="From BTC">
-<input placeholder="To ETH">
-<button class="btn">Swap Now</button>
+<h2>Payment Method</h2>
+
+<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
+<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
 </div>
 
-<!-- WALLET -->
-<div id="wallet" class="page fade">
+<div id="buyAmount" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Wallet Details</h2>
-<p>Address: fchain1qxy2z3abc123</p>
-<p>Balance: $12,450.22</p>
+<h2>Enter Amount</h2>
+<input type="number" placeholder="$50">
+<button class="btn" onclick="openPage('buyDone')">Continue</button>
 </div>
 
-<!-- BROWSER -->
-<div id="browser" class="page fade">
+<div id="buyDone" class="page">
+<h2>Processing Payment</h2>
+<div class="loader"></div>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<!-- RECEIVE FLOW -->
+<div id="receive" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
-<h2>DApp Browser</h2>
-<p>No DApps Connected</p>
+<h2>Receive Crypto</h2>
+
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('receiveBTC')">Ethereum (ETH)</div>
+</div>
+
+<div id="receiveBTC" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Your BTC Address</h2>
+
+<div class="qr-box">QR CODE</div>
+<p class="address">bc1qfchainwalletdemo9987x</p>
+
+<button class="btn" onclick="copyAddress()">Copy Address</button>
+<button class="btn" onclick="openHome()">Done</button>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Profile</h2>
+<div class="card">Name: FChain User</div>
+<div class="card">Wallet ID: #FCH99212</div>
 </div>
 
 <!-- SETTINGS -->
-<div id="settings" class="page fade">
+<div id="settings" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<p>Security</p>
-<p>Backup Wallet</p>
-<p>About FChain</p>
+<div class="card">Security</div>
+<div class="card">Backup Wallet</div>
+<div class="card">Network</div>
 </div>
 
-<!-- BOTTOM TAB BAR -->
-<div class="bottom">
-<div onclick="openHome()">🏠<br>Home</div>
-<div onclick="openPage('wallet')">💼<br>Wallet</div>
-<div onclick="openPage('browser')">🌐<br>Browser</div>
-<div onclick="openPage('settings')">⚙️<br>Settings</div>
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+<div class="nav-btn" onclick="openHome()">Home</div>
+<div class="nav-btn" onclick="openPage('profile')">Profile</div>
+<div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-let stack=[];
+let historyStack=[];
 
 function openPage(id){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
- document.getElementById(id).classList.add('show');
- stack.push(id);
-}
-
-function openHome(){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
- document.getElementById('home').classList.add('show');
- stack=[];
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  historyStack.push(id);
 }
 
 function goBack(){
- stack.pop();
- let last = stack.pop();
- if(last) openPage(last);
- else openHome();
+  historyStack.pop();
+  let last = historyStack.pop();
+  if(last) openPage(last);
+  else openHome();
 }
 
-function confirmSend(){
- let a=document.getElementById("addr").value;
- let b=document.getElementById("amt").value;
- document.getElementById("confirmText").innerHTML="Send "+b+" BTC to<br>"+a;
- openPage("send4");
+function openHome(){
+  historyStack=[];
+  openPage("home");
 }
 
-function finishSend(){
- document.getElementById("hash").innerText=Math.random().toString(36).substring(2,15);
- openPage("send5");
+function copyAddress(){
+  navigator.clipboard.writeText("bc1qfchainwalletdemo9987x");
+  alert("Address Copied!");
 }
 </script>
 
 </body>
  </html>
- 
