@@ -1,146 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FChain Wallet Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FChain Wallet</title>
 
 <style>
 body {
   margin:0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
 }
 
-/* App container */
-#app { padding:20px; padding-bottom:140px; }
+/* Screens */
+.screen {
+  display:none;
+  padding:20px;
+  padding-bottom:120px;
+}
+.screen.active { display:block; }
 
-/* Title */
-#app-title { text-align:center; font-size:32px; font-weight:bold; margin-bottom:15px; }
+/* Header */
+h1 { text-align:center; }
 
-/* Balance */
-.balance { text-align:center; font-size:28px; margin-bottom:15px; }
-
-/* Top action buttons */
-.action-row { display:flex; justify-content:space-around; margin-bottom:20px; }
-.action-row button {
+/* Buttons */
+.top-actions {
+  display:flex;
+  justify-content:space-around;
+  margin-bottom:20px;
+}
+.top-actions button {
   background:#2563eb;
   border:none;
-  border-radius:12px;
   color:white;
-  font-weight:bold;
   padding:12px 18px;
-  flex:1;
-  margin:0 5px;
+  border-radius:12px;
+  font-weight:bold;
   cursor:pointer;
 }
 
-/* Demo content below buttons */
-.card-content {
-  display:none;
-  background: rgba(255,255,255,0.08);
+/* Cards */
+.card {
+  background:rgba(255,255,255,0.08);
   padding:15px;
   border-radius:12px;
-  margin-bottom:15px;
-}
-
-/* Wallet list */
-.wallet-card {
-  background: rgba(255,255,255,0.08);
-  padding:12px;
-  border-radius:12px;
   margin-bottom:10px;
-  font-size:18px;
 }
 
-/* Bottom nav */
+/* Bottom Nav */
 .bottom-nav {
   position:fixed;
-  bottom:12px;
+  bottom:10px;
   left:50%;
   transform:translateX(-50%);
-  width:92%;
-  background: rgba(30, 58, 138, 0.35);
-  backdrop-filter:blur(18px);
+  width:95%;
+  background:rgba(30,58,138,0.4);
+  backdrop-filter:blur(20px);
   border-radius:30px;
   display:flex;
   justify-content:space-around;
-  padding:14px 10px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
-  border:1px solid rgba(255,255,255,0.15);
-  z-index:9999;
+  padding:12px;
 }
 
 .bottom-nav button {
   background:none;
   border:none;
-  color: rgba(255,255,255,0.8);
-  font-size:16px;
-  font-weight:600;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  color:white;
+  font-size:14px;
   cursor:pointer;
 }
 
-.bottom-nav span { font-size:22px; }
-
 .bottom-nav button.active {
   color:#60a5fa;
-  transform:scale(1.15);
+  font-weight:bold;
 }
 </style>
 </head>
+
 <body>
 
-<div id="app">
-  <div id="app-title">FChain Wallet</div>
-  <div class="balance">$12,450.22</div>
+<!-- HOME SCREEN -->
+<div id="home" class="screen active">
+  <h1>FChain Wallet</h1>
+  <h2>Total Balance: $12,450.22</h2>
 
-  <!-- Top action buttons -->
-  <div class="action-row">
-    <button onclick="showAction('send')">Send</button>
-    <button onclick="showAction('receive')">Receive</button>
-    <button onclick="showAction('buy')">Buy</button>
-    <button onclick="showAction('swap')">Swap</button>
+  <div class="top-actions">
+    <button onclick="showScreen('send')">Send</button>
+    <button onclick="showScreen('receive')">Receive</button>
+    <button onclick="showScreen('buy')">Buy</button>
+    <button onclick="showScreen('swap')">Swap</button>
   </div>
 
-  <!-- Demo content area -->
-  <div id="actionContent">
-    <div id="send" class="card-content">Send 0.01 BTC to demo address: 1FchainDemo123...</div>
-    <div id="receive" class="card-content">Receive BTC: Your address is 1FchainReceiveDemo...</div>
-    <div id="buy" class="card-content">Buy BTC/ETH/FCH: Demo purchase panel</div>
-    <div id="swap" class="card-content">Swap BTC ↔ ETH ↔ FCH: Demo swap panel</div>
-  </div>
-
-  <!-- Wallet balances -->
-  <div class="wallet-card">Bitcoin (BTC) – 0.054 BTC</div>
-  <div class="wallet-card">Ethereum (ETH) – 2.4 ETH</div>
-  <div class="wallet-card">FChain Token – 12,000 FCH</div>
-
+  <div class="card">Bitcoin (BTC) – 0.054 BTC</div>
+  <div class="card">Ethereum (ETH) – 2.4 ETH</div>
+  <div class="card">FChain Token – 12,000 FCH</div>
 </div>
 
-<!-- Bottom nav -->
+<!-- SEND SCREEN -->
+<div id="send" class="screen">
+  <h1>Send Crypto</h1>
+  <div class="card">
+    Address:<br>
+    <input style="width:100%" placeholder="Wallet Address">
+  </div>
+  <div class="card">
+    Amount:<br>
+    <input style="width:100%" placeholder="0.00 BTC">
+  </div>
+  <button style="width:100%;padding:12px;background:#22c55e;border:none;border-radius:10px;">Send</button>
+</div>
+
+<!-- RECEIVE SCREEN -->
+<div id="receive" class="screen">
+  <h1>Receive Crypto</h1>
+  <div class="card">Your BTC Address:</div>
+  <div class="card">1FChainReceiveDemoWalletAddress12345</div>
+</div>
+
+<!-- BUY SCREEN -->
+<div id="buy" class="screen">
+  <h1>Buy Crypto</h1>
+  <div class="card">Buy BTC with Card</div>
+  <div class="card">Buy ETH with Bank</div>
+</div>
+
+<!-- SWAP SCREEN -->
+<div id="swap" class="screen">
+  <h1>Swap Tokens</h1>
+  <div class="card">From: BTC</div>
+  <div class="card">To: ETH</div>
+  <button style="width:100%;padding:12px;background:#facc15;border:none;border-radius:10px;">Swap</button>
+</div>
+
+<!-- WALLET SCREEN -->
+<div id="wallet" class="screen">
+  <h1>Your Wallet</h1>
+  <div class="card">BTC Wallet</div>
+  <div class="card">ETH Wallet</div>
+  <div class="card">FCH Wallet</div>
+</div>
+
+<!-- BROWSER SCREEN -->
+<div id="browser" class="screen">
+  <h1>DApp Browser</h1>
+  <div class="card">Uniswap</div>
+  <div class="card">OpenSea</div>
+</div>
+
+<!-- SETTINGS / PROFILE -->
+<div id="settings" class="screen">
+  <h1>Profile & Settings</h1>
+  <div class="card">Name: Eddie Joe</div>
+  <div class="card">Wallet ID: FCH-USER-001</div>
+  <div class="card">Security Settings</div>
+</div>
+
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <button class="active" onclick="showSection('home', this)"><span>🏠</span>Home</button>
-  <button onclick="showSection('wallet', this)"><span>💰</span>Wallet</button>
-  <button onclick="showSection('browser', this)"><span>🌍</span>Browser</button>
-  <button onclick="showSection('settings', this)"><span>⚙️</span>Set</button>
+  <button class="active" onclick="showScreen('home', this)">Home</button>
+  <button onclick="showScreen('wallet', this)">Wallet</button>
+  <button onclick="showScreen('browser', this)">Browser</button>
+  <button onclick="showScreen('settings', this)">Profile</button>
 </div>
 
 <script>
-// Bottom nav section switch (for demo)
-function showSection(id, btn){
-  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  alert("Demo switched to " + id); // Can be replaced with real section content
-}
+function showScreen(id, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 
-// Show top action content
-function showAction(id){
-  document.querySelectorAll('#actionContent .card-content').forEach(c=>c.style.display='none');
-  document.getElementById(id).style.display='block';
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
 }
 </script>
 
