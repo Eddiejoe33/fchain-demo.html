@@ -3,6 +3,7 @@
 <head>
 <title>FChain Wallet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body {
   font-family: Arial;
@@ -38,10 +39,11 @@ body {
 
 .action-btn {
   background:#1f3c88;
-  padding:10px 15px;
+  padding:12px 16px;
   border-radius:10px;
   text-align:center;
   font-size:14px;
+  cursor:pointer;
 }
 
 .token-list {
@@ -53,6 +55,7 @@ body {
   justify-content:space-between;
   padding:10px;
   border-bottom:1px solid #222;
+  cursor:pointer;
 }
 
 .navbar {
@@ -64,6 +67,44 @@ body {
   justify-content:space-around;
   padding:10px 0;
   font-size:14px;
+}
+
+/* Popup Screens */
+.screen {
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#0b0f19;
+  padding:20px;
+  z-index:9999;
+}
+
+.close-btn {
+  background:red;
+  padding:8px 12px;
+  border-radius:8px;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+input {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+button.main {
+  width:100%;
+  padding:12px;
+  background:#1f3c88;
+  color:white;
+  border:none;
+  border-radius:10px;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -78,16 +119,16 @@ body {
 </div>
 
 <div class="actions">
-  <div class="action-btn">Send</div>
-  <div class="action-btn">Receive</div>
-  <div class="action-btn">Buy</div>
-  <div class="action-btn">Swap</div>
+  <div class="action-btn" onclick="openScreen('sendScreen')">Send</div>
+  <div class="action-btn" onclick="openScreen('receiveScreen')">Receive</div>
+  <div class="action-btn" onclick="openScreen('buyScreen')">Buy</div>
+  <div class="action-btn" onclick="openScreen('swapScreen')">Swap</div>
 </div>
 
 <div class="token-list">
-  <div class="token"><span>Bitcoin (BTC)</span><span>0.054 BTC</span></div>
-  <div class="token"><span>Ethereum (ETH)</span><span>2.4 ETH</span></div>
-  <div class="token"><span>FChain Token</span><span>12,000 FCH</span></div>
+  <div class="token" onclick="openScreen('btcScreen')"><span>Bitcoin (BTC)</span><span>0.054 BTC</span></div>
+  <div class="token" onclick="openScreen('ethScreen')"><span>Ethereum (ETH)</span><span>2.4 ETH</span></div>
+  <div class="token" onclick="openScreen('fchScreen')"><span>FChain Token</span><span>12,000 FCH</span></div>
 </div>
 
 <div class="navbar">
@@ -96,6 +137,73 @@ body {
   <div>Browser</div>
   <div>Settings</div>
 </div>
+
+<!-- SEND SCREEN -->
+<div id="sendScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Send Crypto</h2>
+  <input placeholder="Recipient Address">
+  <input placeholder="Amount">
+  <button class="main">Send Transaction</button>
+</div>
+
+<!-- RECEIVE SCREEN -->
+<div id="receiveScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Your Wallet Address</h2>
+  <p>fchain1q9xk2m9a0fakeaddress12345</p>
+  <p>[ QR CODE DEMO ]</p>
+</div>
+
+<!-- BUY SCREEN -->
+<div id="buyScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Buy Crypto</h2>
+  <input placeholder="Amount USD">
+  <button class="main">Buy Now</button>
+</div>
+
+<!-- SWAP SCREEN -->
+<div id="swapScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Swap Tokens</h2>
+  <input placeholder="From Token">
+  <input placeholder="To Token">
+  <button class="main">Swap</button>
+</div>
+
+<!-- TOKEN HISTORY -->
+<div id="btcScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Bitcoin History</h2>
+  <p>+0.034 BTC Received</p>
+  <p>-0.010 BTC Sent</p>
+</div>
+
+<div id="ethScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>Ethereum History</h2>
+  <p>+1.2 ETH Received</p>
+  <p>-0.5 ETH Sent</p>
+</div>
+
+<div id="fchScreen" class="screen">
+  <button class="close-btn" onclick="closeScreens()">Back</button>
+  <h2>FChain Token History</h2>
+  <p>+5000 FCH Airdrop</p>
+  <p>-2000 FCH Swap</p>
+</div>
+
+<script>
+function openScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+  document.getElementById(id).style.display="block";
+}
+
+function closeScreens(){
+  document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+}
+</script>
 
 </body>
   </html>
