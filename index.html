@@ -90,13 +90,54 @@ input{
   height:100%;background:#22c55e;width:20%;
   transition:width 1s;
 }
+
+/* BIOMETRIC ANIMATION */
+@keyframes pulse{
+  0%{box-shadow:0 0 0px #2563eb;}
+  50%{box-shadow:0 0 25px #2563eb;}
+  100%{box-shadow:0 0 0px #2563eb;}
+}
+.shake{
+  animation:shake 0.3s;
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
 </style>
 </head>
 
 <body>
 
+<!-- 🔐 BIOMETRIC LOCK SCREEN -->
+<div id="lockScreen" class="page active">
+  <h2>FChain Wallet</h2>
+  <p style="text-align:center;margin-top:40px;">Unlock with Biometrics</p>
+
+  <div id="bioIcon" style="
+    width:150px;height:150px;border:3px solid #2563eb;
+    border-radius:50%;margin:40px auto;
+    display:flex;align-items:center;justify-content:center;
+    font-size:60px;animation:pulse 1.5s infinite;">🧬</div>
+
+  <p id="bioStatus" style="text-align:center;color:#94a3b8;">Touch fingerprint sensor</p>
+
+  <button class="btn" onclick="startBiometric()">Use Fingerprint</button>
+  <button class="btn" onclick="showPin()">Use PIN Instead</button>
+</div>
+
+<!-- 🔢 PIN SCREEN -->
+<div id="pinScreen" class="page">
+  <h2>Enter PIN</h2>
+  <input id="pinInput" type="password" maxlength="4" placeholder="••••">
+  <button class="btn" onclick="checkPin()">Unlock</button>
+</div>
+
 <!-- HOME -->
-<div id="home" class="page active">
+<div id="home" class="page">
 <h2>FChain Wallet</h2>
 
 <h1 id="totalBalance">$12,450.22</h1>
@@ -113,7 +154,7 @@ input{
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<!-- SEND FLOW -->
+<!-- SEND -->
 <div id="send" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
@@ -150,7 +191,7 @@ input{
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
-<!-- BUY FLOW -->
+<!-- BUY -->
 <div id="buy" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
@@ -185,7 +226,7 @@ input{
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
-<!-- RECEIVE FLOW -->
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
@@ -215,50 +256,17 @@ input{
 <div id="profile" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-<div class="card" onclick="openPage('profileSecurity')">Security</div>
-<div class="card" onclick="openPage('profileBackup')">Backup Wallet</div>
-<div class="card" onclick="openPage('profileInfo')">Wallet Info</div>
-</div>
-
-<div id="profileSecurity" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Security Settings</h2>
-<div class="card">Change PIN</div>
-<div class="card">Biometrics</div>
-</div>
-
-<div id="profileBackup" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Backup Wallet</h2>
-<div class="card">View Recovery Phrase</div>
-</div>
-
-<div id="profileInfo" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Wallet Info</h2>
-<div class="card">Wallet ID: FCH-99212</div>
+<div class="card">Security</div>
+<div class="card">Backup Wallet</div>
+<div class="card">Wallet Info</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openPage('setNetwork')">Network</div>
-<div class="card" onclick="openPage('setCurrency')">Currency</div>
-</div>
-
-<div id="setNetwork" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Networks</h2>
-<div class="card">Ethereum Mainnet</div>
-<div class="card">Bitcoin Network</div>
-</div>
-
-<div id="setCurrency" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Currency</h2>
-<div class="card">USD</div>
-<div class="card">NGN</div>
+<div class="card">Network</div>
+<div class="card">Currency</div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -322,6 +330,50 @@ setInterval(()=>{
 },500);
 
 setInterval(fakeBlockchain,2000);
+
+/* BIOMETRIC SYSTEM */
+let attempts=0;
+let correctPin="1234";
+
+function startBiometric(){
+  let status=document.getElementById("bioStatus");
+  let icon=document.getElementById("bioIcon");
+  status.innerText="Scanning fingerprint...";
+  icon.innerHTML="🔍";
+
+  setTimeout(()=>{
+    let success=Math.random()>0.3;
+    if(success){
+      status.innerText="Fingerprint recognized ✅";
+      icon.innerHTML="✔️";
+      setTimeout(unlockWallet,1000);
+    }else{
+      attempts++;
+      status.innerText="Fingerprint not recognized ❌";
+      icon.classList.add("shake");
+      setTimeout(()=>icon.classList.remove("shake"),300);
+      if(attempts>=3) status.innerText="Too many attempts. Use PIN.";
+    }
+  },1500);
+}
+
+function unlockWallet(){
+  document.getElementById("lockScreen").classList.remove("active");
+  openHome();
+}
+
+function showPin(){
+  document.getElementById("lockScreen").classList.remove("active");
+  openPage("pinScreen");
+}
+
+function checkPin(){
+  if(document.getElementById("pinInput").value===correctPin){
+    unlockWallet();
+  }else{
+    alert("Wrong PIN");
+  }
+}
 </script>
 
 </body>
