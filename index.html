@@ -244,48 +244,43 @@ input{
 </div>
 
 <script>
-let historyStack=[];
+let historyStack = ["home"];
 
-// Open any page (top buttons, bottom nav, or cards)
+// Open page
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  historyStack.push(id);
+
+  // Prevent duplicate history spam
+  if(historyStack[historyStack.length - 1] !== id){
+    historyStack.push(id);
+  }
 }
 
-// Back button inside the app
+// Back inside app
 function goBack(){
-  historyStack.pop(); // remove current
-  let last = historyStack.pop(); // get previous
-  if(last) openPage(last);
-  else openHome();
+  historyStack.pop(); // remove current page
+  let last = historyStack[historyStack.length - 1];
+
+  if(!last){
+    last = "home";
+    historyStack = ["home"];
+  }
+
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(last).classList.add("active");
 }
 
 // Home shortcut
 function openHome(){
-  historyStack=[];
+  historyStack = ["home"];
   openPage("home");
 }
 
-// Example: deep navigation inside profile
-function openProfileDetail(section){
-  let detailId = section + "Detail";
-  if(!document.getElementById(detailId)){
-    // Create dynamically if needed
-    let div = document.createElement("div");
-    div.id = detailId;
-    div.className = "page";
-    div.innerHTML = `
-      <button class="back" onclick="goBack()">⬅ Back</button>
-      <h2>${section} Details</h2>
-      <div class="card">Info about ${section}</div>
-      <div class="card" onclick="openProfileDetail('More')">More Details</div>
-    `;
-    document.body.appendChild(div);
-  }
-  openPage(detailId);
+// Copy address fake
+function copyAddress(){
+  alert("Address copied!");
 }
 </script>
-
 </body>
  </html>
