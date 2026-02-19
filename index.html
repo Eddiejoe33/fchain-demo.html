@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>⚡ FChain Fake Bitcoin Network Demo</title>
+<title>FChain Wallet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
-  background:black;
-  color:#00ffcc;
-  font-family: monospace;
+  font-family: Arial;
+  background:#0b0f19;
+  color:white;
+  margin:0;
 }
-h1 { color:#00ffaa; }
-.panel {
-  border:1px solid #00ffcc;
+
+.header {
+  padding:15px;
+  text-align:center;
+  font-size:20px;
+  background:#10172a;
+}
+
+.balance-card {
+  margin:15px;
+  padding:20px;
+  background:#16213e;
+  border-radius:12px;
+}
+
+.balance {
+  font-size:28px;
+  font-weight:bold;
+}
+
+.actions {
+  display:flex;
+  justify-content:space-around;
+  margin:15px;
+}
+
+.action-btn {
+  background:#1f3c88;
+  padding:10px 15px;
+  border-radius:10px;
+  text-align:center;
+  font-size:14px;
+}
+
+.token-list {
+  margin:15px;
+}
+
+.token {
+  display:flex;
+  justify-content:space-between;
   padding:10px;
-  margin:10px;
+  border-bottom:1px solid #222;
 }
-.map {
+
+.navbar {
+  position:fixed;
+  bottom:0;
   width:100%;
-  height:200px;
-  background:#001;
-  position:relative;
-  overflow:hidden;
-}
-.node {
-  width:6px;
-  height:6px;
-  background:red;
-  position:absolute;
-  border-radius:50%;
+  background:#10172a;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>⚡ FChain Fake Bitcoin Network Demo</h1>
+<div class="header">FChain Wallet</div>
 
-<div class="panel">
-<h2>📡 Fake Mempool</h2>
-<div id="mempool"></div>
+<div class="balance-card">
+  <div>Total Balance</div>
+  <div class="balance">$12,450.22</div>
 </div>
 
-<div class="panel">
-<h2>📜 Transaction History</h2>
-<div id="history"></div>
+<div class="actions">
+  <div class="action-btn">Send</div>
+  <div class="action-btn">Receive</div>
+  <div class="action-btn">Buy</div>
+  <div class="action-btn">Swap</div>
 </div>
 
-<div class="panel">
-<h2>🌍 Live Network Map</h2>
-<div class="map" id="map"></div>
+<div class="token-list">
+  <div class="token"><span>Bitcoin (BTC)</span><span>0.054 BTC</span></div>
+  <div class="token"><span>Ethereum (ETH)</span><span>2.4 ETH</span></div>
+  <div class="token"><span>FChain Token</span><span>12,000 FCH</span></div>
 </div>
 
-<script>
-// Fake random TX generator
-function randomTX() {
-  return Math.random().toString(36).substring(2,12);
-}
-
-// Generate mempool
-function updateMempool() {
-  let html = "";
-  for(let i=0;i<5;i++){
-    html += `TX: ${randomTX()} | ${(Math.random()*2).toFixed(4)} BTC | Fee: ${(Math.random()*0.01).toFixed(6)} BTC<br>`;
-  }
-  document.getElementById("mempool").innerHTML = html;
-}
-
-// Generate history
-function updateHistory() {
-  let html = "";
-  for(let i=0;i<5;i++){
-    html += `✔ Confirmed: ${randomTX()} | ${(Math.random()*2).toFixed(4)} BTC<br>`;
-  }
-  document.getElementById("history").innerHTML = html;
-}
-
-// Fake live network map
-function spawnNode() {
-  let map = document.getElementById("map");
-  let node = document.createElement("div");
-  node.className="node";
-  node.style.left = Math.random()*100 + "%";
-  node.style.top = Math.random()*100 + "%";
-  map.appendChild(node);
-  setTimeout(()=>node.remove(),5000);
-}
-
-// Run updates
-setInterval(updateMempool, 2000);
-setInterval(updateHistory, 5000);
-setInterval(spawnNode, 300);
-</script>
+<div class="navbar">
+  <div>Home</div>
+  <div>Wallet</div>
+  <div>Browser</div>
+  <div>Settings</div>
+</div>
 
 </body>
   </html>
