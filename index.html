@@ -1,137 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
-body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial;
-  margin:0;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #0f172a, #020617);
+  color: white;
 }
 
-.page{
-  display:none;
-  padding:15px;
-}
+/* Pages */
+.page { display: none; padding: 20px; }
+.page.active { display: block; }
 
-.active{
-  display:block;
+h1,h2 { text-align: center; margin: 10px 0; }
+.card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-
-h2{
-  text-align:center;
-  margin-top:10px;
+.card:hover { background: rgba(255,255,255,0.15); }
+.btn {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
 }
+.back { background:none; border:none; color:#38bdf8; font-size:16px; cursor:pointer; margin-bottom:10px; }
 
-.btn{
-  width:100%;
-  padding:14px;
-  background:#2563eb;
-  border:none;
-  border-radius:10px;
-  color:white;
-  font-size:16px;
-  margin-top:10px;
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  background: rgba(2,6,23,0.85);
+  border-top: 1px solid #1e293b;
 }
-
-.card{
-  background:#111827;
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:16px;
-}
-
-.back{
-  background:none;
-  border:none;
-  color:#38bdf8;
-  font-size:16px;
-}
-
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  display:flex;
-  background:#020617;
-  border-top:1px solid #1e293b;
-}
-
-.nav-btn{
+.nav-btn {
   flex:1;
   text-align:center;
-  padding:10px;
-  color:#94a3b8;
-  font-size:14px;
-}
-
-.nav-btn:hover{color:white;}
-
-.qr-box{
-  width:180px;
-  height:180px;
-  background:#111;
-  border:2px solid #333;
-  margin:20px auto;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  border-radius:12px;
-}
-
-.address{
-  text-align:center;
-  font-size:13px;
-  color:#94a3b8;
-}
-
-input{
-  width:100%;
   padding:12px;
-  border-radius:8px;
-  border:none;
-  background:#111827;
-  color:white;
-  font-size:16px;
+  font-size:14px;
+  color:#94a3b8;
+  cursor:pointer;
 }
+.nav-btn.active { color:white; font-weight:bold; }
+.nav-btn:hover { color:white; }
 
-.loader{
-  width:40px;
-  height:40px;
-  border:4px solid #2563eb;
-  border-top:4px solid transparent;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+/* QR Box */
+.qr-box {
+  width:180px; height:180px;
+  background:#111;
+  border-radius:12px;
   margin:20px auto;
+  display:flex; justify-content:center; align-items:center;
+  border:2px solid #333;
 }
 
-@keyframes spin{
-  0%{transform:rotate(0deg);}
-  100%{transform:rotate(360deg);}
-}
+/* Inputs */
+input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#111827; color:white; font-size:16px; }
+
+/* Loader */
+.loader { width:40px; height:40px; border:4px solid #2563eb; border-top:4px solid transparent; border-radius:50%; margin:20px auto; animation:spin 1s linear infinite; }
+@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 </style>
 </head>
-
 <body>
 
 <!-- HOME -->
 <div id="home" class="page active">
 <h2>FChain Wallet</h2>
-
 <h1>$12,450.22</h1>
-
 <div class="card">BTC: 0.054</div>
 <div class="card">ETH: 2.4</div>
 <div class="card">FCH: 12,000</div>
-
 <button class="btn" onclick="openPage('send')">Send</button>
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
@@ -141,7 +99,6 @@ input{
 <div id="send" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send Crypto</h2>
-
 <div class="card" onclick="openPage('sendForm')">Bitcoin (BTC)</div>
 <div class="card" onclick="openPage('sendForm')">Ethereum (ETH)</div>
 </div>
@@ -149,10 +106,8 @@ input{
 <div id="sendForm" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Send BTC</h2>
-
 <input placeholder="Recipient Address">
 <input type="number" placeholder="Amount">
-
 <button class="btn" onclick="openPage('sendConfirm')">Next</button>
 </div>
 
@@ -173,7 +128,6 @@ input{
 <div id="buy" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-
 <div class="card" onclick="openPage('buyPay')">Bitcoin (BTC)</div>
 <div class="card" onclick="openPage('buyPay')">Ethereum (ETH)</div>
 </div>
@@ -181,7 +135,6 @@ input{
 <div id="buyPay" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Payment Method</h2>
-
 <button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
 <button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
 </div>
@@ -203,7 +156,6 @@ input{
 <div id="receive" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
-
 <div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
 <div class="card" onclick="openPage('receiveBTC')">Ethereum (ETH)</div>
 </div>
@@ -211,76 +163,99 @@ input{
 <div id="receiveBTC" class="page">
 <button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Your BTC Address</h2>
-
 <div class="qr-box">QR CODE</div>
-<p class="address">bc1qfchainwalletdemo9987x</p>
-
-<button class="btn" onclick="copyAddress()">Copy Address</button>
+<p style="text-align:center;">bc1qfchainwalletdemo9987x</p>
+<button class="btn" onclick="alert('Copied!')">Copy Address</button>
 <button class="btn" onclick="openHome()">Done</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
 <div class="card">Name: FChain User</div>
 <div class="card">Wallet ID: #FCH99212</div>
+<div class="card" onclick="openPage('profileDetail')">More Details</div>
+</div>
+
+<div id="profileDetail" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Profile Details</h2>
+<div class="card">Email: demo@fchain.com</div>
+<div class="card" onclick="openPage('profileMore')">Even More Info</div>
+</div>
+
+<div id="profileMore" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Profile Extra</h2>
+<div class="card">2FA Enabled: Yes</div>
+<div class="card">Joined: Jan 2026</div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card">Security</div>
-<div class="card">Backup Wallet</div>
-<div class="card">Network</div>
+<div class="card" onclick="openPage('security')">Security</div>
+<div class="card" onclick="openPage('backup')">Backup Wallet</div>
+<div class="card" onclick="openPage('network')">Network</div>
 </div>
 
-<!-- BOTTOM NAV -->
+<div id="security" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Security</h2>
+<div class="card">Change PIN</div>
+<div class="card">Enable Biometrics</div>
+</div>
+
+<div id="backup" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Backup Wallet</h2>
+<div class="card">Backup Now</div>
+</div>
+
+<div id="network" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Network</h2>
+<div class="card">Select Network</div>
+</div>
+
+<!-- Bottom Nav -->
 <div class="bottom-nav">
-  <div class="nav-btn" onclick="openPage('home')">Home</div>
-  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
+<div class="nav-btn active" onclick="openTab('home', this)">Home</div>
+<div class="nav-btn" onclick="openTab('profile', this)">Profile</div>
+<div class="nav-btn" onclick="openTab('settings', this)">Settings</div>
 </div>
 
 <script>
 let historyStack = ["home"];
 
-// Open page
+// Open deep pages
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-
-  // Prevent duplicate history spam
-  if(historyStack[historyStack.length - 1] !== id){
-    historyStack.push(id);
-  }
+  if(historyStack[historyStack.length-1] !== id) historyStack.push(id);
 }
 
-// Back inside app
+// Bottom nav tabs (always clickable like real wallet)
+function openTab(id, btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".nav-btn").forEach(n=>n.classList.remove("active"));
+  btn.classList.add("active");
+
+  historyStack = [id];
+}
+
+// Back button
 function goBack(){
-  historyStack.pop(); // remove current page
-  let last = historyStack[historyStack.length - 1];
-
-  if(!last){
-    last = "home";
-    historyStack = ["home"];
-  }
-
+  historyStack.pop();
+  let last = historyStack[historyStack.length-1] || "home";
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(last).classList.add("active");
 }
 
 // Home shortcut
-function openHome(){
-  historyStack = ["home"];
-  openPage("home");
-}
-
-// Copy address fake
-function copyAddress(){
-  alert("Address copied!");
-}
+function openHome(){ historyStack=["home"]; openTab("home", document.querySelector(".nav-btn")); }
 </script>
 </body>
- </html>
+  </html>
