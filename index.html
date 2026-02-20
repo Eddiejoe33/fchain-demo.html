@@ -12,17 +12,7 @@ body{
   font-family:Arial;
   margin:0;
 }
-/* Error banner like real wallets */
-.error-banner{
-  background:#7f1d1d;
-  color:#fecaca;
-  padding:8px;
-  text-align:center;
-  font-size:13px;
-  display:none;
-  border-radius:8px;
-  margin-top:10px;
-  }
+
 /* pages */
 .page{display:none;padding:15px;}
 .active{display:block;}
@@ -383,7 +373,7 @@ async function loadEthBalance(){
 
  }catch(e){
   console.log("RPC error",e);
-  errorBox.style.display="block";
+  
 
   if(!cached){
     ethBal.innerText="0.000000 ETH";
