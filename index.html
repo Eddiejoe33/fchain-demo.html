@@ -7,32 +7,66 @@
 
 <style>
 body{
-  background:#0f172a;
+  background:#0b1220;
   color:white;
   font-family:Arial;
   margin:0;
 }
 
+/* pages */
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;margin-top:5px;}
+h2{text-align:center;margin-top:5px;font-size:20px;font-weight:bold;}
 
+/* inputs */
 input{
   width:100%;padding:12px;border-radius:8px;
   border:none;background:#111827;color:white;font-size:16px;
   margin-top:10px;
 }
 
+/* buttons */
 .btn{
-  width:100%;padding:14px;background:#2563eb;border:none;
-  border-radius:10px;color:white;font-size:16px;margin-top:10px;
+  width:100%;padding:14px;background:#1f4cff;border:none;
+  border-radius:12px;color:white;font-size:16px;margin-top:10px;
+  font-weight:bold;
 }
 
+/* wallet cards */
 .card{
-  background:#111827;padding:12px;border-radius:12px;
+  background:#111827;padding:14px;border-radius:14px;
   margin-top:10px;display:flex;justify-content:space-between;
+  align-items:center;font-size:16px;
 }
 
+/* top balance card */
+.balance-card{
+  background:#101c33;
+  padding:20px;
+  border-radius:18px;
+  text-align:center;
+  margin-bottom:15px;
+}
+.balance-card h1{font-size:30px;margin:5px 0;}
+.balance-card p{color:#94a3b8;font-size:13px;}
+
+/* token list */
+.token{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px;
+  border-bottom:1px solid #1c2d52;
+}
+.token img{
+  width:30px;height:30px;border-radius:50%;
+  margin-right:10px;
+}
+.token-left{
+  display:flex;align-items:center;
+}
+
+/* bottom nav */
 .bottom-nav{
   position:fixed;bottom:25px;width:100%;
   display:flex;background:#020617;border-top:1px solid #1e293b;
@@ -42,17 +76,14 @@ input{
 }
 .nav-btn:hover{color:white;}
 
+/* network ticker */
 .netbar{
   position:fixed;
-  bottom:0;
-  width:100%;
+  bottom:0;width:100%;
   background:#020617;
-  color:#22c55e;
-  font-size:12px;
-  padding:6px;
+  color:#22c55e;font-size:12px;padding:6px;
   border-top:1px solid #1e293b;
-  white-space:nowrap;
-  overflow:hidden;
+  white-space:nowrap;overflow:hidden;
 }
 .nettext{
   display:inline-block;
@@ -62,6 +93,47 @@ input{
   from{transform:translateX(100%);}
   to{transform:translateX(-100%);}
 }
+
+/* loading shimmer */
+.shimmer{
+  height:20px;background:linear-gradient(90deg,#111,#222,#111);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:6px;
+}
+@keyframes shimmer{
+  0%{background-position:200% 0;}
+  100%{background-position:-200% 0;}
+}
+
+/* spinner */
+.loader{
+  width:40px;height:40px;border:4px solid #1f4cff;
+  border-top:4px solid transparent;border-radius:50%;
+  animation:spin 1s linear infinite;margin:auto;
+}
+@keyframes spin{100%{transform:rotate(360deg);}}
+
+/* transaction list */
+.tx-list{
+  margin-top:10px;
+}
+.tx{
+  background:#111827;
+  padding:12px;border-radius:12px;
+  margin-bottom:8px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.tx-left{display:flex;align-items:center;}
+.tx-icon{
+  width:32px;height:32px;border-radius:50%;
+  background:#1f4cff;display:flex;align-items:center;
+  justify-content:center;margin-right:10px;font-size:14px;
+}
+.tx small{color:#94a3b8;}
+.tx-success{color:#22c55e;}
+.tx-pending{color:#facc15;}
+.tx-failed{color:#ef4444;}
 </style>
 </head>
 
@@ -90,82 +162,103 @@ input{
 
 <!-- HOME -->
 <div id="home" class="page">
-<h2>FChain Wallet</h2>
-<h1 id="balance">$0.00</h1>
 
-<div class="card">BTC: <span>0.000000</span></div>
-<div class="card">ETH: <span id="ethBal">Loading...</span></div>
-<div class="card">FCH: <span>0</span></div>
+<div class="balance-card">
+  <p>Total Balance</p>
+  <h1 id="balance">$0.00</h1>
+  <div id="balanceLoader" class="shimmer"></div>
+</div>
+
+<div class="card">
+  <b>Assets</b>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png">
+    <div>Bitcoin</div>
+  </div>
+  <div>0.000000 BTC</div>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png">
+    <div>Ethereum</div>
+  </div>
+  <div id="ethBal">Loading...</div>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://via.placeholder.com/30">
+    <div>FChain Token</div>
+  </div>
+  <div>0 FCH</div>
+</div>
 
 <button class="btn" onclick="openPage('send')">Send</button>
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
+
+<!-- TRANSACTION HISTORY -->
+<div class="card"><b>Recent Transactions</b></div>
+<div class="tx-list" id="txList"></div>
+
 </div>
 
-<!-- SEND PAGE -->
+<!-- SEND -->
 <div id="send" class="page">
 <h2>Send Crypto</h2>
 <input placeholder="Recipient Address">
 <input placeholder="Amount">
-<button class="btn" onclick="alert('Transaction submitted to network')">Send Now</button>
-<button class="btn" onclick="openPage('home')">Back</button>
-</div>
-<!-- BUY PAGE -->
-<div id="buy" class="page">
-<h2>Buy Crypto</h2>
-<button class="btn" onclick="openPage('buyMethod')">Buy with Credit Card</button>
-<button class="btn" onclick="openPage('buyMethod')">Buy with Bank Transfer</button>
+<button class="btn" onclick="alert('Transaction submitted')">Send Now</button>
 <button class="btn" onclick="openPage('home')">Back</button>
 </div>
 
-<!-- SELECT CRYPTO -->
+<!-- BUY -->
+<div id="buy" class="page">
+<h2>Buy Crypto</h2>
+<button class="btn" onclick="openPage('buyMethod')">Credit Card</button>
+<button class="btn" onclick="openPage('buyMethod')">Bank Transfer</button>
+<button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
 <div id="buyMethod" class="page">
 <h2>Select Crypto</h2>
-<button class="btn" onclick="openPage('buyAmount')">Bitcoin (BTC)</button>
-<button class="btn" onclick="openPage('buyAmount')">Ethereum (ETH)</button>
-<button class="btn" onclick="openPage('buyAmount')">FChain Token (FCH)</button>
+<button class="btn" onclick="openPage('buyAmount')">Bitcoin</button>
+<button class="btn" onclick="openPage('buyAmount')">Ethereum</button>
+<button class="btn" onclick="openPage('buyAmount')">FChain</button>
 <button class="btn" onclick="openPage('buy')">Back</button>
 </div>
 
-<!-- ENTER AMOUNT -->
 <div id="buyAmount" class="page">
 <h2>Enter Amount</h2>
-<input placeholder="USD Amount (e.g 100)">
+<input placeholder="USD Amount">
 <button class="btn" onclick="openPage('buyCard')">Continue</button>
 <button class="btn" onclick="openPage('buyMethod')">Back</button>
 </div>
 
-<!-- CREDIT CARD PAGE -->
 <div id="buyCard" class="page">
-<h2>Credit Card Details</h2>
+<h2>Card Payment</h2>
 <input placeholder="Card Number">
-<input placeholder="MM / YY">
+<input placeholder="MM/YY">
 <input placeholder="CVV">
 <input placeholder="Name on Card">
-<button class="btn" onclick="openPage('buyProcess')">Pay Now</button>
-<button class="btn" onclick="openPage('buyAmount')">Back</button>
+<button class="btn" onclick="openPage('buyProcess')">Pay</button>
 </div>
 
-<!-- PROCESSING -->
 <div id="buyProcess" class="page">
-<h2>Processing Payment...</h2>
-<p>Contacting payment gateway...</p>
+<h2>Processing...</h2>
 <div class="loader"></div>
-<button class="btn" onclick="openPage('buySuccess')">Done</button>
+<button class="btn" onclick="openPage('home')">Done</button>
 </div>
 
-<!-- SUCCESS -->
-<div id="buySuccess" class="page">
-<h2>Payment Submitted</h2>
-<p>Your crypto will arrive shortly.</p>
-<button class="btn" onclick="openPage('home')">Go Home</button>
-</div>
-
-<!-- RECEIVE PAGE -->
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <h2>Your Wallet Address</h2>
 <div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
-<button class="btn" onclick="navigator.clipboard.writeText(walletAddress)">Copy Address</button>
+<button class="btn" onclick="navigator.clipboard.writeText(walletAddress)">Copy</button>
 <button class="btn" onclick="openPage('home')">Back</button>
 </div>
 
@@ -173,8 +266,7 @@ input{
 <div id="profile" class="page">
 <h2>Profile</h2>
 <div class="card">Username: <span id="profileName"></span></div>
-<div class="card">Wallet Address:</div>
-<div class="card" id="walletAddress2">0xPUT_YOUR_ADDRESS_HERE</div>
+<div class="card" id="walletAddress2"></div>
 <button class="btn" onclick="logout()">Logout</button>
 </div>
 
@@ -194,111 +286,86 @@ input{
 
 <!-- NETWORK FEED -->
 <div class="netbar">
-  <div id="netFeed" class="nettext">Connecting to blockchain network...</div>
+  <div id="netFeed" class="nettext">Connecting to blockchain...</div>
 </div>
 
 <script>
-/* PAGE NAV */
 function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
 }
 
 /* LOGIN */
 function login(){
-  let u=username.value;
-  let p=password.value;
-  if(!u||!p){alert("Enter login details");return;}
-  localStorage.setItem("user",u);
-  openPage("pinPage");
+ if(!username.value||!password.value){alert("Enter login");return;}
+ localStorage.setItem("user",username.value);
+ openPage("pinPage");
 }
 
-/* PIN SAVE */
+/* PIN */
 function savePin(){
-  let pin=document.getElementById("pin").value;
-  if(pin.length<4){alert("PIN must be at least 4 digits");return;}
-  localStorage.setItem("pin",pin);
-  loadApp();
+ if(pin.value.length<4){alert("PIN must be 4 digits");return;}
+ localStorage.setItem("pin",pin.value);
+ loadApp();
 }
-
-/* UNLOCK */
 function unlock(){
-  if(unlockPin.value===localStorage.getItem("pin")){
-    loadApp();
-  } else alert("Wrong PIN");
+ if(unlockPin.value===localStorage.getItem("pin")) loadApp();
+ else alert("Wrong PIN");
 }
-
-/* LOAD APP */
 function loadApp(){
-  openPage("home");
-  profileName.innerText=localStorage.getItem("user");
+ openPage("home");
+ profileName.innerText=localStorage.getItem("user");
 }
-
-/* CHANGE PIN */
-function changePin(){
-  localStorage.removeItem("pin");
-  openPage("pinPage");
-}
-
-/* LOGOUT */
-function logout(){
-  localStorage.clear();
-  location.reload();
-}
-
-/* RESET */
-function resetApp(){
-  localStorage.clear();
-  alert("Wallet reset");
-  location.reload();
-}
+function logout(){localStorage.clear();location.reload();}
+function changePin(){localStorage.removeItem("pin");openPage("pinPage");}
+function resetApp(){localStorage.clear();location.reload();}
 
 /* AUTO LOGIN */
-if(localStorage.getItem("user") && localStorage.getItem("pin")){
-  openPage("unlockPage");
-}
+if(localStorage.getItem("user")&&localStorage.getItem("pin")) openPage("unlockPage");
 
-/* REAL MAINNET BALANCE VIEWER */
-const walletAddress = "0xPUT_YOUR_ADDRESS_HERE"; // CHANGE THIS
-document.getElementById("walletAddress").innerText = walletAddress;
-document.getElementById("walletAddress2").innerText = walletAddress;
+/* WALLET ADDRESS */
+const walletAddress="0xPUT_YOUR_ADDRESS_HERE";
+walletAddress2.innerText=walletAddress;
+document.getElementById("walletAddress").innerText=walletAddress;
 
+/* ETH MAINNET VIEW */
 async function loadEthBalance(){
-  try{
-    const res = await fetch("https://cloudflare-eth.com",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        jsonrpc:"2.0",
-        method:"eth_getBalance",
-        params:[walletAddress,"latest"],
-        id:1
-      })
-    });
-    const data = await res.json();
-    let wei = parseInt(data.result,16);
-    let eth = wei / 1e18;
-    document.getElementById("ethBal").innerText = eth.toFixed(6) + " ETH";
-  }catch(e){
-    document.getElementById("ethBal").innerText="0.000000 ETH";
-  }
+ try{
+ const r=await fetch("https://cloudflare-eth.com",{
+ method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({jsonrpc:"2.0",method:"eth_getBalance",params:[walletAddress,"latest"],id:1})
+ });
+ const d=await r.json();
+ let wei=parseInt(d.result,16);
+ let eth=wei/1e18;
+ ethBal.innerText=eth.toFixed(6)+" ETH";
+ balance.innerText="$"+(eth*3200).toFixed(2);
+ balanceLoader.style.display="none";
+ }catch{ethBal.innerText="0.000000 ETH";}
 }
-loadEthBalance();
-setInterval(loadEthBalance,10000);
+loadEthBalance(); setInterval(loadEthBalance,15000);
+
+/* TRANSACTION HISTORY */
+const txList=document.getElementById("txList");
+const fakeTx=[
+{t:"Received BTC",amt:"+0.002 BTC",s:"success"},
+{t:"Sent ETH",amt:"-0.5 ETH",s:"pending"},
+{t:"Received FCH",amt:"+1200 FCH",s:"success"},
+{t:"Sent BTC",amt:"-0.001 BTC",s:"failed"}
+];
+fakeTx.forEach(tx=>{
+ let d=document.createElement("div");
+ d.className="tx";
+ d.innerHTML=`<div class="tx-left">
+ <div class="tx-icon">⇅</div>
+ <div>${tx.t}<br><small>Today</small></div></div>
+ <div class="tx-${tx.s}">${tx.amt}</div>`;
+ txList.appendChild(d);
+});
 
 /* NETWORK FEED */
-const feeds=[
-"New block mined",
-"Transaction confirmed",
-"Node synced",
-"Gas price updated",
-"Block propagated",
-"Pending transaction broadcasted",
-"Validator signed block"
-];
-setInterval(()=>{
-  netFeed.innerText = feeds[Math.floor(Math.random()*feeds.length)];
-},4000);
+const feeds=["New block mined","Tx confirmed","Gas updated","Node synced","Validator signed"];
+setInterval(()=>netFeed.innerText=feeds[Math.floor(Math.random()*feeds.length)],3000);
 </script>
 
 </body>
