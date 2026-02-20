@@ -42,7 +42,6 @@ input{
 }
 .nav-btn:hover{color:white;}
 
-/* Network bar */
 .netbar{
   position:fixed;
   bottom:0;
@@ -55,12 +54,10 @@ input{
   white-space:nowrap;
   overflow:hidden;
 }
-
 .nettext{
   display:inline-block;
   animation:scroll 12s linear infinite;
 }
-
 @keyframes scroll{
   from{transform:translateX(100%);}
   to{transform:translateX(-100%);}
@@ -78,14 +75,13 @@ input{
 <button class="btn" onclick="login()">Login</button>
 </div>
 
-<!-- PIN SET -->
+<!-- PIN -->
 <div id="pinPage" class="page">
 <h2>Create Security PIN</h2>
 <input id="pin" type="password" placeholder="Enter PIN">
 <button class="btn" onclick="savePin()">Continue</button>
 </div>
 
-<!-- PIN UNLOCK -->
 <div id="unlockPage" class="page">
 <h2>Enter PIN</h2>
 <input id="unlockPin" type="password" placeholder="PIN">
@@ -98,7 +94,7 @@ input{
 <h1 id="balance">$0.00</h1>
 
 <div class="card">BTC: <span>0.000000</span></div>
-<div class="card">ETH: <span>0.0000</span></div>
+<div class="card">ETH: <span id="ethBal">Loading...</span></div>
 <div class="card">FCH: <span>0</span></div>
 
 <button class="btn">Send</button>
@@ -110,7 +106,8 @@ input{
 <div id="profile" class="page">
 <h2>Profile</h2>
 <div class="card">Username: <span id="profileName"></span></div>
-<div class="card">Account Type: Standard Wallet</div>
+<div class="card">Wallet Address:</div>
+<div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
 <button class="btn" onclick="logout()">Logout</button>
 </div>
 
@@ -121,19 +118,20 @@ input{
 <button class="btn" onclick="resetApp()">Reset Wallet</button>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- NAV -->
 <div class="bottom-nav">
   <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
   <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
-<!-- NETWORK BAR -->
+<!-- NETWORK FEED -->
 <div class="netbar">
   <div id="netFeed" class="nettext">Connecting to blockchain network...</div>
 </div>
 
 <script>
+/* PAGE NAV */
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
@@ -141,15 +139,14 @@ function openPage(id){
 
 /* LOGIN */
 function login(){
-  let u=document.getElementById("username").value;
-  let p=document.getElementById("password").value;
+  let u=username.value;
+  let p=password.value;
   if(!u||!p){alert("Enter login details");return;}
   localStorage.setItem("user",u);
-  localStorage.setItem("pass",p);
   openPage("pinPage");
 }
 
-/* SAVE PIN */
+/* PIN SAVE */
 function savePin(){
   let pin=document.getElementById("pin").value;
   if(pin.length<4){alert("PIN must be at least 4 digits");return;}
@@ -159,18 +156,15 @@ function savePin(){
 
 /* UNLOCK */
 function unlock(){
-  let p=document.getElementById("unlockPin").value;
-  if(p===localStorage.getItem("pin")){
+  if(unlockPin.value===localStorage.getItem("pin")){
     loadApp();
-  }else{
-    alert("Incorrect PIN");
-  }
+  } else alert("Wrong PIN");
 }
 
 /* LOAD APP */
 function loadApp(){
   openPage("home");
-  document.getElementById("profileName").innerText=localStorage.getItem("user");
+  profileName.innerText=localStorage.getItem("user");
 }
 
 /* CHANGE PIN */
@@ -188,34 +182,60 @@ function logout(){
 /* RESET */
 function resetApp(){
   localStorage.clear();
-  alert("Wallet reset completed");
+  alert("Wallet reset");
   location.reload();
 }
 
 /* AUTO LOGIN */
 if(localStorage.getItem("user") && localStorage.getItem("pin")){
   openPage("unlockPage");
-}else if(localStorage.getItem("user")){
-  openPage("pinPage");
 }
 
-/* NETWORK ACTIVITY FEED */
+/* ================= REAL MAINNET BALANCE VIEWER ================= */
+
+// PUT YOUR REAL PUBLIC ADDRESS HERE
+const walletAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+document.getElementById("walletAddress").innerText = walletAddress;
+
+// Ethereum RPC
+async function loadEthBalance(){
+  try{
+    const res = await fetch("https://cloudflare-eth.com",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        jsonrpc:"2.0",
+        method:"eth_getBalance",
+        params:[walletAddress,"latest"],
+        id:1
+      })
+    });
+    const data = await res.json();
+    let wei = parseInt(data.result,16);
+    let eth = wei / 1e18;
+    document.getElementById("ethBal").innerText = eth.toFixed(6) + " ETH";
+  }catch(e){
+    document.getElementById("ethBal").innerText="0.000000 ETH";
+  }
+}
+loadEthBalance();
+setInterval(loadEthBalance,10000);
+
+/* NETWORK FEED */
 const feeds=[
-"New block mined • Height 19,234,112",
-"Transaction confirmed • 0.42 ETH",
-"Node synced • Peer 102 connected",
-"Gas price updated • 32 gwei",
-"Block propagated across network",
+"New block mined",
+"Transaction confirmed",
+"Node synced",
+"Gas price updated",
+"Block propagated",
 "Pending transaction broadcasted",
 "Validator signed block",
-"Smart contract execution completed"
+"Smart contract executed"
 ];
-
 setInterval(()=>{
-  let text=feeds[Math.floor(Math.random()*feeds.length)];
-  document.getElementById("netFeed").innerText=text;
+  netFeed.innerText = feeds[Math.floor(Math.random()*feeds.length)];
 },4000);
 </script>
 
 </body>
-  </html>
+                                </html>
