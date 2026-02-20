@@ -110,13 +110,55 @@ input{
 <button class="btn" onclick="alert('Transaction submitted to network')">Send Now</button>
 <button class="btn" onclick="openPage('home')">Back</button>
 </div>
-
 <!-- BUY PAGE -->
 <div id="buy" class="page">
 <h2>Buy Crypto</h2>
-<button class="btn">Credit Card</button>
-<button class="btn">Bank Transfer</button>
+<button class="btn" onclick="openPage('buyMethod')">Buy with Credit Card</button>
+<button class="btn" onclick="openPage('buyMethod')">Buy with Bank Transfer</button>
 <button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
+<!-- SELECT CRYPTO -->
+<div id="buyMethod" class="page">
+<h2>Select Crypto</h2>
+<button class="btn" onclick="openPage('buyAmount')">Bitcoin (BTC)</button>
+<button class="btn" onclick="openPage('buyAmount')">Ethereum (ETH)</button>
+<button class="btn" onclick="openPage('buyAmount')">FChain Token (FCH)</button>
+<button class="btn" onclick="openPage('buy')">Back</button>
+</div>
+
+<!-- ENTER AMOUNT -->
+<div id="buyAmount" class="page">
+<h2>Enter Amount</h2>
+<input placeholder="USD Amount (e.g 100)">
+<button class="btn" onclick="openPage('buyCard')">Continue</button>
+<button class="btn" onclick="openPage('buyMethod')">Back</button>
+</div>
+
+<!-- CREDIT CARD PAGE -->
+<div id="buyCard" class="page">
+<h2>Credit Card Details</h2>
+<input placeholder="Card Number">
+<input placeholder="MM / YY">
+<input placeholder="CVV">
+<input placeholder="Name on Card">
+<button class="btn" onclick="openPage('buyProcess')">Pay Now</button>
+<button class="btn" onclick="openPage('buyAmount')">Back</button>
+</div>
+
+<!-- PROCESSING -->
+<div id="buyProcess" class="page">
+<h2>Processing Payment...</h2>
+<p>Contacting payment gateway...</p>
+<div class="loader"></div>
+<button class="btn" onclick="openPage('buySuccess')">Done</button>
+</div>
+
+<!-- SUCCESS -->
+<div id="buySuccess" class="page">
+<h2>Payment Submitted</h2>
+<p>Your crypto will arrive shortly.</p>
+<button class="btn" onclick="openPage('home')">Go Home</button>
 </div>
 
 <!-- RECEIVE PAGE -->
