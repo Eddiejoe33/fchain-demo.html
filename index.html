@@ -267,7 +267,7 @@ input{
 <!-- RECEIVE -->
 <div id="receive" class="page">
 <h2>Your Wallet Address</h2>
-<div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
+<div class="card" id="walletAddress">0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
 <button class="btn" onclick="navigator.clipboard.writeText(walletAddress)">Copy</button>
 <div id="walletQR"></div>
 <button class="btn" onclick="openPage('home')">Back</button>
@@ -351,25 +351,37 @@ new QRCode(document.getElementById("walletQR"), {
 /* ETH BALANCE */
 async function loadEthBalance(){
   const balanceLoader = document.getElementById("balanceLoader");
-  balanceLoader.style.display="block";
+  balanceLoader.style.display = "block";
   try{
-    const res=await fetch("https://cloudflare-eth.com",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({jsonrpc:"2.0",method:"eth_getBalance",params:[walletAddress,"latest"],id:1})
+    const res = await fetch("https://cloudflare-eth.com", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        jsonrpc:"2.0",
+        method:"eth_getBalance",
+        params:[walletAddress,"latest"],
+        id:1
+      })
     });
-    const data=await res.json();
-    let wei=parseInt(data.result,16);
-    let eth=wei/1e18;
-    ethBal.innerText=eth.toFixed(6)+" ETH";
-    balance.innerText="$"+(eth*3200).toFixed(2);
-  }catch{
-    ethBal.innerText="0.000000 ETH";
-    balance.innerText="$0.00";
+    const data = await res.json();
+    
+    // safe parsing
+    let wei = 0;
+    if(data && data.result && /^0x[0-9a-fA-F]+$/.test(data.result)){
+      wei = parseInt(data.result,16);
+    }
+    
+    let eth = wei / 1e18;
+    ethBal.innerText = eth.toFixed(6) + " ETH";
+    balance.innerText = "$" + (eth*3200).toFixed(2);
+  }catch(e){
+    ethBal.innerText = "0.000000 ETH";
+    balance.innerText = "$0.00";
+    console.error("Error fetching ETH balance:", e);
   }finally{
-    balanceLoader.style.display="none";
+    balanceLoader.style.display = "none";
   }
-}
+  }
 loadEthBalance();
 setInterval(loadEthBalance,15000);
 
