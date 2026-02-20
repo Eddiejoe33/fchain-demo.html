@@ -97,9 +97,34 @@ input{
 <div class="card">ETH: <span id="ethBal">Loading...</span></div>
 <div class="card">FCH: <span>0</span></div>
 
-<button class="btn">Send</button>
-<button class="btn">Buy</button>
-<button class="btn">Receive</button>
+<button class="btn" onclick="openPage('send')">Send</button>
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
+
+<!-- SEND PAGE -->
+<div id="send" class="page">
+<h2>Send Crypto</h2>
+<input placeholder="Recipient Address">
+<input placeholder="Amount">
+<button class="btn" onclick="alert('Transaction submitted to network')">Send Now</button>
+<button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
+<!-- BUY PAGE -->
+<div id="buy" class="page">
+<h2>Buy Crypto</h2>
+<button class="btn">Credit Card</button>
+<button class="btn">Bank Transfer</button>
+<button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
+<!-- RECEIVE PAGE -->
+<div id="receive" class="page">
+<h2>Your Wallet Address</h2>
+<div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
+<button class="btn" onclick="navigator.clipboard.writeText(walletAddress)">Copy Address</button>
+<button class="btn" onclick="openPage('home')">Back</button>
 </div>
 
 <!-- PROFILE -->
@@ -107,7 +132,7 @@ input{
 <h2>Profile</h2>
 <div class="card">Username: <span id="profileName"></span></div>
 <div class="card">Wallet Address:</div>
-<div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
+<div class="card" id="walletAddress2">0xPUT_YOUR_ADDRESS_HERE</div>
 <button class="btn" onclick="logout()">Logout</button>
 </div>
 
@@ -191,13 +216,11 @@ if(localStorage.getItem("user") && localStorage.getItem("pin")){
   openPage("unlockPage");
 }
 
-/* ================= REAL MAINNET BALANCE VIEWER ================= */
-
-// PUT YOUR REAL PUBLIC ADDRESS HERE
-const walletAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+/* REAL MAINNET BALANCE VIEWER */
+const walletAddress = "0xPUT_YOUR_ADDRESS_HERE"; // CHANGE THIS
 document.getElementById("walletAddress").innerText = walletAddress;
+document.getElementById("walletAddress2").innerText = walletAddress;
 
-// Ethereum RPC
 async function loadEthBalance(){
   try{
     const res = await fetch("https://cloudflare-eth.com",{
@@ -229,8 +252,7 @@ const feeds=[
 "Gas price updated",
 "Block propagated",
 "Pending transaction broadcasted",
-"Validator signed block",
-"Smart contract executed"
+"Validator signed block"
 ];
 setInterval(()=>{
   netFeed.innerText = feeds[Math.floor(Math.random()*feeds.length)];
@@ -238,4 +260,4 @@ setInterval(()=>{
 </script>
 
 </body>
-                                </html>
+  </html>
