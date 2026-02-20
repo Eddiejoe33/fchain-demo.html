@@ -149,12 +149,127 @@ input{
 
 <body>
 
-<!-- RECEIVE PAGE -->
+<!-- LOGIN -->
+<div id="loginPage" class="page active">
+<h2>FChain Wallet</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button class="btn" onclick="login()">Login</button>
+</div>
+
+<!-- PIN -->
+<div id="pinPage" class="page">
+<h2>Create Security PIN</h2>
+<input id="pin" type="password" placeholder="Enter PIN">
+<button class="btn" onclick="savePin()">Continue</button>
+</div>
+
+<div id="unlockPage" class="page">
+<h2>Enter PIN</h2>
+<input id="unlockPin" type="password" placeholder="PIN">
+<button class="btn" onclick="unlock()">Unlock</button>
+</div>
+
+<!-- HOME -->
+<div id="home" class="page">
+
+<div class="balance-card">
+  <p>Total Balance</p>
+  <h1 id="balance">$0.00</h1>
+  <div id="balanceLoader" class="shimmer"></div>
+</div>
+
+<div class="card">
+  <b>Assets</b>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png">
+    <div>Bitcoin</div>
+  </div>
+  <div>0.000000 BTC</div>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png">
+    <div>Ethereum</div>
+  </div>
+  <div id="ethBal"><div class="shimmer"></div></div>
+</div>
+
+<div class="token">
+  <div class="token-left">
+    <img src="https://via.placeholder.com/30">
+    <div>FChain Token</div>
+  </div>
+  <div>0 FCH</div>
+</div>
+
+<button class="btn" onclick="openPage('send')">Send</button>
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+
+<!-- TRANSACTION HISTORY -->
+<div class="card"><b>Recent Transactions</b></div>
+<div class="tx-list" id="txList"></div>
+
+</div>
+
+<!-- SEND -->
+<div id="send" class="page">
+<h2>Send Crypto</h2>
+<input placeholder="Recipient Address">
+<input placeholder="Amount">
+<button class="btn" onclick="alert('Transaction submitted')">Send Now</button>
+<button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
+<!-- BUY -->
+<div id="buy" class="page">
+<h2>Buy Crypto</h2>
+<button class="btn" onclick="openPage('buyMethod')">Credit Card</button>
+<button class="btn" onclick="openPage('buyMethod')">Bank Transfer</button>
+<button class="btn" onclick="openPage('home')">Back</button>
+</div>
+
+<div id="buyMethod" class="page">
+<h2>Select Crypto</h2>
+<button class="btn" onclick="openPage('buyAmount')">Bitcoin</button>
+<button class="btn" onclick="openPage('buyAmount')">Ethereum</button>
+<button class="btn" onclick="openPage('buyAmount')">FChain</button>
+<button class="btn" onclick="openPage('buy')">Back</button>
+</div>
+
+<div id="buyAmount" class="page">
+<h2>Enter Amount</h2>
+<input placeholder="USD Amount">
+<button class="btn" onclick="openPage('buyCard')">Continue</button>
+<button class="btn" onclick="openPage('buyMethod')">Back</button>
+</div>
+
+<div id="buyCard" class="page">
+<h2>Card Payment</h2>
+<input placeholder="Card Number">
+<input placeholder="MM/YY">
+<input placeholder="CVV">
+<input placeholder="Name on Card">
+<button class="btn" onclick="openPage('buyProcess')">Pay</button>
+</div>
+
+<div id="buyProcess" class="page">
+<h2>Processing...</h2>
+<div class="loader"></div>
+<button class="btn" onclick="openPage('home')">Done</button>
+</div>
+
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <h2>Your Wallet Address</h2>
 <div class="card" id="walletAddress">0xPUT_YOUR_ADDRESS_HERE</div>
 <button class="btn" onclick="navigator.clipboard.writeText(walletAddress)">Copy</button>
-<div id="walletQR"></div> <!-- QR code container -->
+<div id="walletQR"></div>
 <button class="btn" onclick="openPage('home')">Back</button>
 </div>
 
@@ -164,6 +279,13 @@ input{
 <div class="card">Username: <span id="profileName"></span></div>
 <div class="card" id="walletAddress2"></div>
 <button class="btn" onclick="logout()">Logout</button>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="page">
+<h2>Settings</h2>
+<button class="btn" onclick="changePin()">Change PIN</button>
+<button class="btn" onclick="resetApp()">Reset Wallet</button>
 </div>
 
 <!-- NAV -->
@@ -185,12 +307,38 @@ function openPage(id){
   document.getElementById(id).classList.add("active");
 }
 
-/* WALLET ADDRESS */
-const walletAddress="0xYOUR_METAMASK_ADDRESS_HERE"; // Replace with your real address
-walletAddress2.innerText = walletAddress;
-document.getElementById("walletAddress").innerText = walletAddress;
+/* LOGIN/PIN FUNCTIONS */
+function login(){
+  if(!username.value||!password.value){alert("Enter login");return;}
+  localStorage.setItem("user",username.value);
+  openPage("pinPage");
+}
+function savePin(){
+  if(pin.value.length<4){alert("PIN must be 4 digits");return;}
+  localStorage.setItem("pin",pin.value);
+  loadApp();
+}
+function unlock(){
+  if(unlockPin.value===localStorage.getItem("pin")) loadApp();
+  else alert("Wrong PIN");
+}
+function loadApp(){
+  openPage("home");
+  profileName.innerText=localStorage.getItem("user");
+}
+function logout(){localStorage.clear();location.reload();}
+function changePin(){localStorage.removeItem("pin");openPage("pinPage");}
+function resetApp(){localStorage.clear();location.reload();}
 
-// Generate QR code for wallet
+/* AUTO LOGIN */
+if(localStorage.getItem("user") && localStorage.getItem("pin")) openPage("unlockPage");
+
+/* WALLET ADDRESS */
+const walletAddress="0xPUT_YOUR_ADDRESS_HERE"; // replace with your MetaMask address
+walletAddress2.innerText=walletAddress;
+document.getElementById("walletAddress").innerText=walletAddress;
+
+// Generate QR code
 new QRCode(document.getElementById("walletQR"), {
     text: walletAddress,
     width:150,
@@ -200,13 +348,53 @@ new QRCode(document.getElementById("walletQR"), {
     correctLevel: QRCode.CorrectLevel.H
 });
 
-/* AUTO LOGIN (example, can add your login/pin system here) */
-if(localStorage.getItem("user") && localStorage.getItem("pin")) openPage("unlockPage");
+/* ETH BALANCE */
+async function loadEthBalance(){
+  const balanceLoader = document.getElementById("balanceLoader");
+  balanceLoader.style.display="block";
+  try{
+    const res=await fetch("https://cloudflare-eth.com",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({jsonrpc:"2.0",method:"eth_getBalance",params:[walletAddress,"latest"],id:1})
+    });
+    const data=await res.json();
+    let wei=parseInt(data.result,16);
+    let eth=wei/1e18;
+    ethBal.innerText=eth.toFixed(6)+" ETH";
+    balance.innerText="$"+(eth*3200).toFixed(2);
+  }catch{
+    ethBal.innerText="0.000000 ETH";
+    balance.innerText="$0.00";
+  }finally{
+    balanceLoader.style.display="none";
+  }
+}
+loadEthBalance();
+setInterval(loadEthBalance,15000);
+
+/* TRANSACTION HISTORY */
+const txList=document.getElementById("txList");
+const fakeTx=[
+  {t:"Received BTC",amt:"+0.002 BTC",s:"success"},
+  {t:"Sent ETH",amt:"-0.5 ETH",s:"pending"},
+  {t:"Received FCH",amt:"+1200 FCH",s:"success"},
+  {t:"Sent BTC",amt:"-0.001 BTC",s:"failed"}
+];
+fakeTx.forEach(tx=>{
+  let d=document.createElement("div");
+  d.className="tx";
+  d.innerHTML=`<div class="tx-left">
+  <div class="tx-icon">⇅</div>
+  <div>${tx.t}<br><small>Today</small></div></div>
+  <div class="tx-${tx.s}">${tx.amt}</div>`;
+  txList.appendChild(d);
+});
 
 /* NETWORK FEED */
 const feeds=["New block mined","Tx confirmed","Gas updated","Node synced","Validator signed"];
 setInterval(()=>netFeed.innerText=feeds[Math.floor(Math.random()*feeds.length)],3000);
-</script>
 
+</script>
 </body>
   </html>
