@@ -333,12 +333,13 @@ function resetApp(){localStorage.clear();location.reload();}
 /* AUTO LOGIN */
 if(localStorage.getItem("user") && localStorage.getItem("pin")) openPage("unlockPage");
 
-/* WALLET ADDRESS */
-const walletAddress="0xPUT_YOUR_ADDRESS_HERE"; // replace with your MetaMask address
-walletAddress2.innerText=walletAddress;
-document.getElementById("walletAddress").innerText=walletAddress;
+/* WALLET ADDRESS & QR CODE */
+const walletAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+walletAddress2.innerText = walletAddress;
+document.getElementById("walletAddress").innerText = walletAddress;
 
 // Generate QR code
+document.getElementById("walletQR").innerHTML = ""; // clear previous QR if any
 new QRCode(document.getElementById("walletQR"), {
     text: walletAddress,
     width:150,
@@ -364,13 +365,10 @@ async function loadEthBalance(){
       })
     });
     const data = await res.json();
-    
-    // safe parsing
     let wei = 0;
     if(data && data.result && /^0x[0-9a-fA-F]+$/.test(data.result)){
       wei = parseInt(data.result,16);
     }
-    
     let eth = wei / 1e18;
     ethBal.innerText = eth.toFixed(6) + " ETH";
     balance.innerText = "$" + (eth*3200).toFixed(2);
@@ -381,7 +379,7 @@ async function loadEthBalance(){
   }finally{
     balanceLoader.style.display = "none";
   }
-  }
+}
 loadEthBalance();
 setInterval(loadEthBalance,15000);
 
