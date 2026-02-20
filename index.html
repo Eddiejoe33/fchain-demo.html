@@ -330,25 +330,36 @@ document.getElementById("walletAddress").innerText=walletAddress;
 
 /* ETH MAINNET VIEW */
 async function loadEthBalance(){
-  const balanceLoader = document.getElementById("balanceLoader");
-  balanceLoader.style.display="block";
-  try{
-    const res=await fetch("https://cloudflare-eth.com",{
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({jsonrpc:"2.0",method:"eth_getBalance",params:[walletAddress,"latest"],id:1})
+  try {
+    const r = await fetch("https://cloudflare-eth.com", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        jsonrpc:"2.0",
+        method:"eth_getBalance",
+        params:[walletAddress,"latest"],
+        id:1
+      })
     });
-    const data=await res.json();
-    let wei=parseInt(data.result,16);
-    let eth=wei/1e18;
-    ethBal.innerText=eth.toFixed(6)+" ETH";
-    balance.innerText="$"+(eth*3200).toFixed(2);
-  }catch{
-    ethBal.innerText="0.000000 ETH";
-    balance.innerText="$0.00";
-  } finally{
-    balanceLoader.style.display="none";
+
+    const d = await r.json();
+    let wei = parseInt(d.result,16);
+    if(isNaN(wei)) wei = 0; // fallback if parsing fails
+
+    let eth = wei / 1e18;
+    if(isNaN(eth)) eth = 0; // fallback again
+
+    ethBal.innerText = eth.toFixed(6) + " ETH";
+    balance.innerText = "$" + (eth * 3200).toFixed(2); // optional USD conversion
+    balanceLoader.style.display = "none";
+
+  } catch(err) {
+    // If fetch fails, show last saved balance or 0
+    ethBal.innerText = "0.000000 ETH";
+    balance.innerText = "$0.00";
+    balanceLoader.style.display = "none";
   }
-}
+  }
 loadEthBalance();
 setInterval(loadEthBalance,15000);
 
