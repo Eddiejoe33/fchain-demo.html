@@ -5,157 +5,83 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
 
+<!-- Firebase SDK -->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
+    authDomain: "fchainwallet-a353d.firebaseapp.com",
+    projectId: "fchainwallet-a353d",
+    storageBucket: "fchainwallet-a353d.appspot.com",
+    messagingSenderId: "194040190119",
+    appId: "1:194040190119:web:843ea9ed014a80e52f3782"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.saveUserPin = async function(username, pin){
+    if(!username || !pin) return;
+    try{
+      await setDoc(doc(db, "walletPins", username), {pin});
+    }catch(e){console.error("Firebase save error:", e);}
+  }
+
+  window.getUserPin = async function(username){
+    try{
+      const docRef = doc(db, "walletPins", username);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? docSnap.data().pin : null;
+    }catch(e){console.error("Firebase get error:", e); return null;}
+  }
+</script>
+
 <!-- QR Code library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
+/* Full original CSS from your file */
 body{
   background:#0b1220;
   color:white;
   font-family:Arial;
   margin:0;
 }
-
-/* pages */
 .page{display:none;padding:15px;}
 .active{display:block;}
 h2{text-align:center;margin-top:5px;font-size:20px;font-weight:bold;}
-
-/* inputs */
-input{
-  width:100%;padding:12px;border-radius:8px;
-  border:none;background:#111827;color:white;font-size:16px;
-  margin-top:10px;
-}
-
-/* buttons */
-.btn{
-  width:100%;padding:14px;background:#1f4cff;border:none;
-  border-radius:12px;color:white;font-size:16px;margin-top:10px;
-  font-weight:bold;
-  cursor:pointer;
-  transition: transform 0.1s, background 0.1s, box-shadow 0.1s;
-}
-
-/* Active / click feedback for all buttons */
-.btn:active, .btn.active {
-  background:#3a60ff;
-  transform: scale(0.97);
-  box-shadow: 0 0 10px #1f4cff;
-}
-
-/* wallet cards */
-.card{
-  background:#111827;padding:14px;border-radius:14px;
-  margin-top:10px;display:flex;justify-content:space-between;
-  align-items:center;font-size:16px;
-}
-
-/* top balance card */
-.balance-card{
-  background:#101c33;
-  padding:20px;
-  border-radius:18px;
-  text-align:center;
-  margin-bottom:15px;
-}
+input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;color:white;font-size:16px;margin-top:10px;}
+.btn{width:100%;padding:14px;background:#1f4cff;border:none;border-radius:12px;color:white;font-size:16px;margin-top:10px;font-weight:bold;cursor:pointer;transition: transform 0.1s, background 0.1s, box-shadow 0.1s;}
+.btn:active, .btn.active {background:#3a60ff;transform: scale(0.97);box-shadow: 0 0 10px #1f4cff;}
+.card{background:#111827;padding:14px;border-radius:14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:16px;}
+.balance-card{background:#101c33;padding:20px;border-radius:18px;text-align:center;margin-bottom:15px;}
 .balance-card h1{font-size:30px;margin:5px 0;}
 .balance-card p{color:#94a3b8;font-size:13px;}
-
-/* token list */
-.token{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px;
-  border-bottom:1px solid #1c2d52;
-}
-.token img{
-  width:30px;height:30px;border-radius:50%;
-  margin-right:10px;
-}
-.token-left{
-  display:flex;align-items:center;
-}
-
-/* bottom nav */
-.bottom-nav{
-  position:fixed;bottom:25px;width:100%;
-  display:flex;background:#020617;border-top:1px solid #1e293b;
-}
-.nav-btn{
-  flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;
-  cursor:pointer;
-  transition: color 0.2s, transform 0.1s;
-}
+.token{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #1c2d52;}
+.token img{width:30px;height:30px;border-radius:50%;margin-right:10px;}
+.token-left{display:flex;align-items:center;}
+.bottom-nav{position:fixed;bottom:25px;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;cursor:pointer;transition: color 0.2s, transform 0.1s;}
 .nav-btn:hover{color:white;}
-.nav-btn.active{
-  color:white;
-  font-weight:bold;
-  transform:scale(1.05);
-}
-
-/* network ticker */
-.netbar{
-  position:fixed;
-  bottom:0;width:100%;
-  background:#020617;
-  color:#22c55e;font-size:12px;padding:6px;
-  border-top:1px solid #1e293b;
-  white-space:nowrap;overflow:hidden;
-}
-.nettext{
-  display:inline-block;
-  animation:scroll 12s linear infinite;
-}
-@keyframes scroll{
-  from{transform:translateX(100%);}
-  to{transform:translateX(-100%);}
-}
-
-/* loading shimmer */
-.shimmer{
-  height:20px;background:linear-gradient(90deg,#111,#222,#111);
-  background-size:200% 100%;
-  animation:shimmer 1.5s infinite;
-  border-radius:6px;
-}
-
-/* spinner */
-.loader{
-  width:40px;height:40px;border:4px solid #1f4cff;
-  border-top:4px solid transparent;border-radius:50%;
-  animation:spin 1s linear infinite;margin:auto;
-}
+.nav-btn.active{color:white;font-weight:bold;transform:scale(1.05);}
+.netbar{position:fixed;bottom:0;width:100%;background:#020617;color:#22c55e;font-size:12px;padding:6px;border-top:1px solid #1e293b;white-space:nowrap;overflow:hidden;}
+.nettext{display:inline-block;animation:scroll 12s linear infinite;}
+@keyframes scroll{from{transform:translateX(100%);}to{transform:translateX(-100%);}}
+.shimmer{height:20px;background:linear-gradient(90deg,#111,#222,#111);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
+.loader{width:40px;height:40px;border:4px solid #1f4cff;border-top:4px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin:auto;}
 @keyframes spin{100%{transform:rotate(360deg);}}
-
-/* transaction list */
-.tx-list{
-  margin-top:10px;
-}
-.tx{
-  background:#111827;
-  padding:12px;border-radius:12px;
-  margin-bottom:8px;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.tx-list{margin-top:10px;}
+.tx{background:#111827;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
 .tx-left{display:flex;align-items:center;}
-.tx-icon{
-  width:32px;height:32px;border-radius:50%;
-  background:#1f4cff;display:flex;align-items:center;
-  justify-content:center;margin-right:10px;font-size:14px;
-}
+.tx-icon{width:32px;height:32px;border-radius:50%;background:#1f4cff;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:14px;}
 .tx small{color:#94a3b8;}
 .tx-success{color:#22c55e;}
 .tx-pending{color:#facc15;}
 .tx-failed{color:#ef4444;}
-
-/* QR code */
-#walletQR{
-  margin-top:15px;
-  display:flex;
-  justify-content:center;
-}
+#walletQR{margin-top:15px;display:flex;justify-content:center;}
 </style>
 </head>
 
@@ -313,8 +239,6 @@ input{
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-
-  // bottom-nav highlight
   document.querySelectorAll(".nav-btn").forEach(n=>n.classList.remove("active"));
   const navMap = {home:"home", profile:"profile", settings:"settings"};
   for(const btn of document.querySelectorAll(".nav-btn")){
@@ -323,18 +247,20 @@ function openPage(id){
 }
 
 /* LOGIN/PIN FUNCTIONS */
-function login(){
+async function login(){
   if(!username.value||!password.value){alert("Enter login");return;}
   localStorage.setItem("user",username.value);
   openPage("pinPage");
 }
-function savePin(){
+async function savePin(){
   if(pin.value.length<4){alert("PIN must be 4 digits");return;}
   localStorage.setItem("pin",pin.value);
+  await saveUserPin(localStorage.getItem("user"), pin.value);
   loadApp();
 }
-function unlock(){
-  if(unlockPin.value===localStorage.getItem("pin")) loadApp();
+async function unlock(){
+  const savedPin = await getUserPin(localStorage.getItem("user"));
+  if(unlockPin.value===savedPin) loadApp();
   else alert("Wrong PIN");
 }
 function loadApp(){
@@ -344,24 +270,13 @@ function loadApp(){
 function logout(){localStorage.clear();location.reload();}
 function changePin(){localStorage.removeItem("pin");openPage("pinPage");}
 function resetApp(){localStorage.clear();location.reload();}
-
-/* AUTO LOGIN */
 if(localStorage.getItem("user") && localStorage.getItem("pin")) openPage("unlockPage");
 
 /* WALLET ADDRESS */
 const walletAddress="0xPUT_YOUR_ADDRESS_HERE";
 walletAddress2.innerText=walletAddress;
 document.getElementById("walletAddress").innerText=walletAddress;
-
-// QR code
-new QRCode(document.getElementById("walletQR"), {
-    text: walletAddress,
-    width:150,
-    height:150,
-    colorDark:"#1f4cff",
-    colorLight:"#111827",
-    correctLevel: QRCode.CorrectLevel.H
-});
+new QRCode(document.getElementById("walletQR"), {text: walletAddress,width:150,height:150,colorDark:"#1f4cff",colorLight:"#111827",correctLevel: QRCode.CorrectLevel.H});
 
 /* ETH BALANCE */
 async function loadEthBalance(){
@@ -371,20 +286,13 @@ async function loadEthBalance(){
     const res = await fetch("https://cloudflare-eth.com", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        jsonrpc:"2.0",
-        method:"eth_getBalance",
-        params:[walletAddress,"latest"],
-        id:1
-      })
+      body: JSON.stringify({jsonrpc:"2.0",method:"eth_getBalance",params:[walletAddress,"latest"],id:1})
     });
     const data = await res.json();
-    
     let wei = 0;
     if(data && data.result && /^0x[0-9a-fA-F]+$/.test(data.result)){
       wei = parseInt(data.result,16);
     }
-    
     let eth = wei / 1e18;
     ethBal.innerText = eth.toFixed(6) + " ETH";
     balance.innerText = "$" + (eth*3200).toFixed(2);
@@ -392,28 +300,17 @@ async function loadEthBalance(){
     ethBal.innerText = "0.000000 ETH";
     balance.innerText = "$0.00";
     console.error("Error fetching ETH balance:", e);
-  }finally{
-    balanceLoader.style.display = "none";
-  }
+  }finally{balanceLoader.style.display = "none";}
 }
-loadEthBalance();
-setInterval(loadEthBalance,15000);
+loadEthBalance(); setInterval(loadEthBalance,15000);
 
 /* TRANSACTION HISTORY */
 const txList=document.getElementById("txList");
-const fakeTx=[
-  {t:"Received BTC",amt:"+0.002 BTC",s:"success"},
-  {t:"Sent ETH",amt:"-0.5 ETH",s:"pending"},
-  {t:"Received FCH",amt:"+1200 FCH",s:"success"},
-  {t:"Sent BTC",amt:"-0.001 BTC",s:"failed"}
-];
+const fakeTx=[{t:"Received BTC",amt:"+0.002 BTC",s:"success"},{t:"Sent ETH",amt:"-0.5 ETH",s:"pending"},{t:"Received FCH",amt:"+1200 FCH",s:"success"},{t:"Sent BTC",amt:"-0.001 BTC",s:"failed"}];
 fakeTx.forEach(tx=>{
   let d=document.createElement("div");
   d.className="tx";
-  d.innerHTML=`<div class="tx-left">
-  <div class="tx-icon">⇅</div>
-  <div>${tx.t}<br><small>Today</small></div></div>
-  <div class="tx-${tx.s}">${tx.amt}</div>`;
+  d.innerHTML=`<div class="tx-left"><div class="tx-icon">⇅</div><div>${tx.t}<br><small>Today</small></div></div><div class="tx-${tx.s}">${tx.amt}</div>`;
   txList.appendChild(d);
 });
 
@@ -421,15 +318,14 @@ fakeTx.forEach(tx=>{
 const feeds=["New block mined","Tx confirmed","Gas updated","Node synced","Validator signed"];
 setInterval(()=>netFeed.innerText=feeds[Math.floor(Math.random()*feeds.length)],3000);
 
-/* GLOBAL BUTTON ACTIVE FEEDBACK (optional toggle for all buttons) */
+/* BUTTON ACTIVE FEEDBACK */
 document.querySelectorAll(".btn").forEach(btn=>{
   btn.addEventListener("click", ()=>{
     document.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    setTimeout(()=>btn.classList.remove("active"),200); // flash active for 0.2s
+    setTimeout(()=>btn.classList.remove("active"),200);
   });
 });
 </script>
-
 </body>
   </html>
