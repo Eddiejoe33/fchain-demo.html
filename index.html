@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FChain Wallet Simulation</title>
+<title>FChain Wallet</title>
 
 <style>
 body{
@@ -12,9 +12,10 @@ body{
   font-family:Arial;
   margin:0;
 }
+
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;}
+h2{text-align:center;margin-top:5px;}
 
 input{
   width:100%;padding:12px;border-radius:8px;
@@ -33,63 +34,87 @@ input{
 }
 
 .bottom-nav{
-  position:fixed;bottom:0;width:100%;
+  position:fixed;bottom:25px;width:100%;
   display:flex;background:#020617;border-top:1px solid #1e293b;
 }
 .nav-btn{
   flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;
 }
 .nav-btn:hover{color:white;}
+
+/* Network bar */
+.netbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#020617;
+  color:#22c55e;
+  font-size:12px;
+  padding:6px;
+  border-top:1px solid #1e293b;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+.nettext{
+  display:inline-block;
+  animation:scroll 12s linear infinite;
+}
+
+@keyframes scroll{
+  from{transform:translateX(100%);}
+  to{transform:translateX(-100%);}
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div id="loginPage" class="page active">
-<h2>FChain Wallet Login</h2>
+<h2>FChain Wallet</h2>
 <input id="username" placeholder="Username">
 <input id="password" type="password" placeholder="Password">
 <button class="btn" onclick="login()">Login</button>
 </div>
 
-<!-- PIN SET PAGE -->
+<!-- PIN SET -->
 <div id="pinPage" class="page">
-<h2>Set Wallet PIN</h2>
-<input id="pin" type="password" placeholder="Create PIN">
-<button class="btn" onclick="savePin()">Save PIN</button>
+<h2>Create Security PIN</h2>
+<input id="pin" type="password" placeholder="Enter PIN">
+<button class="btn" onclick="savePin()">Continue</button>
 </div>
 
-<!-- PIN UNLOCK PAGE -->
+<!-- PIN UNLOCK -->
 <div id="unlockPage" class="page">
 <h2>Enter PIN</h2>
 <input id="unlockPin" type="password" placeholder="PIN">
-<button class="btn" onclick="unlock()">Unlock Wallet</button>
+<button class="btn" onclick="unlock()">Unlock</button>
 </div>
 
-<!-- HOME DASHBOARD -->
+<!-- HOME -->
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
 <h1 id="balance">$0.00</h1>
 
-<div class="card">BTC: 0.000000</div>
-<div class="card">ETH: 0.0000</div>
-<div class="card">FCH: 0</div>
+<div class="card">BTC: <span>0.000000</span></div>
+<div class="card">ETH: <span>0.0000</span></div>
+<div class="card">FCH: <span>0</span></div>
 
-<button class="btn" onclick="alert('Simulation only')">Send</button>
-<button class="btn" onclick="alert('Simulation only')">Buy</button>
-<button class="btn" onclick="alert('Simulation only')">Receive</button>
+<button class="btn">Send</button>
+<button class="btn">Buy</button>
+<button class="btn">Receive</button>
 </div>
 
-<!-- PROFILE PAGE -->
+<!-- PROFILE -->
 <div id="profile" class="page">
 <h2>Profile</h2>
 <div class="card">Username: <span id="profileName"></span></div>
-<div class="card">Account Type: Educational Demo</div>
+<div class="card">Account Type: Standard Wallet</div>
 <button class="btn" onclick="logout()">Logout</button>
 </div>
 
-<!-- SETTINGS PAGE -->
+<!-- SETTINGS -->
 <div id="settings" class="page">
 <h2>Settings</h2>
 <button class="btn" onclick="changePin()">Change PIN</button>
@@ -103,17 +128,22 @@ input{
   <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
+<!-- NETWORK BAR -->
+<div class="netbar">
+  <div id="netFeed" class="nettext">Connecting to blockchain network...</div>
+</div>
+
 <script>
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* LOGIN SYSTEM */
+/* LOGIN */
 function login(){
   let u=document.getElementById("username").value;
   let p=document.getElementById("password").value;
-  if(!u || !p){alert("Enter login details");return;}
+  if(!u||!p){alert("Enter login details");return;}
   localStorage.setItem("user",u);
   localStorage.setItem("pass",p);
   openPage("pinPage");
@@ -122,9 +152,8 @@ function login(){
 /* SAVE PIN */
 function savePin(){
   let pin=document.getElementById("pin").value;
-  if(pin.length<4){alert("PIN must be 4 digits");return;}
+  if(pin.length<4){alert("PIN must be at least 4 digits");return;}
   localStorage.setItem("pin",pin);
-  alert("PIN Saved");
   loadApp();
 }
 
@@ -134,11 +163,11 @@ function unlock(){
   if(p===localStorage.getItem("pin")){
     loadApp();
   }else{
-    alert("Wrong PIN");
+    alert("Incorrect PIN");
   }
 }
 
-/* LOAD APP AFTER LOGIN */
+/* LOAD APP */
 function loadApp(){
   openPage("home");
   document.getElementById("profileName").innerText=localStorage.getItem("user");
@@ -152,26 +181,41 @@ function changePin(){
 
 /* LOGOUT */
 function logout(){
-  localStorage.removeItem("user");
-  localStorage.removeItem("pass");
-  localStorage.removeItem("pin");
+  localStorage.clear();
   location.reload();
 }
 
-/* RESET WALLET */
+/* RESET */
 function resetApp(){
   localStorage.clear();
-  alert("Wallet Reset");
+  alert("Wallet reset completed");
   location.reload();
 }
 
-/* AUTO LOGIN CHECK */
+/* AUTO LOGIN */
 if(localStorage.getItem("user") && localStorage.getItem("pin")){
   openPage("unlockPage");
 }else if(localStorage.getItem("user")){
   openPage("pinPage");
 }
+
+/* NETWORK ACTIVITY FEED */
+const feeds=[
+"New block mined • Height 19,234,112",
+"Transaction confirmed • 0.42 ETH",
+"Node synced • Peer 102 connected",
+"Gas price updated • 32 gwei",
+"Block propagated across network",
+"Pending transaction broadcasted",
+"Validator signed block",
+"Smart contract execution completed"
+];
+
+setInterval(()=>{
+  let text=feeds[Math.floor(Math.random()*feeds.length)];
+  document.getElementById("netFeed").innerText=text;
+},4000);
 </script>
 
 </body>
-    </html>
+  </html>
