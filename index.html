@@ -2,379 +2,186 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial;
-  margin:0;
+body {
+    font-family: Arial, sans-serif;
+    background:#0b1220;
+    color:white;
+    margin:0;
 }
 
-.page{display:none;padding:15px;}
-.active{display:block;}
-
-h2{text-align:center;margin-top:10px;}
-
-.btn{
-  width:100%;
-  padding:14px;
-  background:#2563eb;
-  border:none;
-  border-radius:10px;
-  color:white;
-  font-size:16px;
-  margin-top:10px;
+.header {
+    padding:20px;
+    background:#101c33;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
 }
 
-.card{
-  background:#111827;
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
-  display:flex;
-  justify-content:space-between;
-  font-size:16px;
+.balance {
+    font-size:28px;
+    text-align:center;
+    margin-top:10px;
 }
 
-.back{
-  background:none;border:none;color:#38bdf8;font-size:16px;
+.wallet-box {
+    background:#131f3d;
+    padding:15px;
+    margin:15px;
+    border-radius:12px;
 }
 
-.bottom-nav{
-  position:fixed;bottom:0;width:100%;
-  display:flex;background:#020617;
-  border-top:1px solid #1e293b;
+.coin {
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid #1c2d52;
 }
 
-.nav-btn{
-  flex:1;text-align:center;padding:10px;
-  color:#94a3b8;font-size:14px;
-}
-.nav-btn:hover{color:white;}
-
-.qr-box{
-  width:180px;height:180px;background:#111;
-  border:2px solid #333;margin:20px auto;
-  display:flex;justify-content:center;align-items:center;
-  border-radius:12px;
+.btns {
+    display:flex;
+    justify-content:space-around;
+    margin:15px;
 }
 
-.address{text-align:center;font-size:13px;color:#94a3b8;}
-
-input{
-  width:100%;padding:12px;border-radius:8px;
-  border:none;background:#111827;color:white;font-size:16px;
+.btn {
+    background:#1f4cff;
+    padding:12px 18px;
+    border-radius:10px;
+    color:white;
+    text-align:center;
+    font-size:14px;
+    cursor:pointer;
 }
 
-.loader{
-  width:40px;height:40px;border:4px solid #2563eb;
-  border-top:4px solid transparent;border-radius:50%;
-  animation:spin 1s linear infinite;margin:20px auto;
+.btn:hover {
+    background:#4c74ff;
 }
 
-@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
-
-/* price flash */
-.up{color:#22c55e;}
-.down{color:#ef4444;}
-
-/* fake network bar */
-.netbar{
-  width:100%;height:6px;background:#111827;border-radius:10px;
-  overflow:hidden;margin-top:5px;
-}
-.netfill{
-  height:100%;background:#22c55e;width:20%;
-  transition:width 1s;
+.section {
+    display:none;
+    padding:15px;
 }
 
-/* BIOMETRIC ANIMATION */
-@keyframes pulse{
-  0%{box-shadow:0 0 0px #2563eb;}
-  50%{box-shadow:0 0 25px #2563eb;}
-  100%{box-shadow:0 0 0px #2563eb;}
+.bottom-nav {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    background:#101c33;
+    display:flex;
+    justify-content:space-around;
+    padding:10px 0;
 }
-.shake{
-  animation:shake 0.3s;
-}
-@keyframes shake{
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-5px);}
-  50%{transform:translateX(5px);}
-  75%{transform:translateX(-5px);}
-  100%{transform:translateX(0);}
+
+.nav-btn {
+    color:white;
+    font-size:14px;
+    cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔐 BIOMETRIC LOCK SCREEN -->
-<div id="lockScreen" class="page active">
-  <h2>FChain Wallet</h2>
-  <p style="text-align:center;margin-top:40px;">Unlock with Biometrics</p>
+<div class="header">FChain Wallet</div>
 
-  <div id="bioIcon" style="
-    width:150px;height:150px;border:3px solid #2563eb;
-    border-radius:50%;margin:40px auto;
-    display:flex;align-items:center;justify-content:center;
-    font-size:60px;animation:pulse 1.5s infinite;">🧬</div>
+<div class="balance">$12,450.22</div>
 
-  <p id="bioStatus" style="text-align:center;color:#94a3b8;">Touch fingerprint sensor</p>
-
-  <button class="btn" onclick="startBiometric()">Use Fingerprint</button>
-  <button class="btn" onclick="showPin()">Use PIN Instead</button>
+<div class="wallet-box">
+    <div class="coin">Bitcoin (BTC) <span>0.054 BTC</span></div>
+    <div class="coin">Ethereum (ETH) <span id="ethBalance">Loading...</span></div>
+    <div class="coin">FChain Token (FCH) <span>12,000 FCH</span></div>
 </div>
 
-<!-- 🔢 PIN SCREEN -->
-<div id="pinScreen" class="page">
-  <h2>Enter PIN</h2>
-  <input id="pinInput" type="password" maxlength="4" placeholder="••••">
-  <button class="btn" onclick="checkPin()">Unlock</button>
+<div class="btns">
+    <div class="btn" onclick="openPage('send')">Send</div>
+    <div class="btn" onclick="openPage('receive')">Receive</div>
+    <div class="btn" onclick="openPage('buy')">Buy</div>
 </div>
 
-<!-- HOME -->
-<div id="home" class="page">
-<h2>FChain Wallet</h2>
-
-<h1 id="totalBalance">$12,450.22</h1>
-<p id="syncText">🔄 Syncing blockchain...</p>
-
-<div class="card">BTC: <span id="btcBal">0.054000</span></div>
-<div class="card">ETH: <span id="ethBal">2.4000</span></div>
-<div class="card">FCH: <span id="fchBal">12000</span></div>
-
-<div class="netbar"><div id="netFill" class="netfill"></div></div>
-
-<button class="btn" onclick="openPage('send')">Send</button>
-<button class="btn" onclick="openPage('buy')">Buy</button>
-<button class="btn" onclick="openPage('receive')">Receive</button>
+<!-- SEND PAGE -->
+<div id="send" class="section">
+<h3>Send Crypto</h3>
+<input placeholder="Address" style="width:100%;padding:10px;"><br><br>
+<input placeholder="Amount" style="width:100%;padding:10px;"><br><br>
+<button class="btn">Confirm Send</button>
 </div>
 
-<!-- SEND -->
-<div id="send" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Send Crypto</h2>
-<div class="card" onclick="openPage('sendBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('sendETH')">Ethereum (ETH)</div>
+<!-- RECEIVE PAGE -->
+<div id="receive" class="section">
+<h3>Your Wallet Address</h3>
+<div id="walletAddress" style="font-size:12px;background:#000;padding:10px;border-radius:8px;">
+0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189
+</div>
 </div>
 
-<div id="sendBTC" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Send BTC</h2>
-<input placeholder="Recipient Address">
-<input type="number" placeholder="Amount BTC">
-<button class="btn" onclick="openPage('sendConfirm')">Next</button>
+<!-- BUY PAGE -->
+<div id="buy" class="section">
+<h3>Buy Crypto</h3>
+<div class="wallet-box">Buy with Card</div>
+<div class="wallet-box">Buy with Bank Transfer</div>
 </div>
 
-<div id="sendETH" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Send ETH</h2>
-<input placeholder="Recipient Address">
-<input type="number" placeholder="Amount ETH">
-<button class="btn" onclick="openPage('sendConfirm')">Next</button>
+<!-- HOME / PROFILE / SETTINGS -->
+<div id="home" class="section" style="display:block;">
+<h3>Home Dashboard</h3>
+<p>Live blockchain viewer enabled.</p>
 </div>
 
-<div id="sendConfirm" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Confirm Transaction</h2>
-<div class="card">Gas Fee: $2.40</div>
-<button class="btn" onclick="openPage('sendProcess')">Send Now</button>
+<div id="profile" class="section">
+<h3>Profile</h3>
+<p>Username: Demo User</p>
+<p>Account Type: Educational Wallet</p>
 </div>
 
-<div id="sendProcess" class="page">
-<h2>Broadcasting Transaction...</h2>
-<div class="loader"></div>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<!-- BUY -->
-<div id="buy" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Buy Crypto</h2>
-<div class="card" onclick="openPage('buyBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('buyETH')">Ethereum (ETH)</div>
-</div>
-
-<div id="buyBTC" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Buy BTC</h2>
-<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
-<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
-</div>
-
-<div id="buyETH" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Buy ETH</h2>
-<button class="btn" onclick="openPage('buyAmount')">Credit Card</button>
-<button class="btn" onclick="openPage('buyAmount')">Bank Transfer</button>
-</div>
-
-<div id="buyAmount" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Enter Amount</h2>
-<input type="number" placeholder="$100">
-<button class="btn" onclick="openPage('buyProcess')">Buy Now</button>
-</div>
-
-<div id="buyProcess" class="page">
-<h2>Processing Payment...</h2>
-<div class="loader"></div>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<!-- RECEIVE -->
-<div id="receive" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
-</div>
-
-<div id="receiveBTC" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Your BTC Address</h2>
-<div class="qr-box">QR CODE</div>
-<p class="address">bc1qfchainwallet9987</p>
-<button class="btn">Copy Address</button>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<div id="receiveETH" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Your ETH Address</h2>
-<div class="qr-box">QR CODE</div>
-<p class="address">0xFCHAIN99871233</p>
-<button class="btn">Copy Address</button>
-<button class="btn" onclick="openHome()">Done</button>
-</div>
-
-<!-- PROFILE -->
-<div id="profile" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Profile</h2>
-<div class="card">Security</div>
-<div class="card">Backup Wallet</div>
-<div class="card">Wallet Info</div>
-</div>
-
-<!-- SETTINGS -->
-<div id="settings" class="page">
-<button class="back" onclick="goBack()">⬅ Back</button>
-<h2>Settings</h2>
-<div class="card">Network</div>
-<div class="card">Currency</div>
+<div id="settings" class="section">
+<h3>Settings</h3>
+<div class="wallet-box" onclick="alert('Security Settings')">Security</div>
+<div class="wallet-box" onclick="alert('Network Settings')">Network</div>
+<div class="wallet-box" onclick="alert('About FChain Wallet')">About</div>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-btn" onclick="openHome()">Home</div>
-  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
+    <div class="nav-btn" onclick="openPage('home')">Home</div>
+    <div class="nav-btn" onclick="openPage('profile')">Profile</div>
+    <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-let historyStack=["home"];
-
-function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  historyStack.push(id);
+// PAGE NAVIGATION
+function openPage(page){
+    let pages = document.querySelectorAll(".section");
+    pages.forEach(p=>p.style.display="none");
+    document.getElementById(page).style.display="block";
 }
 
-function goBack(){
-  historyStack.pop();
-  let last=historyStack[historyStack.length-1] || "home";
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(last).classList.add("active");
-}
+// REAL ETH MAINNET LIVE BALANCE VIEWER (NO PRIVATE KEY)
+const address = "0xYOUR_REAL_ETH_ADDRESS_HERE"; // CHANGE THIS
 
-function openHome(){
-  historyStack=["home"];
-  openPage("home");
-}
-
-/* FAKE BLOCKCHAIN LIVE */
-let btc=0.054, eth=2.4, fch=12000;
-let btcPrice=62000, ethPrice=3200, fchPrice=0.012;
-
-function fakeBlockchain(){
-  let old=parseFloat(document.getElementById("totalBalance").innerText.replace("$",""));
-
-  btc += (Math.random()-0.5)*0.0002;
-  eth += (Math.random()-0.5)*0.01;
-  fch += (Math.random()-0.5)*40;
-
-  btcPrice += (Math.random()-0.5)*50;
-  ethPrice += (Math.random()-0.5)*10;
-
-  document.getElementById("btcBal").innerText=btc.toFixed(6);
-  document.getElementById("ethBal").innerText=eth.toFixed(4);
-  document.getElementById("fchBal").innerText=Math.floor(fch);
-
-  let total=(btc*btcPrice)+(eth*ethPrice)+(fch*fchPrice);
-  let el=document.getElementById("totalBalance");
-  el.innerText="$"+total.toFixed(2);
-  el.className = total>old ? "up" : "down";
-
-  document.getElementById("netFill").style.width=(10+Math.random()*90)+"%";
-}
-
-let dots=0;
-setInterval(()=>{
-  dots=(dots+1)%4;
-  document.getElementById("syncText").innerText="🔄 Syncing blockchain"+ ".".repeat(dots);
-},500);
-
-setInterval(fakeBlockchain,2000);
-
-/* BIOMETRIC SYSTEM */
-let attempts=0;
-let correctPin="1234";
-
-function startBiometric(){
-  let status=document.getElementById("bioStatus");
-  let icon=document.getElementById("bioIcon");
-  status.innerText="Scanning fingerprint...";
-  icon.innerHTML="🔍";
-
-  setTimeout(()=>{
-    let success=Math.random()>0.3;
-    if(success){
-      status.innerText="Fingerprint recognized ✅";
-      icon.innerHTML="✔️";
-      setTimeout(unlockWallet,1000);
-    }else{
-      attempts++;
-      status.innerText="Fingerprint not recognized ❌";
-      icon.classList.add("shake");
-      setTimeout(()=>icon.classList.remove("shake"),300);
-      if(attempts>=3) status.innerText="Too many attempts. Use PIN.";
-    }
-  },1500);
-}
-
-function unlockWallet(){
-  document.getElementById("lockScreen").classList.remove("active");
-  openHome();
-}
-
-function showPin(){
-  document.getElementById("lockScreen").classList.remove("active");
-  openPage("pinScreen");
-}
-
-function checkPin(){
-  if(document.getElementById("pinInput").value===correctPin){
-    unlockWallet();
-  }else{
-    alert("Wrong PIN");
-  }
-}
+fetch("https://cloudflare-eth.com", {
+  method:"POST",
+  headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({
+    jsonrpc:"2.0",
+    method:"eth_getBalance",
+    params:[address,"latest"],
+    id:1
+  })
+})
+.then(res=>res.json())
+.then(data=>{
+    let wei = parseInt(data.result,16);
+    let eth = wei / 1e18;
+    document.getElementById("ethBalance").innerText = eth.toFixed(4) + " ETH";
+})
+.catch(()=> {
+    document.getElementById("ethBalance").innerText = "0.0000 ETH";
+});
 </script>
 
 </body>
-  </html>
+</html>
