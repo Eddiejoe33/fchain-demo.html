@@ -3,185 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FChain Wallet</title>
+<title>FChain Wallet Simulation</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background:#0b1220;
-    color:white;
-    margin:0;
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+  margin:0;
+}
+.page{display:none;padding:15px;}
+.active{display:block;}
+h2{text-align:center;}
+
+input{
+  width:100%;padding:12px;border-radius:8px;
+  border:none;background:#111827;color:white;font-size:16px;
+  margin-top:10px;
 }
 
-.header {
-    padding:20px;
-    background:#101c33;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
+.btn{
+  width:100%;padding:14px;background:#2563eb;border:none;
+  border-radius:10px;color:white;font-size:16px;margin-top:10px;
 }
 
-.balance {
-    font-size:28px;
-    text-align:center;
-    margin-top:10px;
+.card{
+  background:#111827;padding:12px;border-radius:12px;
+  margin-top:10px;display:flex;justify-content:space-between;
 }
 
-.wallet-box {
-    background:#131f3d;
-    padding:15px;
-    margin:15px;
-    border-radius:12px;
+.bottom-nav{
+  position:fixed;bottom:0;width:100%;
+  display:flex;background:#020617;border-top:1px solid #1e293b;
 }
-
-.coin {
-    display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid #1c2d52;
+.nav-btn{
+  flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;
 }
-
-.btns {
-    display:flex;
-    justify-content:space-around;
-    margin:15px;
-}
-
-.btn {
-    background:#1f4cff;
-    padding:12px 18px;
-    border-radius:10px;
-    color:white;
-    text-align:center;
-    font-size:14px;
-    cursor:pointer;
-}
-
-.btn:hover {
-    background:#4c74ff;
-}
-
-.section {
-    display:none;
-    padding:15px;
-}
-
-.bottom-nav {
-    position:fixed;
-    bottom:0;
-    width:100%;
-    background:#101c33;
-    display:flex;
-    justify-content:space-around;
-    padding:10px 0;
-}
-
-.nav-btn {
-    color:white;
-    font-size:14px;
-    cursor:pointer;
-}
+.nav-btn:hover{color:white;}
 </style>
 </head>
 
 <body>
 
-<div class="header">FChain Wallet</div>
-
-<div class="balance">$12,450.22</div>
-
-<div class="wallet-box">
-    <div class="coin">Bitcoin (BTC) <span>0.054 BTC</span></div>
-    <div class="coin">Ethereum (ETH) <span id="ethBalance">Loading...</span></div>
-    <div class="coin">FChain Token (FCH) <span>12,000 FCH</span></div>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+<h2>FChain Wallet Login</h2>
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password">
+<button class="btn" onclick="login()">Login</button>
 </div>
 
-<div class="btns">
-    <div class="btn" onclick="openPage('send')">Send</div>
-    <div class="btn" onclick="openPage('receive')">Receive</div>
-    <div class="btn" onclick="openPage('buy')">Buy</div>
+<!-- PIN SET PAGE -->
+<div id="pinPage" class="page">
+<h2>Set Wallet PIN</h2>
+<input id="pin" type="password" placeholder="Create PIN">
+<button class="btn" onclick="savePin()">Save PIN</button>
 </div>
 
-<!-- SEND PAGE -->
-<div id="send" class="section">
-<h3>Send Crypto</h3>
-<input placeholder="Address" style="width:100%;padding:10px;"><br><br>
-<input placeholder="Amount" style="width:100%;padding:10px;"><br><br>
-<button class="btn">Confirm Send</button>
+<!-- PIN UNLOCK PAGE -->
+<div id="unlockPage" class="page">
+<h2>Enter PIN</h2>
+<input id="unlockPin" type="password" placeholder="PIN">
+<button class="btn" onclick="unlock()">Unlock Wallet</button>
 </div>
 
-<!-- RECEIVE PAGE -->
-<div id="receive" class="section">
-<h3>Your Wallet Address</h3>
-<div id="walletAddress" style="font-size:12px;background:#000;padding:10px;border-radius:8px;">
-0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189
-</div>
+<!-- HOME DASHBOARD -->
+<div id="home" class="page">
+<h2>FChain Wallet</h2>
+<h1 id="balance">$0.00</h1>
+
+<div class="card">BTC: 0.000000</div>
+<div class="card">ETH: 0.0000</div>
+<div class="card">FCH: 0</div>
+
+<button class="btn" onclick="alert('Simulation only')">Send</button>
+<button class="btn" onclick="alert('Simulation only')">Buy</button>
+<button class="btn" onclick="alert('Simulation only')">Receive</button>
 </div>
 
-<!-- BUY PAGE -->
-<div id="buy" class="section">
-<h3>Buy Crypto</h3>
-<div class="wallet-box">Buy with Card</div>
-<div class="wallet-box">Buy with Bank Transfer</div>
+<!-- PROFILE PAGE -->
+<div id="profile" class="page">
+<h2>Profile</h2>
+<div class="card">Username: <span id="profileName"></span></div>
+<div class="card">Account Type: Educational Demo</div>
+<button class="btn" onclick="logout()">Logout</button>
 </div>
 
-<!-- HOME / PROFILE / SETTINGS -->
-<div id="home" class="section" style="display:block;">
-<h3>Home Dashboard</h3>
-<p>Live blockchain viewer enabled.</p>
-</div>
-
-<div id="profile" class="section">
-<h3>Profile</h3>
-<p>Username: Demo User</p>
-<p>Account Type: Educational Wallet</p>
-</div>
-
-<div id="settings" class="section">
-<h3>Settings</h3>
-<div class="wallet-box" onclick="alert('Security Settings')">Security</div>
-<div class="wallet-box" onclick="alert('Network Settings')">Network</div>
-<div class="wallet-box" onclick="alert('About FChain Wallet')">About</div>
+<!-- SETTINGS PAGE -->
+<div id="settings" class="page">
+<h2>Settings</h2>
+<button class="btn" onclick="changePin()">Change PIN</button>
+<button class="btn" onclick="resetApp()">Reset Wallet</button>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-    <div class="nav-btn" onclick="openPage('home')">Home</div>
-    <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-    <div class="nav-btn" onclick="openPage('settings')">Settings</div>
+  <div class="nav-btn" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
+  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-// PAGE NAVIGATION
-function openPage(page){
-    let pages = document.querySelectorAll(".section");
-    pages.forEach(p=>p.style.display="none");
-    document.getElementById(page).style.display="block";
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-// REAL ETH MAINNET LIVE BALANCE VIEWER (NO PRIVATE KEY)
-const address = "0xYOUR_REAL_ETH_ADDRESS_HERE"; // CHANGE THIS
+/* LOGIN SYSTEM */
+function login(){
+  let u=document.getElementById("username").value;
+  let p=document.getElementById("password").value;
+  if(!u || !p){alert("Enter login details");return;}
+  localStorage.setItem("user",u);
+  localStorage.setItem("pass",p);
+  openPage("pinPage");
+}
 
-fetch("https://cloudflare-eth.com", {
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({
-    jsonrpc:"2.0",
-    method:"eth_getBalance",
-    params:[address,"latest"],
-    id:1
-  })
-})
-.then(res=>res.json())
-.then(data=>{
-    let wei = parseInt(data.result,16);
-    let eth = wei / 1e18;
-    document.getElementById("ethBalance").innerText = eth.toFixed(4) + " ETH";
-})
-.catch(()=> {
-    document.getElementById("ethBalance").innerText = "0.0000 ETH";
-});
+/* SAVE PIN */
+function savePin(){
+  let pin=document.getElementById("pin").value;
+  if(pin.length<4){alert("PIN must be 4 digits");return;}
+  localStorage.setItem("pin",pin);
+  alert("PIN Saved");
+  loadApp();
+}
+
+/* UNLOCK */
+function unlock(){
+  let p=document.getElementById("unlockPin").value;
+  if(p===localStorage.getItem("pin")){
+    loadApp();
+  }else{
+    alert("Wrong PIN");
+  }
+}
+
+/* LOAD APP AFTER LOGIN */
+function loadApp(){
+  openPage("home");
+  document.getElementById("profileName").innerText=localStorage.getItem("user");
+}
+
+/* CHANGE PIN */
+function changePin(){
+  localStorage.removeItem("pin");
+  openPage("pinPage");
+}
+
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("user");
+  localStorage.removeItem("pass");
+  localStorage.removeItem("pin");
+  location.reload();
+}
+
+/* RESET WALLET */
+function resetApp(){
+  localStorage.clear();
+  alert("Wallet Reset");
+  location.reload();
+}
+
+/* AUTO LOGIN CHECK */
+if(localStorage.getItem("user") && localStorage.getItem("pin")){
+  openPage("unlockPage");
+}else if(localStorage.getItem("user")){
+  openPage("pinPage");
+}
 </script>
 
 </body>
-</html>
+    </html>
