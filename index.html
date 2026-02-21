@@ -5,221 +5,97 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
 
-<!-- QR Code library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-<!-- Firebase SDK -->
+<!-- Firebase -->
 <script type="module">
-  // Import Firebase modules
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
-    authDomain: "fchainwallet-a353d.firebaseapp.com",
-    projectId: "fchainwallet-a353d",
-    storageBucket: "fchainwallet-a353d.appspot.com",
-    messagingSenderId: "194040190119",
-    appId: "1:194040190119:web:843ea9ed014a80e52f3782"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
+  authDomain: "fchainwallet-a353d.firebaseapp.com",
+  projectId: "fchainwallet-a353d",
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // Default balances
-  function getDefaultBalances() {
-    return { btc: 0.000000, eth: 0.000000, fch: 0 };
-  }
-
-  // Load balances for username
-  async function loadUserBalances(username){
-    try{
-      const docRef = doc(db, "wallets", username);
-      const docSnap = await getDoc(docRef);
-      if(docSnap.exists()){
-        return docSnap.data();
-      } else {
-        const defaultBal = getDefaultBalances();
-        await setDoc(docRef, defaultBal);
-        return defaultBal;
-      }
-    }catch(e){
-      console.error("Error loading balances:", e);
-      return getDefaultBalances();
-    }
-  }
-
-  // Display balances in HTML
-  function displayBalances(bal){
-    document.querySelector(".token:nth-of-type(1) div:nth-of-type(2)").innerText = bal.btc.toFixed(6) + " BTC";
-    document.querySelector("#ethBal").innerText = bal.eth.toFixed(6) + " ETH";
-    document.querySelector(".token:nth-of-type(3) div:nth-of-type(2)").innerText = bal.fch + " FCH";
-    const total = bal.eth * 3200 + bal.btc * 40000 + bal.fch * 0.01; // fake USD
-    document.getElementById("balance").innerText = "$" + total.toFixed(2);
-  }
-
-  // Save globally for later use
-  window.loadUserBalances = loadUserBalances;
-  window.displayBalances = displayBalances;
-
+window.loadUserBalances = async function(username){
+  const ref = doc(db,"wallets",username);
+  const snap = await getDoc(ref);
+  if(snap.exists()) return snap.data();
+  const data = {btc:0,eth:0,fch:0};
+  await setDoc(ref,data);
+  return data;
+}
 </script>
 
 <style>
-/* [Your previous CSS here, same as before] */
 body{background:#0b1220;color:white;font-family:Arial;margin:0;}
-.page{display:none;padding:15px;}.active{display:block;}h2{text-align:center;margin-top:5px;font-size:20px;font-weight:bold;}
-input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;color:white;font-size:16px;margin-top:10px;}
-.btn{width:100%;padding:14px;background:#1f4cff;border:none;border-radius:12px;color:white;font-size:16px;margin-top:10px;font-weight:bold;cursor:pointer;transition: transform 0.1s, background 0.1s, box-shadow 0.1s;}
-.btn:active,.btn.active{background:#3a60ff;transform:scale(0.97);box-shadow:0 0 10px #1f4cff;}
-.card{background:#111827;padding:14px;border-radius:14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:16px;}
-.balance-card{background:#101c33;padding:20px;border-radius:18px;text-align:center;margin-bottom:15px;}
-.balance-card h1{font-size:30px;margin:5px 0;}
-.balance-card p{color:#94a3b8;font-size:13px;}
-.token{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid #1c2d52;}
-.token img{width:30px;height:30px;border-radius:50%;margin-right:10px;}
-.token-left{display:flex;align-items:center;}
-.bottom-nav{position:fixed;bottom:25px;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
-.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;cursor:pointer;transition: color 0.2s, transform 0.1s;}
-.nav-btn:hover{color:white;}.nav-btn.active{color:white;font-weight:bold;transform:scale(1.05);}
-.netbar{position:fixed;bottom:0;width:100%;background:#020617;color:#22c55e;font-size:12px;padding:6px;border-top:1px solid #1e293b;white-space:nowrap;overflow:hidden;}
-.nettext{display:inline-block;animation:scroll 12s linear infinite;}
-@keyframes scroll{from{transform:translateX(100%);}to{transform:translateX(-100%);}}
-.shimmer{height:20px;background:linear-gradient(90deg,#111,#222,#111);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;}
-.loader{width:40px;height:40px;border:4px solid #1f4cff;border-top:4px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin:auto;}
-@keyframes spin{100%{transform:rotate(360deg);}}
-.tx-list{margin-top:10px;}
-.tx{background:#111827;padding:12px;border-radius:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.tx-left{display:flex;align-items:center;}
-.tx-icon{width:32px;height:32px;border-radius:50%;background:#1f4cff;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:14px;}
-.tx small{color:#94a3b8;}
-.tx-success{color:#22c55e;}
-.tx-pending{color:#facc15;}
-.tx-failed{color:#ef4444;}
-#walletQR{margin-top:15px;display:flex;justify-content:center;}
+.page{display:none;padding:15px;}
+.active{display:block;}
+input{width:100%;padding:12px;margin-top:10px;background:#111827;border:none;color:white;}
+.btn{width:100%;padding:14px;margin-top:10px;background:#1f4cff;border:none;color:white;font-weight:bold;}
 </style>
 </head>
 
 <body>
-<!-- [All your previous HTML pages here, same as your last index.html] -->
 
-<!-- LOGIN -->
 <div id="loginPage" class="page active">
-<h2>FChain Wallet</h2>
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
+<h2>Login</h2>
+<input id="username">
+<input id="password" type="password">
 <button class="btn" onclick="login()">Login</button>
 </div>
 
-<!-- PIN -->
 <div id="pinPage" class="page">
-<h2>Create Security PIN</h2>
-<input id="pin" type="password" placeholder="Enter PIN">
+<h2>Create PIN</h2>
+<input id="pin" type="password">
 <button class="btn" onclick="savePin()">Continue</button>
 </div>
 
-<div id="unlockPage" class="page">
-<h2>Enter PIN</h2>
-<input id="unlockPin" type="password" placeholder="PIN">
-<button class="btn" onclick="unlock()">Unlock</button>
-</div>
-
-<!-- HOME, ASSETS, TRANSACTIONS, SEND, BUY, RECEIVE, PROFILE, SETTINGS -->
-<!-- Keep everything same as your last working HTML, including wallet QR -->
-
 <div id="home" class="page">
-<div class="balance-card">
-  <p>Total Balance</p>
-  <h1 id="balance">$0.00</h1>
-  <div id="balanceLoader" class="shimmer"></div>
-</div>
-<div class="card"><b>Assets</b></div>
-<div class="token"><div class="token-left"><img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png"><div>Bitcoin</div></div><div>0.000000 BTC</div></div>
-<div class="token"><div class="token-left"><img src="https://cryptologos.cc/logos/ethereum-eth-logo.png"><div>Ethereum</div></div><div id="ethBal"><div class="shimmer"></div></div></div>
-<div class="token"><div class="token-left"><img src="https://via.placeholder.com/30"><div>FChain Token</div></div><div>0 FCH</div></div>
-<button class="btn" onclick="openPage('send')">Send</button>
-<button class="btn" onclick="openPage('buy')">Buy</button>
-<button class="btn" onclick="openPage('receive')">Receive</button>
-<div class="card"><b>Recent Transactions</b></div>
-<div class="tx-list" id="txList"></div>
+<h2>Welcome <span id="profileName"></span></h2>
+<p>Total Balance: <span id="balance">$0.00</span></p>
+<button class="btn" onclick="logout()">Logout</button>
 </div>
 
-<!-- Bottom nav -->
-<div class="bottom-nav">
-  <div class="nav-btn" onclick="openPage('home')">Home</div>
-  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
-</div>
+<script>
+// PAGE SWITCH
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-<!-- NETWORK FEED -->
-<div class="netbar">
-  <div id="netFeed" class="nettext">Connecting to blockchain...</div>
-</div>
+// LOGIN
+function login(){
+  let u=username.value;
+  let p=password.value;
+  if(!u||!p){alert("Enter details");return;}
+  localStorage.setItem("user",u);
+  openPage("pinPage");
+}
 
-<script type="module">
-  // All your previous JS for page navigation, login, PIN, QR, ETH balance
-  // Adjusted loadApp() to use Firebase
-  async function loadApp(){
-    const username = localStorage.getItem("user");
-    openPage("home");
-    profileName.innerText = username;
-    const balances = await loadUserBalances(username);
-    displayBalances(balances);
-  }
+// PIN
+function savePin(){
+  localStorage.setItem("pin",pin.value);
+  loadApp();
+}
 
-  function login(){
-    if(!username.value||!password.value){alert("Enter login");return;}
-    localStorage.setItem("user",username.value);
-    openPage("pinPage");
-  }
-  function savePin(){
-    if(pin.value.length<4){alert("PIN must be 4 digits");return;}
-    localStorage.setItem("pin",pin.value);
-    loadApp();
-  }
-  function unlock(){
-    if(unlockPin.value===localStorage.getItem("pin")) loadApp();
-    else alert("Wrong PIN");
-  }
-  function logout(){localStorage.clear();location.reload();}
-  function changePin(){localStorage.removeItem("pin");openPage("pinPage");}
-  function resetApp(){localStorage.clear();location.reload();}
+// LOAD APP
+async function loadApp(){
+  openPage("home");
+  profileName.innerText = localStorage.getItem("user");
+  const bal = await loadUserBalances(localStorage.getItem("user"));
+  balance.innerText = "$" + (bal.btc*40000 + bal.eth*3000).toFixed(2);
+}
 
-  if(localStorage.getItem("user") && localStorage.getItem("pin")) openPage("unlockPage");
-
-  const walletAddress="0xPUT_YOUR_ADDRESS_HERE";
-  walletAddress2.innerText = walletAddress;
-  document.getElementById("walletAddress").innerText = walletAddress;
-
-  // QR code
-  new QRCode(document.getElementById("walletQR"), {
-      text: walletAddress,
-      width:150,
-      height:150,
-      colorDark:"#1f4cff",
-      colorLight:"#111827",
-      correctLevel: QRCode.CorrectLevel.H
-  });
-
-  // Fake transaction history
-  const txList=document.getElementById("txList");
-  const fakeTx=[
-    {t:"Received BTC",amt:"+0.002 BTC",s:"success"},
-    {t:"Sent ETH",amt:"-0.5 ETH",s:"pending"},
-    {t:"Received FCH",amt:"+1200 FCH",s:"success"},
-    {t:"Sent BTC",amt:"-0.001 BTC",s:"failed"}
-  ];
-  fakeTx.forEach(tx=>{
-    let d=document.createElement("div");
-    d.className="tx";
-    d.innerHTML=`<div class="tx-left"><div class="tx-icon">⇅</div><div>${tx.t}<br><small>Today</small></div></div><div class="tx-${tx.s}">${tx.amt}</div>`;
-    txList.appendChild(d);
-  });
-
-  // Network feed
-  const feeds=["New block mined","Tx confirmed","Gas updated","Node synced","Validator signed"];
-  setInterval(()=>netFeed.innerText=feeds[Math.floor(Math.random()*feeds.length)],3000);
-
+// LOGOUT
+function logout(){
+  localStorage.clear();
+  location.reload();
+}
 </script>
 
 </body>
