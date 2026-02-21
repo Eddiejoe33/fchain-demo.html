@@ -36,75 +36,94 @@ h2{text-align:center;margin-top:10px;}
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
 <div style="display:flex;gap:5px;">
-<button class="btn" onclick="openPage('buy')">Buy</button>
-<button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('buyMarkets')">Buy</button>
+<button class="btn" onclick="openPage('sellAssets')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
-
-<h1 id="totalBalance">$0.00</h1>
-<div class="card">BTC <span id="btcBal">0.000000</span></div>
-<div class="card">ETH <span id="ethBal">0.000000</span></div>
-<div class="card">FCH <span id="fchBal">0</span></div>
+<h1>$0.00</h1>
+<div class="card">BTC <span>0.000000</span></div>
+<div class="card">ETH <span>0.000000</span></div>
+<div class="card">FCH <span>0</span></div>
 </div>
 
-<!-- BUY -->
-<div id="buy" class="page">
+<!-- BUY FLOW -->
+<div id="buyMarkets" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Buy Crypto</h2>
+<h2>Markets</h2>
 <div class="card" onclick="openPage('buyBTC')">Bitcoin (BTC)</div>
 <div class="card">Ethereum (ETH)</div>
 </div>
 
 <div id="buyBTC" class="page">
-<button class="btn" onclick="openPage('buy')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Bitcoin</h2>
-<div class="card">Payment Method: Card</div>
-<div class="card">Amount: $100</div>
-<button class="btn" onclick="openPage('buyConfirm')">Continue</button>
+<div class="card" onclick="openPage('buyPayment')">Amount: $100</div>
+</div>
+
+<div id="buyPayment" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Payment Method</h2>
+<div class="card" onclick="openPage('buyConfirm')">Card</div>
+<div class="card">Bank Transfer</div>
 </div>
 
 <div id="buyConfirm" class="page">
-<button class="btn" onclick="openPage('buyBTC')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Confirm Purchase</h2>
-<div class="card">BTC will be credited after confirmations</div>
+<div class="card">Processing blockchain confirmation...</div>
 <button class="btn">Confirm</button>
 </div>
 
-<!-- SELL -->
-<div id="sell" class="page">
+<!-- SELL FLOW -->
+<div id="sellAssets" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Sell Crypto</h2>
+<h2>Your Assets</h2>
 <div class="card" onclick="openPage('sellBTC')">Bitcoin (BTC)</div>
 <div class="card">Ethereum (ETH)</div>
 </div>
 
 <div id="sellBTC" class="page">
-<button class="btn" onclick="openPage('sell')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Bitcoin</h2>
-<div class="card">Withdraw to Bank</div>
-<button class="btn">Continue</button>
+<div class="card" onclick="openPage('sellBank')">Withdraw</div>
+</div>
+
+<div id="sellBank" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Bank</h2>
+<div class="card">Chase Bank</div>
+<div class="card">Bank of America</div>
+<div class="card">GTBank</div>
+<button class="btn" onclick="openPage('sellConfirm')">Continue</button>
+</div>
+
+<div id="sellConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Withdrawal</h2>
+<div class="card">Transaction queued</div>
+<button class="btn">Confirm</button>
 </div>
 
 <!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
 <div id="receiveBTC" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Your BTC Address</h2>
+<h2>BTC Address</h2>
 <div class="qr-box">QR PLACEHOLDER</div>
-<p class="address">PASTE_YOUR_BTC_ADDRESS_HERE</p>
+<p class="address">PASTE_BTC_ADDRESS_HERE</p>
 </div>
 
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Your ETH Address</h2>
+<h2>ETH Address</h2>
 <div class="qr-box">QR PLACEHOLDER</div>
-<p class="address">PASTE_YOUR_ETH_ADDRESS_HERE</p>
+<p class="address">PASTE_ETH_ADDRESS_HERE</p>
 </div>
 
 <!-- PROFILE -->
@@ -126,34 +145,34 @@ h2{text-align:center;margin-top:10px;}
 </div>
 
 <div id="setProfile" class="page">
-<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Profile Settings</h2>
 <div class="card">Change Name</div>
 <div class="card">Change Email</div>
 </div>
 
 <div id="setSecurity" class="page">
-<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Security</h2>
 <div class="card">Change Password</div>
 <div class="card">Enable PIN</div>
 </div>
 
 <div id="setDisplay" class="page">
-<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Display</h2>
 <div class="card">Dark Mode</div>
 <div class="card">Currency</div>
 </div>
 
 <div id="setNetwork" class="page">
-<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Network</h2>
 <div class="card">Mainnet</div>
 <div class="card">Testnet</div>
 </div>
 
-<!-- LIVE NETWORK PANEL -->
+<!-- LIVE NETWORK BAR -->
 <div class="net-panel">
 <div id="liveNetText">Connecting to network...</div>
 <div class="netbar"><div id="liveNetFill" class="netfill"></div></div>
@@ -167,56 +186,41 @@ h2{text-align:center;margin-top:10px;}
 </div>
 
 <script>
-// LOGIN (ANY EMAIL + SAVED)
+// LOGIN
 function loginUser(){
-  const email = emailInput.value.trim();
-  const pass = passwordInput.value.trim();
-  if(!email || !pass){alert("Enter email & password");return;}
-  localStorage.setItem("walletUser", email);
-  profileUser.innerText = email.split("@")[0];
-  profileEmail.innerText = email;
-  openPage("home");
+ const e=emailInput.value.trim();
+ const p=passwordInput.value.trim();
+ if(!e||!p){alert("Enter email & password");return;}
+ localStorage.setItem("walletUser",e);
+ profileUser.innerText=e.split("@")[0];
+ profileEmail.innerText=e;
+ openPage("home");
 }
-
-window.onload = ()=>{
-  const u = localStorage.getItem("walletUser");
-  if(u){
-    profileUser.innerText = u.split("@")[0];
-    profileEmail.innerText = u;
-    openPage("home");
-  }
+window.onload=()=>{
+ const u=localStorage.getItem("walletUser");
+ if(u){profileUser.innerText=u.split("@")[0];profileEmail.innerText=u;openPage("home");}
 };
 
-// NAVIGATION
+// NAV
 let historyStack=["loginPage"];
 function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  historyStack.push(id);
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ historyStack.push(id);
 }
 function goBack(){
-  historyStack.pop();
-  let last = historyStack[historyStack.length-1] || "home";
-  openPage(last);
+ historyStack.pop();
+ let last=historyStack[historyStack.length-1]||"home";
+ openPage(last);
 }
 
-// LIVE NETWORK SIMULATION
-const netMsgs=[
-"Syncing blocks...",
-"Gas fee updated",
-"Tax calculated",
-"Validators confirming...",
-"Confirmations 1/12",
-"Confirmations 6/12",
-"Confirmations 12/12",
-"Transaction finalized",
-"Network stable"
-];
+// NETWORK SIM
+const netMsgs=["Syncing blocks...","Gas fee updated","Confirmations 1/12","Confirmations 6/12","Finalizing...","Transaction confirmed"];
 let i=0;
 setInterval(()=>{
-  liveNetText.innerText = netMsgs[i];
-  liveNetFill.style.width = Math.random()*100+"%";
-  i=(i+1)%netMsgs.length;
+ liveNetText.innerText=netMsgs[i];
+ liveNetFill.style.width=Math.random()*100+"%";
+ i=(i+1)%netMsgs.length;
 },1500);
 </script>
 
