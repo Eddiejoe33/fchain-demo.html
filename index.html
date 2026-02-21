@@ -5,42 +5,12 @@
 <title>FChain Wallet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <!-- QR Code -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
-  authDomain: "fchainwallet-a353d.firebaseapp.com",
-  projectId: "fchainwallet-a353d",
-  storageBucket: "fchainwallet-a353d.appspot.com",
-  messagingSenderId: "194040190119",
-  appId: "1:194040190119:web:843ea9ed014a80e52f3782"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export async function loadUser(username) {
-  const docRef = doc(db, "wallets", username);
-  const docSnap = await getDoc(docRef);
-  if(docSnap.exists()) return docSnap.data();
-  else {
-    const defaultData = {btc:0, eth:0, fch:0, pin:""};
-    await setDoc(docRef, defaultData);
-    return defaultData;
-  }
-}
-
-export async function updateUser(username, balances) {
-  const docRef = doc(db, "wallets", username);
-  await setDoc(docRef, balances);
-}
-</script>
 
 <style>
 body{margin:0;font-family:Arial;background:#0b1220;color:white;}
@@ -95,30 +65,6 @@ input{width:100%;padding:12px;border-radius:10px;border:none;background:#111827;
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<!-- SEND -->
-<div id="send" class="page">
-<button class="btn back" onclick="goBack()">⬅ Back</button>
-<h2>Send Crypto</h2>
-<div class="card" onclick="openPage('sendBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('sendETH')">Ethereum (ETH)</div>
-</div>
-
-<div id="sendBTC" class="page">
-<button class="btn back" onclick="goBack()">⬅ Back</button>
-<h2>Send BTC</h2>
-<input id="sendBTCAddr" placeholder="Recipient Address">
-<input id="sendBTCAmount" type="number" placeholder="Amount BTC">
-<button class="btn" onclick="sendCrypto('btc')">Send</button>
-</div>
-
-<div id="sendETH" class="page">
-<button class="btn back" onclick="goBack()">⬅ Back</button>
-<h2>Send ETH</h2>
-<input id="sendETHAddr" placeholder="Recipient Address">
-<input id="sendETHAmount" type="number" placeholder="Amount ETH">
-<button class="btn" onclick="sendCrypto('eth')">Send</button>
-</div>
-
 <!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn back" onclick="goBack()">⬅ Back</button>
@@ -154,74 +100,82 @@ input{width:100%;padding:12px;border-radius:10px;border:none;background:#111827;
 <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
-<script type="module">
-import { loadUser, updateUser } from "./index.html";
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
+  authDomain: "fchainwallet-a353d.firebaseapp.com",
+  projectId: "fchainwallet-a353d",
+  storageBucket: "fchainwallet-a353d.appspot.com",
+  messagingSenderId: "194040190119",
+  appId: "1:194040190119:web:843ea9ed014a80e52f3782"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 let currentUser="";
 let balances={btc:0,eth:0,fch:0,pin:""};
 let historyStack=["home"];
 
 function openPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-historyStack.push(id);
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  historyStack.push(id);
 }
 
 function goBack(){
-historyStack.pop();
-let last=historyStack[historyStack.length-1]||"home";
-openPage(last);
+  historyStack.pop();
+  let last=historyStack[historyStack.length-1]||"home";
+  openPage(last);
 }
 
+// Login/Register
 async function login(){
-const username=document.getElementById("usernameInput").value.trim();
-const pin=document.getElementById("pinInput").value.trim();
-if(!username||!pin){alert("Enter username and PIN");return;}
-currentUser=username;
-const data=await loadUser(username);
-if(!data.pin) data.pin=pin;
-if(data.pin!==pin){alert("Wrong PIN");return;}
-balances=data;
-document.getElementById("profileUsername").innerText=currentUser;
-updateDisplay();
-openPage("home");
+  const username=document.getElementById("usernameInput").value.trim();
+  const pin=document.getElementById("pinInput").value.trim();
+  if(!username||!pin){alert("Enter username and PIN");return;}
+  currentUser=username;
 
-// generate QR
-new QRCode(document.getElementById("btcQR"),{text:"bc1fchain000",width:160,height:160,colorDark:"#1f4cff",colorLight:"#111827",correctLevel:QRCode.CorrectLevel.H});
-new QRCode(document.getElementById("ethQR"),{text:"0xFCHAIN000",width:160,height:160,colorDark:"#1f4cff",colorLight:"#111827",correctLevel:QRCode.CorrectLevel.H});
+  const docRef=db.collection("wallets").doc(username);
+  const docSnap=await docRef.get();
+  if(!docSnap.exists){
+    // register new
+    await docRef.set({btc:0,eth:0,fch:0,pin:pin});
+    balances={btc:0,eth:0,fch:0,pin:pin};
+  } else {
+    balances=docSnap.data();
+    if(balances.pin!==pin){alert("Wrong PIN");return;}
+  }
+
+  document.getElementById("profileUsername").innerText=currentUser;
+  updateDisplay();
+  openPage("home");
+
+  // QR codes
+  new QRCode(document.getElementById("btcQR"),{text:"bc1fchain000",width:160,height:160,colorDark:"#1f4cff",colorLight:"#111827",correctLevel:QRCode.CorrectLevel.H});
+  new QRCode(document.getElementById("ethQR"),{text:"0xFCHAIN000",width:160,height:160,colorDark:"#1f4cff",colorLight:"#111827",correctLevel:QRCode.CorrectLevel.H});
 }
 
 function updateDisplay(){
-document.getElementById("btcBal").innerText=balances.btc.toFixed(6)+" BTC";
-document.getElementById("ethBal").innerText=balances.eth.toFixed(6)+" ETH";
-document.getElementById("fchBal").innerText=Math.floor(balances.fch)+" FCH";
-const total=balances.btc*62000+balances.eth*3200+balances.fch*0.012;
-document.getElementById("totalBalance").innerText="$"+total.toFixed(2);
-}
-
-// send crypto
-async function sendCrypto(type){
-const amt=parseFloat(document.getElementById(`send${type.toUpperCase()}Amount`).value);
-if(!amt||amt<=0){alert("Enter valid amount");return;}
-if(balances[type]<amt){alert("Insufficient balance");return;}
-balances[type]-=amt;
-await updateUser(currentUser,balances);
-updateDisplay();
-alert(type.toUpperCase()+" sent!");
-openPage("home");
+  document.getElementById("btcBal").innerText=balances.btc.toFixed(6)+" BTC";
+  document.getElementById("ethBal").innerText=balances.eth.toFixed(6)+" ETH";
+  document.getElementById("fchBal").innerText=Math.floor(balances.fch)+" FCH";
+  const total=balances.btc*62000+balances.eth*3200+balances.fch*0.012;
+  document.getElementById("totalBalance").innerText="$"+total.toFixed(2);
 }
 
 // Fake blockchain feed
 const feeds=["New block mined","Tx confirmed","Gas updated","Node synced","Validator signed"];
 setInterval(()=>{document.getElementById("netFeed").innerText=feeds[Math.floor(Math.random()*feeds.length)];},3000);
 
-// Fake blockchain balances animation
+// Fake balances animation
 setInterval(()=>{
-balances.btc+=Math.random()*0.0001-0.00005;
-balances.eth+=Math.random()*0.01-0.005;
-balances.fch+=Math.random()*5-2.5;
-updateDisplay();
+  balances.btc+=Math.random()*0.0001-0.00005;
+  balances.eth+=Math.random()*0.01-0.005;
+  balances.fch+=Math.random()*5-2.5;
+  updateDisplay();
 },2000);
+
 </script>
+
 </body>
   </html>
