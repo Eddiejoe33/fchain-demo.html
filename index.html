@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FChain Demo Wallet</title>
+<title>FChain Wallet Demo</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
@@ -14,12 +14,18 @@ input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;}
 .btn:hover{background:#1e40af;}
 .card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
+.top-actions{display:flex;gap:8px;margin-bottom:10px;}
 .bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
 .nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;}
 .nav-btn:hover{color:white;}
-.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin:5px 0;}
+
+.net-panel{background:#020617;padding:6px;font-size:12px;border-top:1px solid #1e293b;}
+.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin-top:5px;}
 .netfill{height:100%;background:#22c55e;width:0%;transition:width 1s;}
-video{width:100%;border-radius:12px;}
+
+#netLogs{height:60px;overflow:hidden;font-size:11px;color:#22c55e;}
+
+video{width:100%;border-radius:12px;border:2px solid #1e293b;}
 </style>
 </head>
 <body>
@@ -30,33 +36,51 @@ video{width:100%;border-radius:12px;}
 <input id="emailInput" placeholder="Email">
 <input id="passwordInput" type="password" placeholder="Password">
 <button class="btn" onclick="loginUser()">Login</button>
-<p style="text-align:center;font-size:12px;color:#94a3b8;">Demo mode: Any email works</p>
+<p style="text-align:center;font-size:12px;color:#94a3b8;">Demo Mode: Any email & password works</p>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
 
-<h1 id="totalBalance">$0.00</h1>
-
-<div class="card">BTC Balance: <span id="btcBal">0.000000</span></div>
-<div class="card">ETH Balance: <span id="ethBal">0.000000</span></div>
-<div class="card">FCH Token: <span id="fchBal">0</span></div>
-
+<div class="top-actions">
 <button class="btn" onclick="openPage('receive')">Receive</button>
-<button class="btn" onclick="openPage('profile')">Profile</button>
-<button class="btn" onclick="resetDemo()">Reset Demo Login</button>
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
 </div>
 
-<!-- RECEIVE (REAL CAMERA QR SCANNER) -->
+<h1 id="totalBalance">$0.00</h1>
+<div class="card">BTC: <span id="btcBal">0.000000</span></div>
+<div class="card">ETH: <span id="ethBal">0.000000</span></div>
+<div class="card">FCH Token: <span id="fchBal">0</span></div>
+
+<button class="btn" onclick="openPage('profile')">Profile</button>
+<button class="btn" onclick="resetDemo()">Reset Demo</button>
+</div>
+
+<!-- RECEIVE CAMERA (NO QR SCAN) -->
 <div id="receive" class="page">
-<button class="btn" onclick="stopScan();openPage('home')">⬅ Back</button>
-<h2>Scan QR Wallet Address</h2>
+<button class="btn" onclick="stopCamera();openPage('home')">⬅ Back</button>
+<h2>Wallet Receive Scanner</h2>
+<p style="font-size:12px;color:#94a3b8;text-align:center;">Scanning wallet address (demo mode)</p>
+<video id="camView" autoplay></video>
+<button class="btn" onclick="startCamera()">Start Camera</button>
+</div>
 
-<video id="qrVideo" autoplay></video>
-<p id="qrResult" style="text-align:center;color:#22c55e;"></p>
+<!-- BUY -->
+<div id="buy" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<div class="card">Buy BTC (Demo)</div>
+<div class="card">Buy ETH (Demo)</div>
+</div>
 
-<button class="btn" onclick="startScan()">Start QR Scanner</button>
+<!-- SELL -->
+<div id="sell" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>Sell Crypto</h2>
+<div class="card">Sell BTC (Demo)</div>
+<div class="card">Sell ETH (Demo)</div>
 </div>
 
 <!-- PROFILE -->
@@ -67,18 +91,19 @@ video{width:100%;border-radius:12px;}
 <div class="card">Email: <span id="profileEmail"></span></div>
 </div>
 
-<!-- NETWORK BAR ABOVE NAV -->
+<!-- NETWORK PANEL ABOVE NAV -->
+<div class="net-panel">
+<div id="netLogs"></div>
 <div class="netbar"><div id="netFill" class="netfill"></div></div>
+</div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('receive')">Receive</div>
+  <div class="nav-btn" onclick="openPage('buy')">Buy</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
 </div>
-
-<!-- QR Scanner Library -->
-<script src="https://unpkg.com/jsqr/dist/jsQR.js"></script>
 
 <script>
 // -------- NAVIGATION --------
@@ -109,8 +134,6 @@ window.onload = function(){
 function loadUser(email){
   profileUser.innerText = email.split("@")[0];
   profileEmail.innerText = email;
-
-  // ZERO balances (fresh wallet)
   btcBal.innerText = "0.000000";
   ethBal.innerText = "0.000000";
   fchBal.innerText = "0";
@@ -119,48 +142,45 @@ function loadUser(email){
 
 function resetDemo(){
   localStorage.clear();
-  alert("Reset done");
   location.reload();
 }
 
-// -------- NETWORK MOVING BAR --------
+// -------- LIVE CAMERA (NO SCAN) --------
+let camStream;
+async function startCamera(){
+  camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+  camView.srcObject = camStream;
+}
+function stopCamera(){
+  if(camStream){
+    camStream.getTracks().forEach(t=>t.stop());
+  }
+}
+
+// -------- REALISTIC NETWORK SIMULATION --------
+const logs = [
+"Connecting to FChain mainnet...",
+"Syncing block headers...",
+"Gas fee updated: 0.00021 ETH",
+"Transaction pool synced",
+"Validator consensus reached",
+"Tax fee: 0.3% applied",
+"Confirmations: 1/12",
+"Confirmations: 2/12",
+"Confirmations: 6/12",
+"Transaction finalized",
+"Network stable",
+"Broadcasting mempool update"
+];
+
+let logIndex = 0;
 setInterval(()=>{
   netFill.style.width = Math.floor(Math.random()*100)+"%";
+
+  netLogs.innerHTML = logs[logIndex] + "<br>" + netLogs.innerHTML;
+  logIndex++;
+  if(logIndex >= logs.length) logIndex = 0;
 },2000);
-
-// -------- REAL QR SCANNER (CAMERA) --------
-let videoStream;
-
-async function startScan(){
-  const video = document.getElementById("qrVideo");
-
-  videoStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
-  video.srcObject = videoStream;
-
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  function scan(){
-    if(video.readyState === video.HAVE_ENOUGH_DATA){
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video,0,0,canvas.width,canvas.height);
-      const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-      const code = jsQR(imageData.data, canvas.width, canvas.height);
-      if(code){
-        qrResult.innerText = "Scanned: " + code.data;
-      }
-    }
-    requestAnimationFrame(scan);
-  }
-  scan();
-}
-
-function stopScan(){
-  if(videoStream){
-    videoStream.getTracks().forEach(track=>track.stop());
-  }
-}
 </script>
 
 </body>
