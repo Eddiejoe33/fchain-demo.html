@@ -2,15 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
@@ -24,140 +22,201 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Default balance
-function defaultBalance(){
-  return {btc:0, eth:0, fch:0};
+// Default balances
+function getDefaultBalances() {
+  return { btc:0.000000, eth:0.000000, fch:0, pin:"" };
 }
 
-// Load user
-async function loadUser(username){
-  const ref = doc(db,"wallets",username);
-  const snap = await getDoc(ref);
-
-  if(!snap.exists()){
-    await setDoc(ref, defaultBalance());
-    return defaultBalance();
+// Load user from Firebase
+export async function loadUser(username) {
+  const docRef = doc(db, "wallets", username);
+  const docSnap = await getDoc(docRef);
+  if(docSnap.exists()) return docSnap.data();
+  else {
+    const defaultData = getDefaultBalances();
+    await setDoc(docRef, defaultData);
+    return defaultData;
   }
-  return snap.data();
 }
 
-// Save balance (ADMIN)
-async function adminSetBalance(username, btc, eth, fch){
-  const ref = doc(db,"wallets",username);
-  await updateDoc(ref,{btc, eth, fch});
-  alert("Balance Updated");
+// Update user balances
+export async function updateUser(username, balances) {
+  const docRef = doc(db, "wallets", username);
+  await setDoc(docRef, balances);
 }
 
 window.loadUser = loadUser;
-window.adminSetBalance = adminSetBalance;
+window.updateUser = updateUser;
 </script>
 
 <style>
-body{background:#0b1220;color:white;font-family:Arial;margin:0;}
-.page{display:none;padding:15px;}
-.active{display:block;}
-input{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#111827;color:white;}
-button{width:100%;padding:12px;margin-top:10px;background:#1f4cff;border:none;border-radius:10px;color:white;font-weight:bold;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;}
-.nav-btn{flex:1;padding:10px;text-align:center;color:#94a3b8;cursor:pointer;}
-.nav-btn.active{color:white;font-weight:bold;}
+body{background:#0f172a;color:white;font-family:Arial;margin:0;}
+.page{display:none;padding:15px;}.active{display:block;}
+h2{text-align:center;margin-top:10px;}
+input{width:100%;padding:12px;border-radius:8px;border:none;background:#111827;color:white;font-size:16px;margin-top:10px;}
+.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;transition:0.1s;}
+.btn:active{transform:scale(0.97);}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;display:flex;justify-content:space-between;font-size:16px;}
+.back{background:none;border:none;color:#38bdf8;font-size:16px;}
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;cursor:pointer;}
+.nav-btn:hover{color:white;}
+.loader{width:40px;height:40px;border:4px solid #2563eb;border-top:4px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin:20px auto;}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.netbar{width:100%;height:6px;background:#111827;border-radius:10px;margin-top:5px;overflow:hidden;}
+.netfill{height:100%;background:#22c55e;width:10%;transition:width 1s;}
+.up{color:#22c55e;}.down{color:#ef4444;}
+.qr-box{width:180px;height:180px;background:#111;border:2px solid #333;margin:20px auto;display:flex;justify-content:center;align-items:center;border-radius:12px;}
+.address{text-align:center;font-size:13px;color:#94a3b8;}
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN PAGE -->
 <div id="loginPage" class="page active">
-<h2>FChain Wallet Login</h2>
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password (not real)">
-<button onclick="login()">Login</button>
+<h2>FChain Wallet</h2>
+<input id="usernameInput" placeholder="Username">
+<input id="pinInput" type="password" placeholder="PIN">
+<button class="btn" onclick="login()">Login / Register</button>
 </div>
 
-<!-- HOME -->
+<!-- HOME PAGE -->
 <div id="home" class="page">
-<h2>Total Balance</h2>
-<h1 id="balance">$0.00</h1>
-
+<h2>FChain Wallet</h2>
+<h1 id="totalBalance">$0.00</h1>
+<p id="syncText">🔄 Syncing blockchain...</p>
 <div class="card">BTC: <span id="btcBal">0.000000</span></div>
 <div class="card">ETH: <span id="ethBal">0.000000</span></div>
 <div class="card">FCH: <span id="fchBal">0</span></div>
-
-<button onclick="openPage('profile')">Profile</button>
-<button onclick="openPage('admin')">Admin Panel</button>
+<div class="netbar"><div id="netFill" class="netfill"></div></div>
+<button class="btn" onclick="openPage('send')">Send</button>
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<!-- PROFILE -->
+<!-- SEND PAGE -->
+<div id="send" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send Crypto</h2>
+<div class="card" onclick="openPage('sendBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('sendETH')">Ethereum (ETH)</div>
+</div>
+
+<div id="sendBTC" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send BTC</h2>
+<input id="sendBTCAddr" placeholder="Recipient Address">
+<input id="sendBTCAmount" type="number" placeholder="Amount BTC">
+<button class="btn" onclick="sendCrypto('btc')">Send</button>
+</div>
+
+<div id="sendETH" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Send ETH</h2>
+<input id="sendETHAddr" placeholder="Recipient Address">
+<input id="sendETHAmount" type="number" placeholder="Amount ETH">
+<button class="btn" onclick="sendCrypto('eth')">Send</button>
+</div>
+
+<!-- RECEIVE PAGE -->
+<div id="receive" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<div class="card">BTC Address: <span>bc1fchain000</span></div>
+<div class="card">ETH Address: <span>0xFCHAIN000</span></div>
+</div>
+
+<!-- PROFILE PAGE -->
 <div id="profile" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-<div class="card">User: <span id="profileUser"></span></div>
-<div class="card">Wallet: <span id="walletAddr"></span></div>
-<button onclick="openPage('home')">Back</button>
+<div class="card">Username: <span id="profileUsername"></span></div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="admin" class="page">
-<h2>Admin Balance Editor</h2>
-<input id="adminUser" placeholder="Username">
-<input id="adminBTC" placeholder="BTC Balance">
-<input id="adminETH" placeholder="ETH Balance">
-<input id="adminFCH" placeholder="FCH Balance">
-<button onclick="adminUpdate()">Update Balance</button>
-<button onclick="openPage('home')">Back</button>
+<!-- SETTINGS PAGE -->
+<div id="settings" class="page">
+<button class="back" onclick="goBack()">⬅ Back</button>
+<h2>Settings</h2>
+<div class="card">Network</div>
+<div class="card">Currency</div>
 </div>
 
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-btn active" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('admin')">Admin</div>
+  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
-<script>
-// Page navigation
+<script type="module">
+import { loadUser, updateUser } from "./index.html";
+
+let currentUser="";
+let balances={btc:0,eth:0,fch:0,pin:""};
+let historyStack=["home"];
+
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  const page=document.getElementById(id);
+  if(page) page.classList.add("active");
+  historyStack.push(id);
 }
 
-// Login (fake)
-async function login(){
-  const u = username.value;
-  if(!u){alert("Enter username"); return;}
-  localStorage.setItem("user",u);
-  await loadWallet();
+function goBack(){
+  historyStack.pop();
+  let last=historyStack[historyStack.length-1] || "home";
+  openPage(last);
 }
 
-// Load wallet
-async function loadWallet(){
-  const u = localStorage.getItem("user");
-  const data = await loadUser(u);
+function login(){
+  const user=document.getElementById("usernameInput").value.trim();
+  const pin=document.getElementById("pinInput").value.trim();
+  if(!user || !pin){alert("Enter username and PIN"); return;}
+  currentUser=user;
+  loadUser(user).then(data=>{
+    if(!data.pin) data.pin=pin;
+    if(data.pin!==pin){alert("Wrong PIN"); return;}
+    balances=data;
+    document.getElementById("profileUsername").innerText=currentUser;
+    updateDisplay();
+    openPage("home");
+  });
+}
 
-  btcBal.innerText = data.btc.toFixed(6);
-  ethBal.innerText = data.eth.toFixed(6);
-  fchBal.innerText = data.fch;
+function updateDisplay(){
+  document.getElementById("btcBal").innerText=balances.btc.toFixed(6);
+  document.getElementById("ethBal").innerText=balances.eth.toFixed(6);
+  document.getElementById("fchBal").innerText=Math.floor(balances.fch);
+  const total=balances.btc*62000 + balances.eth*3200 + balances.fch*0.012;
+  document.getElementById("totalBalance").innerText="$"+total.toFixed(2);
+}
 
-  balance.innerText = "$0.00"; // force 0 display
-
-  profileUser.innerText = u;
-  walletAddr.innerText = "0xDEMO_" + u;
-
+// Send crypto
+function sendCrypto(type){
+  const amt=parseFloat(document.getElementById(`send${type.toUpperCase()}Amount`).value);
+  if(!amt || amt<=0){alert("Enter valid amount"); return;}
+  if(balances[type]<amt){alert("Insufficient balance"); return;}
+  balances[type]-=amt;
+  updateUser(currentUser, balances);
+  updateDisplay();
+  alert(type.toUpperCase()+" sent!");
   openPage("home");
 }
 
-// Admin update
-async function adminUpdate(){
-  await adminSetBalance(
-    adminUser.value,
-    parseFloat(adminBTC.value),
-    parseFloat(adminETH.value),
-    parseFloat(adminFCH.value)
-  );
-}
+// Fake blockchain animation
+setInterval(()=>{
+  balances.btc+=Math.random()*0.0001-0.00005;
+  balances.eth+=Math.random()*0.01-0.005;
+  balances.fch+=Math.random()*5-2.5;
+  updateDisplay();
+  document.getElementById("netFill").style.width=(10+Math.random()*90)+"%";
+},2000);
 
-// Auto login
-if(localStorage.getItem("user")) loadWallet();
+setInterval(()=>{
+  const dots=(new Date().getSeconds()%4);
+  document.getElementById("syncText").innerText="🔄 Syncing blockchain"+ ".".repeat(dots);
+},500);
 </script>
 
 </body>
-</html>
+  </html>
