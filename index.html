@@ -138,12 +138,40 @@ background:#020617;z-index:9999;padding:15px;display:none;
 <div id="settings" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openPage('setPin')">Set PIN</div>
-<div class="card" onclick="openPage('changePin')">Change PIN</div>
-<div class="card">Network Settings</div>
-<div class="card">Display Currency</div>
+<div class="card" onclick="openPage('setPin')">🔐 Set PIN</div>
+<div class="card" onclick="openPage('changePin')">🔁 Change PIN</div>
+<div class="card" onclick="openPage('networkSettings')">🌐 Network Settings</div>
+<div class="card" onclick="openPage('currencySettings')">💱 Display Currency</div>
+<div class="card" onclick="openPage('themeSettings')">🎨 Theme Mode</div>
 </div>
 
+<!-- NEW SETTINGS PAGES -->
+<div id="networkSettings" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Network Settings</h2>
+<div class="card" onclick="setNetwork('Mainnet')">Mainnet</div>
+<div class="card" onclick="setNetwork('Testnet')">Testnet</div>
+<div class="card" onclick="setNetwork('Custom RPC')">Custom RPC</div>
+<p id="netStatus"></p>
+</div>
+
+<div id="currencySettings" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Display Currency</h2>
+<div class="card" onclick="setCurrency('USD')">USD ($)</div>
+<div class="card" onclick="setCurrency('NGN')">NGN (₦)</div>
+<div class="card" onclick="setCurrency('EUR')">EUR (€)</div>
+<p id="curStatus"></p>
+</div>
+
+<div id="themeSettings" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Theme Mode</h2>
+<div class="card" onclick="setTheme('dark')">Dark Mode</div>
+<div class="card" onclick="setTheme('light')">Light Mode</div>
+</div>
+
+<!-- PIN -->
 <div id="setPin" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Set PIN</h2>
@@ -190,17 +218,7 @@ function loginUser(){
  }
 }
 
-window.onload=()=>{
- let u=localStorage.getItem("userEmail");
- if(u){profileUser.innerText=u.split("@")[0];profileEmail.innerText=u;openPage("home");}
-
- // Load saved balance
- totalBalance.innerText=localStorage.getItem("totalBal")||"$0.00";
- btcBal.innerText=localStorage.getItem("btcBal")||"0.000000";
- ethBal.innerText=localStorage.getItem("ethBal")||"0.000000";
-};
-
-// NAV
+// NAVIGATION
 let stack=["loginPage"];
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -214,7 +232,7 @@ function goBack(){
  document.getElementById(last).classList.add("active");
 }
 
-// BUY SELL
+// BUY / SELL
 let selectedToken="";
 function selectBuy(t){selectedToken=t; openPage("buyPay");}
 function confirmBuy(){ buyInfo.innerText="Buying "+selectedToken; openPage("buyConfirm");}
@@ -230,7 +248,45 @@ function changePin(){
  } else alert("Wrong PIN");
 }
 
-// FAKE NETWORK
+// SETTINGS FUNCTIONS
+function setNetwork(net){
+ localStorage.setItem("network", net);
+ netStatus.innerText="Network set to: "+net;
+ alert("Network changed to "+net);
+}
+
+function setCurrency(cur){
+ localStorage.setItem("currency", cur);
+ curStatus.innerText="Currency set to: "+cur;
+ alert("Currency changed to "+cur);
+}
+
+function setTheme(mode){
+ if(mode==="light"){
+  document.body.style.background="#f1f5f9";
+  document.body.style.color="black";
+ }else{
+  document.body.style.background="#0f172a";
+  document.body.style.color="white";
+ }
+ localStorage.setItem("theme", mode);
+ alert("Theme: "+mode);
+}
+
+// LOAD SAVED DATA
+window.onload=()=>{
+ let u=localStorage.getItem("userEmail");
+ if(u){profileUser.innerText=u.split("@")[0];profileEmail.innerText=u;openPage("home");}
+
+ totalBalance.innerText=localStorage.getItem("totalBal")||"$0.00";
+ btcBal.innerText=localStorage.getItem("btcBal")||"0.000000";
+ ethBal.innerText=localStorage.getItem("ethBal")||"0.000000";
+
+ let theme=localStorage.getItem("theme");
+ if(theme==="light"){setTheme("light");}
+};
+
+// FAKE NETWORK TICKER
 const msgs=["Confirming block #","Broadcasting TX","Syncing nodes","Pending mempool"];
 setInterval(()=>{
  ticker.innerText=msgs[Math.floor(Math.random()*msgs.length)]+" "+Math.floor(Math.random()*999999);
