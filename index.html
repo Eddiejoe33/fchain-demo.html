@@ -43,7 +43,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="card">ETH: 0.000000</div>
 </div>
 
-<!-- BUY FLOW -->
+<!-- BUY -->
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
@@ -65,7 +65,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="alert('Transaction Submitted')">Confirm</button>
 </div>
 
-<!-- SELL FLOW -->
+<!-- SELL -->
 <div id="sell" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Crypto</h2>
@@ -100,14 +100,14 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>BTC Address</h2>
 <div class="qr-box">Scanning...</div>
-<p>[bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf]</p>
+<p>[PASTE_REAL_BTC_ADDRESS_HERE]</p>
 </div>
 
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>ETH Address</h2>
 <div class="qr-box">Scanning...</div>
-<p>[0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189]</p>
+<p>[PASTE_REAL_ETH_ADDRESS_HERE]</p>
 </div>
 
 <!-- PROFILE -->
@@ -143,7 +143,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="changePin()">Change</button>
 </div>
 
-<!-- NETWORK CONFIRMATION TICKER -->
+<!-- NETWORK CONFIRMATION -->
 <div id="ticker" class="ticker">Connecting to blockchain network...</div>
 
 <!-- BOTTOM NAV -->
@@ -184,7 +184,7 @@ function goBack(){
  document.getElementById(last).classList.add("active");
 }
 
-// BUY / SELL FLOW
+// BUY / SELL
 let selectedToken="";
 function selectBuy(t){selectedToken=t; openPage("buyPay");}
 function confirmBuy(){ buyInfo.innerText="Buying "+selectedToken+" via selected method"; openPage("buyConfirm");}
@@ -208,5 +208,31 @@ setInterval(()=>{
  ticker.innerText=m+" "+Math.floor(Math.random()*999999);
 },2000);
 </script>
+
+<!-- 🔥 ERUDA DEV CONSOLE (5 TAP TO OPEN) -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+let tapCount=0;
+let tapTimer=null;
+
+document.addEventListener("click",()=>{
+  tapCount++;
+
+  if(!tapTimer){
+    tapTimer=setTimeout(()=>{
+      tapCount=0;
+      tapTimer=null;
+    },2000);
+  }
+
+  if(tapCount>=5){
+    tapCount=0;
+    tapTimer=null;
+    eruda.init();
+    alert("Dev Console Opened");
+  }
+});
+</script>
+
 </body>
   </html>
