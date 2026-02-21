@@ -4,27 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
-
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;}
-input{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;}
-.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;}
+h2{text-align:center;margin-top:10px;}
+.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
-.top-actions{display:flex;gap:8px;margin-bottom:10px;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
 .bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
-.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;cursor:pointer;}
 .nav-btn:hover{color:white;}
-
-.net-panel{background:#020617;padding:6px;font-size:12px;border-top:1px solid #1e293b;}
-.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin-top:5px;}
+.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin:5px 0;}
 .netfill{height:100%;background:#22c55e;width:0%;transition:width 1s;}
-#netLogs{height:80px;overflow:hidden;font-size:11px;color:#22c55e;}
-
-video{width:100%;border-radius:12px;border:2px solid #1e293b;}
+.qr-box{width:180px;height:180px;background:#111;border:2px solid #333;margin:20px auto;display:flex;justify-content:center;align-items:center;border-radius:12px;}
+.address{text-align:center;font-size:13px;color:#94a3b8;}
+.net-panel{position:fixed;bottom:50px;width:100%;background:#020617;padding:8px;border-top:1px solid #1e293b;font-size:13px;}
 </style>
 </head>
 <body>
@@ -40,154 +35,189 @@ video{width:100%;border-radius:12px;border:2px solid #1e293b;}
 <!-- HOME -->
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
-
-<div class="top-actions">
-<button class="btn" onclick="openPage('receive')">Receive</button>
+<div style="display:flex;gap:5px;">
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
 <h1 id="totalBalance">$0.00</h1>
-<div class="card">BTC: <span id="btcBal">0.000000</span></div>
-<div class="card">ETH: <span id="ethBal">0.000000</span></div>
-<div class="card">FCH Token: <span id="fchBal">0</span></div>
-</div>
-
-<!-- RECEIVE -->
-<div id="receive" class="page">
-<button class="btn" onclick="stopCamera();openPage('home')">⬅ Back</button>
-<h2>Receive Crypto</h2>
-
-<video id="camView" autoplay></video>
-<button class="btn" onclick="startCamera()">Start Camera</button>
-
-<div class="card">
-BTC Address:<br>
-<span>0xPASTE_REAL_BTC_ADDRESS_HERE</span>
-</div>
-
-<div class="card">
-ETH Address:<br>
-<span>0xPASTE_REAL_ETH_ADDRESS_HERE</span>
-</div>
+<div class="card">BTC <span id="btcBal">0.000000</span></div>
+<div class="card">ETH <span id="ethBal">0.000000</span></div>
+<div class="card">FCH <span id="fchBal">0</span></div>
 </div>
 
 <!-- BUY -->
 <div id="buy" class="page">
-<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('buyBTC')">Bitcoin (BTC)</div>
 <div class="card">Ethereum (ETH)</div>
+</div>
+
+<div id="buyBTC" class="page">
+<button class="btn" onclick="openPage('buy')">⬅ Back</button>
+<h2>Buy Bitcoin</h2>
+<div class="card">Payment Method: Card</div>
+<div class="card">Amount: $100</div>
+<button class="btn" onclick="openPage('buyConfirm')">Continue</button>
+</div>
+
+<div id="buyConfirm" class="page">
+<button class="btn" onclick="openPage('buyBTC')">⬅ Back</button>
+<h2>Confirm Purchase</h2>
+<div class="card">BTC will be credited after confirmations</div>
+<button class="btn">Confirm</button>
 </div>
 
 <!-- SELL -->
 <div id="sell" class="page">
-<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Crypto</h2>
-<div class="card">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('sellBTC')">Bitcoin (BTC)</div>
 <div class="card">Ethereum (ETH)</div>
+</div>
+
+<div id="sellBTC" class="page">
+<button class="btn" onclick="openPage('sell')">⬅ Back</button>
+<h2>Sell Bitcoin</h2>
+<div class="card">Withdraw to Bank</div>
+<button class="btn">Continue</button>
+</div>
+
+<!-- RECEIVE -->
+<div id="receive" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
+</div>
+
+<div id="receiveBTC" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Your BTC Address</h2>
+<div class="qr-box">QR PLACEHOLDER</div>
+<p class="address">PASTE_YOUR_BTC_ADDRESS_HERE</p>
+</div>
+
+<div id="receiveETH" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Your ETH Address</h2>
+<div class="qr-box">QR PLACEHOLDER</div>
+<p class="address">PASTE_YOUR_ETH_ADDRESS_HERE</p>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
-<button class="btn" onclick="openPage('home')">⬅ Back</button>
-<h2>User Profile</h2>
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Profile</h2>
 <div class="card">Username: <span id="profileUser"></span></div>
 <div class="card">Email: <span id="profileEmail"></span></div>
-<button class="btn" onclick="resetUser()">Reset Login</button>
-</div>
-
-<!-- NETWORK -->
-<div id="network" class="page">
-<button class="btn" onclick="openPage('home')">⬅ Back</button>
-<h2>Network Status</h2>
-<div id="netLogs"></div>
-<div class="netbar"><div id="netFill" class="netfill"></div></div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings" class="page">
-<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
+<div class="card" onclick="openPage('setProfile')">Profile</div>
+<div class="card" onclick="openPage('setSecurity')">Security</div>
+<div class="card" onclick="openPage('setDisplay')">Display</div>
+<div class="card" onclick="openPage('setNetwork')">Network</div>
+</div>
+
+<div id="setProfile" class="page">
+<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<h2>Profile Settings</h2>
+<div class="card">Change Name</div>
+<div class="card">Change Email</div>
+</div>
+
+<div id="setSecurity" class="page">
+<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<h2>Security</h2>
+<div class="card">Change Password</div>
+<div class="card">Enable PIN</div>
+</div>
+
+<div id="setDisplay" class="page">
+<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<h2>Display</h2>
+<div class="card">Dark Mode</div>
 <div class="card">Currency</div>
-<div class="card">Security</div>
-<div class="card">Network Configuration</div>
+</div>
+
+<div id="setNetwork" class="page">
+<button class="btn" onclick="openPage('settings')">⬅ Back</button>
+<h2>Network</h2>
+<div class="card">Mainnet</div>
+<div class="card">Testnet</div>
+</div>
+
+<!-- LIVE NETWORK PANEL -->
+<div class="net-panel">
+<div id="liveNetText">Connecting to network...</div>
+<div class="netbar"><div id="liveNetFill" class="netfill"></div></div>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="nav-btn" onclick="openPage('home')">Home</div>
-  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('network')">Network</div>
-  <div class="nav-btn" onclick="openPage('settings')">Settings</div>
+<div class="nav-btn" onclick="openPage('home')">Home</div>
+<div class="nav-btn" onclick="openPage('profile')">Profile</div>
+<div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-// PAGE NAVIGATION
-function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-// LOGIN SYSTEM (LOCAL STORAGE)
+// LOGIN (ANY EMAIL + SAVED)
 function loginUser(){
   const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  if(!email || !password){ alert("Enter email & password"); return; }
-  localStorage.setItem("userEmail", email);
-  loadUser(email);
+  const pass = passwordInput.value.trim();
+  if(!email || !pass){alert("Enter email & password");return;}
+  localStorage.setItem("walletUser", email);
+  profileUser.innerText = email.split("@")[0];
+  profileEmail.innerText = email;
   openPage("home");
 }
 
-window.onload = function(){
-  const email = localStorage.getItem("userEmail");
-  if(email){
-    loadUser(email);
+window.onload = ()=>{
+  const u = localStorage.getItem("walletUser");
+  if(u){
+    profileUser.innerText = u.split("@")[0];
+    profileEmail.innerText = u;
     openPage("home");
   }
 };
 
-function loadUser(email){
-  profileUser.innerText = email.split("@")[0];
-  profileEmail.innerText = email;
+// NAVIGATION
+let historyStack=["loginPage"];
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  historyStack.push(id);
+}
+function goBack(){
+  historyStack.pop();
+  let last = historyStack[historyStack.length-1] || "home";
+  openPage(last);
 }
 
-function resetUser(){
-  localStorage.clear();
-  location.reload();
-}
-
-// CAMERA
-let camStream;
-async function startCamera(){
-  camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
-  camView.srcObject = camStream;
-}
-function stopCamera(){
-  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); }
-}
-
-// NETWORK SIMULATION
-const logs = [
-"Connecting to mainnet...",
-"Syncing block headers...",
+// LIVE NETWORK SIMULATION
+const netMsgs=[
+"Syncing blocks...",
 "Gas fee updated",
-"Transaction pool synced",
-"Validator consensus reached",
-"Tax fee applied",
-"Confirmations: 1/12",
-"Confirmations: 6/12",
-"Confirmations: 12/12",
+"Tax calculated",
+"Validators confirming...",
+"Confirmations 1/12",
+"Confirmations 6/12",
+"Confirmations 12/12",
 "Transaction finalized",
 "Network stable"
 ];
-
-let logIndex=0;
+let i=0;
 setInterval(()=>{
-  netFill.style.width = Math.floor(Math.random()*100)+"%";
-  netLogs.innerHTML = logs[logIndex]+"<br>"+netLogs.innerHTML;
-  logIndex = (logIndex+1) % logs.length;
-},2000);
+  liveNetText.innerText = netMsgs[i];
+  liveNetFill.style.width = Math.random()*100+"%";
+  i=(i+1)%netMsgs.length;
+},1500);
 </script>
 
 </body>
