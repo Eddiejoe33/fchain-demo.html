@@ -5,35 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FChain Wallet</title>
 <style>
-body{
-  margin:0;font-family:Arial,sans-serif;background:#0f172a;color:white;
-}
+body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;margin-top:10px;}
-.btn{
-  width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;
-}
+h2{text-align:center;}
+.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
-.card{
-  background:#111827;padding:12px;border-radius:12px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;
-}
-.bottom-nav{
-  position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;
-}
-.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:14px;cursor:pointer;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;cursor:pointer;}
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;cursor:pointer;}
 .nav-btn:hover{color:white;}
-.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin:5px 0;}
-.netfill{height:100%;background:#22c55e;width:0%;transition:width 1s;}
-.qr-box{width:180px;height:180px;background:#111;border:2px solid #333;margin:20px auto;display:flex;justify-content:center;align-items:center;border-radius:12px;}
-.address{text-align:center;font-size:13px;color:#94a3b8;}
-.loader{width:40px;height:40px;border:4px solid #2563eb;border-top:4px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin:20px auto;}
-@keyframes spin{100%{transform:rotate(360deg);}}
+.ticker{position:fixed;bottom:45px;width:100%;background:#111827;padding:5px;font-size:12px;color:#22c55e;}
+.qr-box{width:180px;height:180px;background:#111;border:2px solid #333;margin:20px auto;display:flex;align-items:center;justify-content:center;border-radius:12px;}
+input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div id="loginPage" class="page active">
 <h2>FChain Wallet Login</h2>
 <input id="emailInput" placeholder="Email">
@@ -41,149 +30,183 @@ h2{text-align:center;margin-top:10px;}
 <button class="btn" onclick="loginUser()">Login</button>
 </div>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
-<div style="display:flex;justify-content:space-between;margin-top:10px;">
-<button class="btn" style="flex:1;margin-right:5px;" onclick="openPage('buy')">Buy</button>
-<button class="btn" style="flex:1;margin-right:5px;" onclick="openPage('sell')">Sell</button>
-<button class="btn" style="flex:1;" onclick="openPage('receive')">Receive</button>
+<div style="display:flex;gap:5px;">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
+<h1>$0.00</h1>
+<div class="card">BTC: 0.000000</div>
+<div class="card">ETH: 0.000000</div>
 </div>
 
-<h1 id="totalBalance">$0.00</h1>
-<div class="card">BTC: <span id="btcBal">0.000000</span></div>
-<div class="card">ETH: <span id="ethBal">0.000000</span></div>
-<div class="card">FCH: <span id="fchBal">0</span></div>
-<div class="netbar"><div id="netFill" class="netfill"></div></div>
-</div>
-
-<!-- BUY PAGE -->
+<!-- BUY FLOW -->
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card" onclick="showMarket('BTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="showMarket('ETH')">Ethereum (ETH)</div>
-<div id="marketDisplay"></div>
+<div class="card" onclick="selectBuy('BTC')">Bitcoin</div>
+<div class="card" onclick="selectBuy('ETH')">Ethereum</div>
 </div>
 
-<!-- SELL PAGE -->
+<div id="buyPay" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Payment</h2>
+<div class="card" onclick="confirmBuy()">Bank Transfer</div>
+<div class="card" onclick="confirmBuy()">Card Payment</div>
+</div>
+
+<div id="buyConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Purchase</h2>
+<p id="buyInfo"></p>
+<button class="btn" onclick="alert('Transaction Submitted')">Confirm</button>
+</div>
+
+<!-- SELL FLOW -->
 <div id="sell" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Crypto</h2>
-<div class="card" onclick="showMarket('BTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="showMarket('ETH')">Ethereum (ETH)</div>
-<div id="sellMarketDisplay"></div>
+<div class="card" onclick="selectSell('BTC')">Bitcoin</div>
+<div class="card" onclick="selectSell('ETH')">Ethereum</div>
 </div>
 
-<!-- RECEIVE PAGE -->
+<div id="sellBank" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Bank</h2>
+<div class="card" onclick="confirmSell()">Access Bank</div>
+<div class="card" onclick="confirmSell()">GTBank</div>
+<div class="card" onclick="confirmSell()">Opay</div>
+</div>
+
+<div id="sellConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Sell</h2>
+<p id="sellInfo"></p>
+<button class="btn" onclick="alert('Sell Order Placed')">Confirm</button>
+</div>
+
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin (BTC)</div>
-<div class="card" onclick="openPage('receiveETH')">Ethereum (ETH)</div>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
 <div id="receiveBTC" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Your BTC Address</h2>
-<div class="qr-box">📷 Scanning...</div>
-<p class="address">[Your BTC Address Here]</p>
-<button class="btn" onclick="alert('Copied BTC address')">Copy Address</button>
+<h2>BTC Address</h2>
+<div class="qr-box">Scanning...</div>
+<p>[bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf]</p>
 </div>
 
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Your ETH Address</h2>
-<div class="qr-box">📷 Scanning...</div>
-<p class="address">[Your ETH Address Here]</p>
-<button class="btn" onclick="alert('Copied ETH address')">Copy Address</button>
+<h2>ETH Address</h2>
+<div class="qr-box">Scanning...</div>
+<p>[0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189]</p>
 </div>
 
-<!-- PROFILE PAGE -->
+<!-- PROFILE -->
 <div id="profile" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Profile</h2>
-<div class="card">Username: <span id="profileUser"></span></div>
+<div class="card">User: <span id="profileUser"></span></div>
 <div class="card">Email: <span id="profileEmail"></span></div>
-<div class="card">Wallet Info</div>
 </div>
 
-<!-- EXPLORER PAGE -->
-<div id="explorer" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Network Explorer</h2>
-<p>Network transaction confirmations running...</p>
-<div class="netbar"><div id="netFillExplorer" class="netfill"></div></div>
-</div>
-
-<!-- SETTINGS PAGE -->
+<!-- SETTINGS -->
 <div id="settings" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card">Network</div>
-<div class="card">Currency</div>
+<div class="card" onclick="openPage('setPin')">Set PIN</div>
+<div class="card" onclick="openPage('changePin')">Change PIN</div>
+<div class="card">Network Settings</div>
+<div class="card">Display Currency</div>
 </div>
+
+<div id="setPin" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Set PIN</h2>
+<input id="newPin" type="password" placeholder="Enter PIN">
+<button class="btn" onclick="savePin()">Save</button>
+</div>
+
+<div id="changePin" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Change PIN</h2>
+<input id="oldPin" type="password" placeholder="Old PIN">
+<input id="newPin2" type="password" placeholder="New PIN">
+<button class="btn" onclick="changePin()">Change</button>
+</div>
+
+<!-- NETWORK CONFIRMATION TICKER -->
+<div id="ticker" class="ticker">Connecting to blockchain network...</div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
-  <div class="nav-btn" onclick="openPage('explorer')">Network</div>
   <div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-// LOGIN FUNCTION (any email/password, saves locally)
+// LOGIN
 function loginUser(){
-  const email = document.getElementById("emailInput").value.trim();
-  const password = document.getElementById("passwordInput").value.trim();
-  if(email && password){
-    localStorage.setItem("demoUserEmail", email);
-    document.getElementById("profileUser").innerText = email.split("@")[0];
-    document.getElementById("profileEmail").innerText = email;
+  let email=emailInput.value;
+  let pass=passwordInput.value;
+  if(email && pass){
+    localStorage.setItem("userEmail",email);
+    profileUser.innerText=email.split("@")[0];
+    profileEmail.innerText=email;
     openPage("home");
-  } else {
-    alert("Enter email and password");
   }
 }
-
-// Auto-load saved user
-window.onload = function(){
-  const user = localStorage.getItem("demoUserEmail");
-  if(user){
-    document.getElementById("profileUser").innerText = user.split("@")[0];
-    document.getElementById("profileEmail").innerText = user;
-    openPage("home");
-  }
+window.onload=()=>{
+  let u=localStorage.getItem("userEmail");
+  if(u){profileUser.innerText=u.split("@")[0];profileEmail.innerText=u;openPage("home");}
 };
 
-// PAGE NAVIGATION
-let historyStack=["loginPage"];
+// NAVIGATION
+let stack=["loginPage"];
 function openPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  historyStack.push(id);
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ stack.push(id);
 }
 function goBack(){
-  historyStack.pop();
-  let last = historyStack[historyStack.length-1] || "home";
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(last).classList.add("active");
+ stack.pop();
+ let last=stack[stack.length-1]||"home";
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(last).classList.add("active");
 }
-function openHome(){historyStack=["home"]; openPage("home");}
 
-// FAKE NETWORK PROGRESS
+// BUY / SELL FLOW
+let selectedToken="";
+function selectBuy(t){selectedToken=t; openPage("buyPay");}
+function confirmBuy(){ buyInfo.innerText="Buying "+selectedToken+" via selected method"; openPage("buyConfirm");}
+
+function selectSell(t){selectedToken=t; openPage("sellBank");}
+function confirmSell(){ sellInfo.innerText="Selling "+selectedToken+" to selected bank"; openPage("sellConfirm");}
+
+// PIN
+function savePin(){localStorage.setItem("pin",newPin.value); alert("PIN Saved");}
+function changePin(){
+ if(localStorage.getItem("pin")===oldPin.value){
+  localStorage.setItem("pin",newPin2.value);
+  alert("PIN Changed");
+ } else alert("Wrong PIN");
+}
+
+// NETWORK TICKER
+const msgs=["Confirming block #","Broadcasting TX","Syncing nodes","Pending mempool"];
 setInterval(()=>{
-  document.getElementById("netFill").style.width = Math.floor(Math.random()*100)+"%";
-  if(document.getElementById("netFillExplorer"))
-    document.getElementById("netFillExplorer").style.width = Math.floor(Math.random()*100)+"%";
+ let m=msgs[Math.floor(Math.random()*msgs.length)];
+ ticker.innerText=m+" "+Math.floor(Math.random()*999999);
 },2000);
-
-// MARKET SHOW FUNCTION
-function showMarket(token){
-  const display = token === 'BTC' ? document.getElementById('marketDisplay') : document.getElementById('sellMarketDisplay');
-  display.innerHTML = `<div class="card">${token} Market Data Loaded</div>`;
-}
 </script>
 </body>
- </html>
+  </html>
