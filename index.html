@@ -3,82 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TrustChain Wallet Demo</title>
+<title>FChain Wallet</title>
 
-<!-- Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<!-- QR Code -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAcbSgzaILvD01pZLGJUasTCE2tjMLq-fw",
+  authDomain: "fchainwallet-a353d.firebaseapp.com",
+  projectId: "fchainwallet-a353d",
+  storageBucket: "fchainwallet-a353d.appspot.com",
+  messagingSenderId: "194040190119",
+  appId: "1:194040190119:web:843ea9ed014a80e52f3782"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Default balance
+function defaultBalance(){
+  return {btc:0, eth:0, fch:0};
+}
+
+// Load user
+async function loadUser(username){
+  const ref = doc(db,"wallets",username);
+  const snap = await getDoc(ref);
+
+  if(!snap.exists()){
+    await setDoc(ref, defaultBalance());
+    return defaultBalance();
+  }
+  return snap.data();
+}
+
+// Save balance (ADMIN)
+async function adminSetBalance(username, btc, eth, fch){
+  const ref = doc(db,"wallets",username);
+  await updateDoc(ref,{btc, eth, fch});
+  alert("Balance Updated");
+}
+
+window.loadUser = loadUser;
+window.adminSetBalance = adminSetBalance;
+</script>
+
 <style>
-:root{
---bg:#0b1220;
---card:#111827;
---blue:#1f4cff;
---text:#fff;
---muted:#94a3b8;
-}
-body.dark{
---bg:#fff;
---card:#f1f5f9;
---blue:#2563eb;
---text:#000;
---muted:#475569;
-}
-
-body{
-background:var(--bg);
-color:var(--text);
-font-family:Arial;
-margin:0;
-transition:0.3s;
-}
-
+body{background:#0b1220;color:white;font-family:Arial;margin:0;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-
-h2{text-align:center;margin-top:5px;}
-
-input{
-width:100%;padding:12px;border-radius:8px;border:none;
-background:var(--card);color:var(--text);margin-top:10px;
-}
-
-.btn{
-width:100%;padding:14px;background:var(--blue);
-border:none;border-radius:12px;color:white;font-weight:bold;
-margin-top:10px;cursor:pointer;
-}
-
-.card{
-background:var(--card);
-padding:14px;border-radius:14px;margin-top:10px;
-}
-
-.balance-card{
-background:linear-gradient(135deg,#1f4cff,#00c6ff);
-padding:20px;border-radius:18px;color:white;
-}
-
-.token{
-display:flex;align-items:center;justify-content:space-between;
-padding:12px;border-bottom:1px solid #1c2d52;
-}
-.token-left{display:flex;align-items:center;}
-.token img{width:28px;margin-right:10px;border-radius:50%;}
-
-.bottom-nav{
-position:fixed;bottom:0;width:100%;
-display:flex;background:var(--card);
-}
-.nav-btn{
-flex:1;text-align:center;padding:10px;font-size:14px;
-cursor:pointer;color:var(--muted);
-}
-.nav-btn.active{color:var(--blue);font-weight:bold;}
-
-#walletQR{margin-top:15px;text-align:center;}
+input{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#111827;color:white;}
+button{width:100%;padding:12px;margin-top:10px;background:#1f4cff;border:none;border-radius:10px;color:white;font-weight:bold;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;}
+.nav-btn{flex:1;padding:10px;text-align:center;color:#94a3b8;cursor:pointer;}
+.nav-btn.active{color:white;font-weight:bold;}
 </style>
 </head>
 
@@ -86,169 +69,95 @@ cursor:pointer;color:var(--muted);
 
 <!-- LOGIN -->
 <div id="loginPage" class="page active">
-<h2>TrustChain Wallet</h2>
+<h2>FChain Wallet Login</h2>
 <input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password">
-<button class="btn" onclick="login()">Login</button>
+<input id="password" type="password" placeholder="Password (not real)">
+<button onclick="login()">Login</button>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
-<div class="balance-card">
-<p>Total Balance</p>
+<h2>Total Balance</h2>
 <h1 id="balance">$0.00</h1>
-</div>
 
-<div class="card"><b>Assets</b></div>
+<div class="card">BTC: <span id="btcBal">0.000000</span></div>
+<div class="card">ETH: <span id="ethBal">0.000000</span></div>
+<div class="card">FCH: <span id="fchBal">0</span></div>
 
-<div class="token">
-<div class="token-left">
-<img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png">
-Bitcoin
-</div>
-<div id="btcBal">0.000000 BTC</div>
-</div>
-
-<div class="token">
-<div class="token-left">
-<img src="https://cryptologos.cc/logos/ethereum-eth-logo.png">
-Ethereum
-</div>
-<div id="ethBal">0.000000 ETH</div>
-</div>
-
-<div class="token">
-<div class="token-left">
-<img src="https://cryptologos.cc/logos/tether-usdt-logo.png">
-USDT
-</div>
-<div id="usdtBal">0.00 USDT</div>
-</div>
-
-<button class="btn" onclick="openPage('send')">Send</button>
-<button class="btn" onclick="openPage('receive')">Receive</button>
-<button class="btn" onclick="openPage('explorer')">Explorer</button>
-</div>
-
-<!-- SEND -->
-<div id="send" class="page">
-<h2>Send Ethereum</h2>
-<input placeholder="Recipient Address">
-<input placeholder="Amount ETH">
-<button class="btn" onclick="alert('Transaction submitted (demo)')">Send</button>
-<button class="btn" onclick="openPage('home')">Back</button>
-</div>
-
-<!-- RECEIVE -->
-<div id="receive" class="page">
-<h2>Receive</h2>
-<div class="card" id="walletAddress"></div>
-<div id="walletQR"></div>
-<button class="btn" onclick="openPage('home')">Back</button>
+<button onclick="openPage('profile')">Profile</button>
+<button onclick="openPage('admin')">Admin Panel</button>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page">
 <h2>Profile</h2>
-<div class="card">Username: <span id="profileUser"></span></div>
-<div class="card">Wallet: <span id="profileWallet"></span></div>
-<button class="btn" onclick="logout()">Logout</button>
+<div class="card">User: <span id="profileUser"></span></div>
+<div class="card">Wallet: <span id="walletAddr"></span></div>
+<button onclick="openPage('home')">Back</button>
 </div>
 
-<!-- SETTINGS -->
-<div id="settings" class="page">
-<h2>Settings</h2>
-<button class="btn" onclick="toggleDark()">Toggle Dark Mode</button>
-<button class="btn" onclick="alert('Security coming soon')">Security</button>
-<button class="btn" onclick="resetApp()">Reset Wallet</button>
-<button class="btn" onclick="openPage('home')">Back</button>
+<!-- ADMIN PANEL -->
+<div id="admin" class="page">
+<h2>Admin Balance Editor</h2>
+<input id="adminUser" placeholder="Username">
+<input id="adminBTC" placeholder="BTC Balance">
+<input id="adminETH" placeholder="ETH Balance">
+<input id="adminFCH" placeholder="FCH Balance">
+<button onclick="adminUpdate()">Update Balance</button>
+<button onclick="openPage('home')">Back</button>
 </div>
 
-<!-- BLOCKCHAIN EXPLORER (FAKE) -->
-<div id="explorer" class="page">
-<h2>Blockchain Explorer</h2>
-<div class="card">Latest Block: #18399234</div>
-<div class="card">Tx Hash: 0xA93...DEMO</div>
-<div class="card">Gas Price: 22 Gwei</div>
-<button class="btn" onclick="openPage('home')">Back</button>
-</div>
-
-<!-- NAV -->
 <div class="bottom-nav">
-<div class="nav-btn active" onclick="openPage('home')"><i class="fa fa-home"></i><br>Home</div>
-<div class="nav-btn" onclick="openPage('profile')"><i class="fa fa-user"></i><br>Profile</div>
-<div class="nav-btn" onclick="openPage('settings')"><i class="fa fa-gear"></i><br>Settings</div>
+  <div class="nav-btn active" onclick="openPage('home')">Home</div>
+  <div class="nav-btn" onclick="openPage('profile')">Profile</div>
+  <div class="nav-btn" onclick="openPage('admin')">Admin</div>
 </div>
 
 <script>
-// NAVIGATION
+// Page navigation
 function openPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-
-document.querySelectorAll(".nav-btn").forEach(n=>n.classList.remove("active"));
-if(id=="home")document.querySelectorAll(".nav-btn")[0].classList.add("active");
-if(id=="profile")document.querySelectorAll(".nav-btn")[1].classList.add("active");
-if(id=="settings")document.querySelectorAll(".nav-btn")[2].classList.add("active");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-// LOGIN
-function login(){
-if(!username.value){alert("Enter username");return;}
-localStorage.setItem("user",username.value);
-loadApp();
+// Login (fake)
+async function login(){
+  const u = username.value;
+  if(!u){alert("Enter username"); return;}
+  localStorage.setItem("user",u);
+  await loadWallet();
 }
 
-function loadApp(){
-openPage("home");
-profileUser.innerText=localStorage.getItem("user");
-profileWallet.innerText=walletAddress;
+// Load wallet
+async function loadWallet(){
+  const u = localStorage.getItem("user");
+  const data = await loadUser(u);
+
+  btcBal.innerText = data.btc.toFixed(6);
+  ethBal.innerText = data.eth.toFixed(6);
+  fchBal.innerText = data.fch;
+
+  balance.innerText = "$0.00"; // force 0 display
+
+  profileUser.innerText = u;
+  walletAddr.innerText = "0xDEMO_" + u;
+
+  openPage("home");
 }
 
-// WALLET ADDRESS
-const walletAddress="0xDEMO_WALLET_ADDRESS_123";
-walletAddress.innerText=walletAddress;
-
-// QR
-new QRCode(walletQR,{text:walletAddress,width:150,height:150});
-
-// DARK MODE
-function toggleDark(){
-document.body.classList.toggle("dark");
+// Admin update
+async function adminUpdate(){
+  await adminSetBalance(
+    adminUser.value,
+    parseFloat(adminBTC.value),
+    parseFloat(adminETH.value),
+    parseFloat(adminFCH.value)
+  );
 }
 
-// RESET
-function resetApp(){
-localStorage.clear();
-location.reload();
-}
-function logout(){
-resetApp();
-}
-
-// LIVE CRYPTO PRICE (REAL API)
-async function loadPrices(){
-try{
-let r=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd");
-let d=await r.json();
-
-let btc=0,eth=0,usdt=0;
-document.getElementById("btcBal").innerText=btc.toFixed(6)+" BTC";
-document.getElementById("ethBal").innerText=eth.toFixed(6)+" ETH";
-document.getElementById("usdtBal").innerText=usdt.toFixed(2)+" USDT";
-
-let total=btc*d.bitcoin.usd + eth*d.ethereum.usd + usdt;
-balance.innerText="$"+total.toFixed(2);
-}catch(e){
-console.log("Price API error");
-}
-}
-loadPrices();
-setInterval(loadPrices,15000);
-
-// AUTO LOGIN
-if(localStorage.getItem("user")) loadApp();
+// Auto login
+if(localStorage.getItem("user")) loadWallet();
 </script>
 
 </body>
-             </html>
+</html>
