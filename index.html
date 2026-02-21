@@ -4,22 +4,23 @@
 <meta charset="UTF-8">
 <title>FChain Wallet Demo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white}
 .page{display:none;padding:15px}
 .active{display:block}
 h2{text-align:center}
-.btn{width:100%;padding:12px;background:#2563eb;border:none;border-radius:10px;color:white;margin-top:10px;font-size:16px}
-.card{background:#111827;padding:12px;border-radius:10px;margin-top:10px;display:flex;justify-content:space-between}
+h1{text-align:center;margin-top:5px}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;display:flex;justify-content:space-between;flex-direction:column}
+.btn{padding:10px;border:none;border-radius:10px;background:#2563eb;color:white;margin:5px;font-size:14px}
+.top-actions{text-align:center}
+.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin:8px 0}
+.netfill{height:100%;background:#22c55e;width:40%;transition:1s}
+
 .bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b}
-.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;font-size:13px}
 .nav-btn:hover{color:white}
-.qr-box{width:160px;height:160px;background:#111;margin:auto;border-radius:12px}
-.address{text-align:center;font-size:12px;color:#94a3b8}
-.netbar{width:100%;height:6px;background:#111827;border-radius:10px;overflow:hidden;margin-top:5px}
-.netfill{height:100%;background:#22c55e;width:20%;transition:1s}
+input{padding:10px;width:95%;border-radius:8px;border:none;margin-top:5px}
 </style>
 </head>
 
@@ -28,115 +29,158 @@ h2{text-align:center}
 <!-- LOGIN -->
 <div id="login" class="page active">
 <h2>FChain Wallet Login</h2>
-<input id="user" placeholder="Username"><br><br>
-<input id="pin" type="password" placeholder="PIN">
+<input id="user" placeholder="Username"><br>
+<input id="pin" type="password" placeholder="PIN"><br><br>
 <button class="btn" onclick="login()">Login</button>
-<p style="color:#94a3b8;font-size:12px;text-align:center">Demo only – Not real crypto</p>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <h2>FChain Wallet</h2>
-<h1>$0.00</h1>
-<div class="card">BTC <span>0.000000</span></div>
-<div class="card">ETH <span>0.000000</span></div>
-<div class="card">FCH <span>0.000000</span></div>
 
-<p id="sync">Syncing network...</p>
-<div class="netbar"><div id="net" class="netfill"></div></div>
-
+<div class="top-actions">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
-<button class="btn" onclick="openPage('explorer')">Blockchain Explorer</button>
+</div>
+
+<h1>$0.00</h1>
+
+<div class="card">Bitcoin <span>0.000000 BTC</span></div>
+<div class="card">Ethereum <span>0.000000 ETH</span></div>
+<div class="card">FChain <span>0.000000 FCH</span></div>
+
+<p id="netStatus">Network syncing...</p>
+<div class="netbar"><div id="netBar" class="netfill"></div></div>
+
+</div>
+
+<!-- BUY -->
+<div id="buy" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>Buy Crypto (Demo)</h2>
+<p>Payment gateways can be integrated later.</p>
+</div>
+
+<!-- SELL -->
+<div id="sell" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>Sell Crypto (Demo)</h2>
+<p>Exchange API can be added later.</p>
 </div>
 
 <!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="openPage('home')">⬅ Back</button>
-<h2>Receive Crypto (Demo)</h2>
+<h2>Receive Crypto</h2>
 
-<h3>Bitcoin</h3>
-<div class="qr-box" id="btcQR"></div>
-<p class="address" id="btcAddr"></p>
+<div class="card">
+<b>Bitcoin Address</b><br>
+<input value="bc1q-demo-bitcoin-wallet-address" readonly>
+</div>
 
-<h3>Ethereum</h3>
-<div class="qr-box" id="ethQR"></div>
-<p class="address" id="ethAddr"></p>
+<div class="card">
+<b>Ethereum Address</b><br>
+<input value="0xDEMO_ETH_WALLET_ADDRESS_HERE" readonly>
+</div>
+
+<div class="card">
+<b>FChain Address</b><br>
+<input value="fchain-demo-wallet-123456" readonly>
+</div>
+
+<p style="font-size:12px;color:#94a3b8">Replace these addresses later with real wallets.</p>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>User Profile</h2>
+<p id="profileName"></p>
+<p>Wallet ID: DEMO-00001</p>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="page">
+<button class="btn" onclick="openPage('home')">⬅ Back</button>
+<h2>Settings</h2>
+<button class="btn" onclick="toggleDark()">Toggle Dark Mode</button>
 </div>
 
 <!-- EXPLORER -->
 <div id="explorer" class="page">
 <button class="btn" onclick="openPage('home')">⬅ Back</button>
-<h2>FChain Explorer (SIMULATION)</h2>
+<h2>FChain Explorer (Simulation)</h2>
 <div id="txList"></div>
 </div>
 
-<!-- NAV -->
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
 <div class="nav-btn" onclick="openPage('home')">Home</div>
-<div class="nav-btn" onclick="openPage('receive')">Receive</div>
+<div class="nav-btn" onclick="openPage('profile')">Profile</div>
 <div class="nav-btn" onclick="openPage('explorer')">Explorer</div>
+<div class="nav-btn" onclick="openPage('settings')">Settings</div>
 </div>
 
 <script>
-// ===== LOGIN SYSTEM (LOCAL DEMO) =====
-let DEMO_USER="admin";
-let DEMO_PIN="1234";
+// LOGIN
+let USER="admin";
+let PIN="1234";
+let currentUser="";
 
 function login(){
   let u=document.getElementById("user").value;
   let p=document.getElementById("pin").value;
-  if(u===DEMO_USER && p===DEMO_PIN){
+  if(u===USER && p===PIN){
+    currentUser=u;
+    document.getElementById("profileName").innerText="Username: "+u;
     openPage("home");
-    loadQR();
     fakeNetwork();
-    fakeTxGenerator();
+    fakeTx();
   }else{
-    alert("Wrong username or PIN");
+    alert("Wrong login");
   }
 }
 
-// ===== PAGE SWITCH =====
+// PAGE SWITCH
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-// ===== PLACEHOLDER ADDRESSES =====
-let BTC_ADDRESS="bc1q-demo-fchain-000000000000";
-let ETH_ADDRESS="0xFCHAIN000000000000000000000000000000";
-
-function loadQR(){
-  document.getElementById("btcAddr").innerText=BTC_ADDRESS;
-  document.getElementById("ethAddr").innerText=ETH_ADDRESS;
-  new QRCode("btcQR", BTC_ADDRESS);
-  new QRCode("ethQR", ETH_ADDRESS);
-}
-
-// ===== NETWORK ANIMATION =====
+// NETWORK SIMULATION
 function fakeNetwork(){
   setInterval(()=>{
-    document.getElementById("net").style.width=(10+Math.random()*90)+"%";
-    document.getElementById("sync").innerText="Network synced";
+    document.getElementById("netBar").style.width=(20+Math.random()*80)+"%";
+    document.getElementById("netStatus").innerText="Network: Connected";
   },1500);
 }
 
-// ===== FAKE TRANSACTION HASH GENERATOR =====
+// FAKE TX HASH
 function randomHash(){
   return "0x"+Math.random().toString(16).substring(2,18)+Math.random().toString(16).substring(2,18);
 }
 
-// ===== FAKE BLOCKCHAIN CONFIRMATIONS =====
-function fakeTxGenerator(){
+function fakeTx(){
   setInterval(()=>{
-    let hash=randomHash();
-    let conf=Math.floor(Math.random()*6)+1;
     let div=document.createElement("div");
     div.className="card";
-    div.innerHTML="TX: "+hash+"<br>Confirmations: "+conf+" (SIM)";
+    div.innerHTML="TX "+randomHash()+"<br>Confirmations: "+(Math.floor(Math.random()*6)+1)+" (SIM)";
     document.getElementById("txList").prepend(div);
-  },5000);
+  },6000);
+}
+
+// DARK MODE
+function toggleDark(){
+  if(document.body.style.background=="white"){
+    document.body.style.background="#0f172a";
+    document.body.style.color="white";
+  }else{
+    document.body.style.background="white";
+    document.body.style.color="black";
+  }
 }
 </script>
 
 </body>
-</html>
+  </html>
