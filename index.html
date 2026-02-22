@@ -179,12 +179,10 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Withdraw Funds</h2>
 <div class="card">
-<label>Recipient Address</label>
-<input id="withdrawAddress" placeholder="Enter address">
-<label>Amount</label>
-<input id="withdrawAmount" placeholder="Enter amount">
-<button class="btn" onclick="processWithdraw()">Withdraw</button>
-<p id="withdrawStatus" style="color:#22c55e;font-weight:bold;margin-top:5px;"></p>
+<p>Status: <span style="color:orange">LOCKED</span></p>
+<p>Unlock Fee Required: <b>$120 Gas Fee</b></p>
+<button class="btn" disabled>Pay Gas Fee</button>
+<p style="color:red;font-size:12px">⚠️ Real crypto NEVER requires unlock fees.</p>
 </div>
 </div>
 
@@ -271,7 +269,8 @@ function registerUser(){
 
 // finish seed setup → full dashboard
 function finishSetup(){
-  document.activeElement.blur(); // remove floating password popup
+  // remove focus from password inputs to dismiss password suggestion popup
+  document.activeElement.blur();
   openPage("dashboard");
 }
 
@@ -290,16 +289,6 @@ function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
 function confirmBuy(){openPage("buyConfirm");}
 function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
 function confirmSell(){openPage("sellConfirm");}
-
-// Withdraw function
-function processWithdraw(){
-  const addr = document.getElementById("withdrawAddress").value;
-  const amt = document.getElementById("withdrawAmount").value;
-  if(!addr||!amt){alert("Enter address and amount"); return;}
-  document.getElementById("withdrawStatus").innerText="Withdraw of "+amt+" submitted to "+addr;
-  document.getElementById("withdrawAddress").value="";
-  document.getElementById("withdrawAmount").value="";
-}
 </script>
 
 </body>
