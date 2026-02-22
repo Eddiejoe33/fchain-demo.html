@@ -232,11 +232,22 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <script>
 // navigation
 let stack=["welcome"];
+let appPages = ["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","profile","settings","network"];
+
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  stack.push(id);
+
+ // show/hide bottom nav
+ let nav = document.querySelector(".bottom-nav");
+ if(appPages.includes(id)){
+   nav.classList.remove("hidden-nav");
+ } else {
+   nav.classList.add("hidden-nav");
+ }
 }
+
 function goBack(){
  stack.pop();
  openPage(stack[stack.length-1] || "welcome");
@@ -267,7 +278,10 @@ function registerUser(){
  },100);
 }
 
-function finishSetup(){openPage("dashboard");}
+// after seed → real app
+function finishSetup(){
+ openPage("dashboard");
+}
 
 // login
 function loginUser(){
@@ -276,7 +290,9 @@ function loginUser(){
  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
    profileEmail.innerText=e;
    openPage("dashboard");
- } else {alert("Invalid credentials");}
+ } else {
+   alert("Invalid credentials");
+ }
 }
 
 // Buy/Sell
@@ -284,6 +300,9 @@ function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
 function confirmBuy(){openPage("buyConfirm");}
 function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
 function confirmSell(){openPage("sellConfirm");}
+
+// hide nav on first load
+document.querySelector(".bottom-nav").classList.add("hidden-nav");
 </script>
 
 </body>
