@@ -162,65 +162,66 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
   <div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
   <div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
-<!-- RECEIVE BTC (Trust Wallet Style) -->
+<!-- RECEIVE BTC -->
 <div id="receiveBTC" class="page">
   <button class="btn" onclick="goBack()">⬅ Back</button>
   <h2>Bitcoin Address</h2>
-  <div class="card" style="text-align:center; padding:20px; border-radius:16px;
-      background: linear-gradient(145deg,#1a202c,#111827);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5); position:relative;">
-    <canvas id="btcQR" style="border-radius:12px;"></canvas>
-    <p id="btcShort" style="font-size:16px; font-weight:bold; margin-top:12px; cursor:pointer; transition:0.3s;"></p>
-    <span id="btcMsg" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
-        font-size:12px; color:#94a3b8; opacity:0; transition:opacity 0.4s;">Click the address to copy full BTC</span>
+  <div class="card" style="text-align:center; background: linear-gradient(135deg, #f7931a, #ffb347); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+    <canvas id="btcQR"></canvas>
+    <p id="btcShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select: none; margin-top:10px;"></p>
+    <small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full BTC address</small>
   </div>
-  <p style="color:red;font-size:12px; margin-top:6px;">Only send BTC to this address.</p>
+  <p style="color:red;font-size:12px; margin-top:10px;">Only send BTC to this address.</p>
 </div>
 
-<!-- RECEIVE ETH (Trust Wallet Style) -->
+<!-- RECEIVE ETH -->
 <div id="receiveETH" class="page">
   <button class="btn" onclick="goBack()">⬅ Back</button>
   <h2>Ethereum Address</h2>
-  <div class="card" style="text-align:center; padding:20px; border-radius:16px;
-      background: linear-gradient(145deg,#1a202c,#111827);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5); position:relative;">
-    <canvas id="ethQR" style="border-radius:12px;"></canvas>
-    <p id="ethShort" style="font-size:16px; font-weight:bold; margin-top:12px; cursor:pointer; transition:0.3s;"></p>
-    <span id="ethMsg" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
-        font-size:12px; color:#94a3b8; opacity:0; transition:opacity 0.4s;">Click the address to copy full ETH</span>
+  <div class="card" style="text-align:center; background: linear-gradient(135deg, #3c3cbd, #627eea); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+    <canvas id="ethQR"></canvas>
+    <p id="ethShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select: none; margin-top:10px;"></p>
+    <small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full ETH address</small>
   </div>
-  <p style="color:red;font-size:12px; margin-top:6px;">Only send ETH to this address.</p>
+  <p style="color:red;font-size:12px; margin-top:10px;">Only send ETH to this address.</p>
 </div>
 
-<!-- Add this at the bottom of your <script> section -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script>
-const btcAddress = "bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
-const ethAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+  // Full addresses
+  const btcAddress = "bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
+  const ethAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
 
-function shortAddress(addr){ return addr.slice(0,6)+"..."+addr.slice(-6); }
+  // Shorten function for display only
+  function shorten(addr){
+    return addr.slice(0,6) + "..." + addr.slice(-6);
+  }
 
-// BTC QR + copy
-QRCode.toCanvas(document.getElementById('btcQR'), btcAddress, {width:180}, function(err){ if(err) console.error(err); });
-const btcShortEl = document.getElementById('btcShort');
-const btcMsg = document.getElementById('btcMsg');
-btcShortEl.innerText = shortAddress(btcAddress);
-btcShortEl.addEventListener("click", ()=>{
-  navigator.clipboard.writeText(btcAddress);
-  btcMsg.style.opacity = 1;
-  setTimeout(()=> btcMsg.style.opacity = 0, 1200);
-});
+  // BTC
+  const btcQR = new QRious({element: document.getElementById('btcQR'), value: btcAddress, size:150});
+  const btcShort = document.getElementById('btcShort');
+  btcShort.innerText = shorten(btcAddress);
 
-// ETH QR + copy
-QRCode.toCanvas(document.getElementById('ethQR'), ethAddress, {width:180}, function(err){ if(err) console.error(err); });
-const ethShortEl = document.getElementById('ethShort');
-const ethMsg = document.getElementById('ethMsg');
-ethShortEl.innerText = shortAddress(ethAddress);
-ethShortEl.addEventListener("click", ()=>{
-  navigator.clipboard.writeText(ethAddress);
-  ethMsg.style.opacity = 1;
-  setTimeout(()=> ethMsg.style.opacity = 0, 1200);
-});
+  btcShort.onclick = () => {
+    // Copy full BTC address
+    navigator.clipboard.writeText(btcAddress);
+    // Optional: visual feedback
+    btcShort.style.opacity = 0.5;
+    setTimeout(()=>btcShort.style.opacity=1,300);
+  }
+
+  // ETH
+  const ethQR = new QRious({element: document.getElementById('ethQR'), value: ethAddress, size:150});
+  const ethShort = document.getElementById('ethShort');
+  ethShort.innerText = shorten(ethAddress);
+
+  ethShort.onclick = () => {
+    // Copy full ETH address
+    navigator.clipboard.writeText(ethAddress);
+    // Optional: visual feedback
+    ethShort.style.opacity = 0.5;
+    setTimeout(()=>ethShort.style.opacity=1,300);
+  }
 </script>
 
 <!-- WITHDRAW (UPDATED) -->
