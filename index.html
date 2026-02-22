@@ -52,6 +52,19 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 #devTools input{
   width:100%;padding:5px;margin:3px 0;border-radius:5px;border:none;
 }
+
+/* QR radiant cards */
+.qrCard{
+  text-align:center;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 8px 16px rgba(0,0,0,0.3);
+  margin-top:10px;
+}
+.btcCard{background: linear-gradient(135deg,#f7931a,#ffb347);}
+.ethCard{background: linear-gradient(135deg,#3c3cbd,#627eea);}
+.qrCard p{font-size:16px;font-weight:bold;cursor:pointer;}
+.qrCard small{color:rgba(0,0,0,0.6);}
 </style>
 </head>
 
@@ -138,10 +151,10 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="receiveBTC" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Bitcoin Address</h2>
-<div class="card" style="text-align:center; padding:20px; border-radius:20px; background: linear-gradient(135deg,#f7931a,#ffb347); box-shadow:0 8px 16px rgba(0,0,0,0.3);">
+<div class="qrCard btcCard">
 <canvas id="btcQR"></canvas>
-<p id="btcShort" style="font-size:16px;font-weight:bold;cursor:pointer;"></p>
-<small style="color:rgba(0,0,0,0.6);">Tap to copy full BTC address</small>
+<p id="btcShort"></p>
+<small>Tap to copy full BTC address</small>
 </div>
 </div>
 
@@ -149,10 +162,10 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Ethereum Address</h2>
-<div class="card" style="text-align:center; padding:20px; border-radius:20px; background: linear-gradient(135deg,#3c3cbd,#627eea); box-shadow:0 8px 16px rgba(0,0,0,0.3);">
+<div class="qrCard ethCard">
 <canvas id="ethQR"></canvas>
-<p id="ethShort" style="font-size:16px;font-weight:bold;cursor:pointer;"></p>
-<small style="color:rgba(0,0,0,0.6);">Tap to copy full ETH address</small>
+<p id="ethShort"></p>
+<small>Tap to copy full ETH address</small>
 </div>
 </div>
 
@@ -169,14 +182,12 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 /* NAVIGATION */
 let historyStack=["welcome"];
 const appPages=["dashboard","receive","receiveBTC","receiveETH"];
-
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  if(historyStack[historyStack.length-1]!==id) historyStack.push(id);
  document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
-
 function goBack(){
  historyStack.pop();
  openPage(historyStack[historyStack.length-1]||"welcome");
@@ -198,7 +209,6 @@ function registerUser(){
   if(i>=100){clearInterval(timer); seedKey.innerText=seed; profileEmail.innerText=regEmail.value; openPage("seed");}
  },100);
 }
-
 function finishSetup(){openPage("dashboard");}
 
 /* LOGIN */
@@ -207,10 +217,12 @@ function loginUser(){
  const storedPass  = localStorage.pass;
  if(!storedEmail || !storedPass){ alert("No wallet found. Please create one."); openPage("welcome"); return; }
  if(loginEmail.value === storedEmail && loginPass.value === storedPass){
-  profileEmail.innerText = storedEmail;
-  btcDisplay.innerText = "BTC: "+(localStorage.btc||"0.134532");
-  ethDisplay.innerText = "ETH: "+(localStorage.eth||"2.43211");
-  currencyDisplay.innerText = localStorage.currency||"$12,450.32";
+  // update balances
+  document.getElementById("btcDisplay").innerText = "BTC: "+(localStorage.btc||"0.134532");
+  document.getElementById("ethDisplay").innerText = "ETH: "+(localStorage.eth||"2.43211");
+  document.getElementById("currencyDisplay").innerText = localStorage.currency||"$12,450.32";
+  // profile email
+  if(document.getElementById("profileEmail")) document.getElementById("profileEmail").innerText=storedEmail;
   openPage("dashboard");
  } else alert("Invalid login");
 }
@@ -218,7 +230,6 @@ function loginUser(){
 /* QR */
 const btcAddress="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
 const ethAddress="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
-
 window.addEventListener("DOMContentLoaded",()=>{
  new QRious({element:btcQR,value:btcAddress,size:150});
  btcShort.innerText=btcAddress.slice(0,6)+"..."+btcAddress.slice(-6);
@@ -251,16 +262,14 @@ function handleDevTap() {
     document.getElementById("devCurrency").value = localStorage.currency || "";
   }
 }
-
 function saveDevTools(){
  localStorage.email = document.getElementById("devEmail").value;
  localStorage.btc = document.getElementById("devBTC").value;
  localStorage.eth = document.getElementById("devETH").value;
  localStorage.currency = document.getElementById("devCurrency").value;
- profileEmail.innerText = localStorage.email;
- btcDisplay.innerText = "BTC: "+localStorage.btc;
- ethDisplay.innerText = "ETH: "+localStorage.eth;
- currencyDisplay.innerText = localStorage.currency;
+ document.getElementById("btcDisplay").innerText="BTC: "+localStorage.btc;
+ document.getElementById("ethDisplay").innerText="ETH: "+localStorage.eth;
+ document.getElementById("currencyDisplay").innerText=localStorage.currency;
  showConfirm("DevTools Saved");
 }
 
@@ -269,7 +278,7 @@ window.addEventListener("DOMContentLoaded", ()=>{
   const mainH=document.getElementById("mainHeading");
   const dashH=document.getElementById("dashHeading");
   if(mainH) mainH.addEventListener("click", handleDevTap);
-  if(dashH) mainH.addEventListener("click", handleDevTap);
+  if(dashH) dashH.addEventListener("click", handleDevTap);
 });
 </script>
 
