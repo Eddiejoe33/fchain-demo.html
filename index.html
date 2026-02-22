@@ -223,24 +223,29 @@ function showConfirm(msg){
  setTimeout(()=>{c.style.opacity=0;},1500);
 }
 
-// DEVTOOLS (tap heading 5 times)
+// DEVTOOLS TAP FIXED WITH TIMEOUT
 let devTap=0;
-function handleDevTap(){ devTap++; if(devTap>=5){document.getElementById("devTools").style.display="block"; devTap=0;}}
-document.getElementById("mainHeading").addEventListener("click",handleDevTap);
-document.getElementById("dashHeading").addEventListener("click",handleDevTap);
+let devTapTimer=null;
 
-function saveDevTools(){
- let e=document.getElementById("devEmail").value;
- let b=document.getElementById("devBTC").value;
- let eth=document.getElementById("devETH").value;
- let cur=document.getElementById("devCurrency").value;
- if(e){profileEmail.innerText=e;}
- if(b){document.getElementById("btcDisplay").innerText="BTC: "+b;}
- if(eth){document.getElementById("ethDisplay").innerText="ETH: "+eth;}
- if(cur){document.getElementById("currencyDisplay").innerText=cur;}
- showConfirm("DevTools Applied");
+function handleDevTap() {
+  devTap++;
+  clearTimeout(devTapTimer);
+  devTapTimer=setTimeout(()=>{ devTap=0; }, 1500); // reset if >1.5s between taps
+
+  if(devTap>=5){
+    document.getElementById("devTools").style.display="block";
+    devTap=0;
+    showConfirm("DevTools Enabled");
+  }
 }
-</script>
+
+// Attach safely after DOM ready
+window.addEventListener("DOMContentLoaded", ()=>{
+  const mainH=document.getElementById("mainHeading");
+  const dashH=document.getElementById("dashHeading");
+  if(mainH) mainH.addEventListener("click", handleDevTap);
+  if(dashH) dashH.addEventListener("click", handleDevTap);
+});
 
 </body>
   </html>
