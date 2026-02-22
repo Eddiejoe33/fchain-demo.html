@@ -157,23 +157,69 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <!-- RECEIVE -->
 <div id="receive" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
-<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Receive Crypto</h2>
+  <div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+  <div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
+<!-- RECEIVE BTC -->
 <div id="receiveBTC" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>BTC Address</h2>
-<div class="card">bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf</div>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Bitcoin Address</h2>
+  <div class="card" style="text-align:center;">
+    <canvas id="btcQR"></canvas>
+    <p id="btcShort" style="font-size:16px;font-weight:bold;margin-top:10px;cursor:pointer;"></p>
+    <p style="color:gray;font-size:12px;margin-top:5px;">Click the address to copy full BTC address</p>
+  </div>
+  <p style="color:red;font-size:12px;">Only send BTC to this address.</p>
 </div>
 
+<!-- RECEIVE ETH -->
 <div id="receiveETH" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>ETH Address</h2>
-<div class="card">0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Ethereum Address</h2>
+  <div class="card" style="text-align:center;">
+    <canvas id="ethQR"></canvas>
+    <p id="ethShort" style="font-size:16px;font-weight:bold;margin-top:10px;cursor:pointer;"></p>
+    <p style="color:gray;font-size:12px;margin-top:5px;">Click the address to copy full ETH address</p>
+  </div>
+  <p style="color:red;font-size:12px;">Only send ETH to this address.</p>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+// BTC & ETH addresses
+const btcAddress = "bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
+const ethAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+
+// Helper to shorten
+function shortAddress(addr){
+  return addr.slice(0,6) + "..." + addr.slice(-6);
+}
+
+// Render BTC QR and shortened clickable address
+QRCode.toCanvas(document.getElementById('btcQR'), btcAddress, {width:180}, function (error) {
+  if(error) console.error(error);
+});
+const btcShortEl = document.getElementById('btcShort');
+btcShortEl.innerText = shortAddress(btcAddress);
+btcShortEl.addEventListener("click", function(){
+  navigator.clipboard.writeText(btcAddress);
+  alert("BTC address copied!");
+});
+
+// Render ETH QR and shortened clickable address
+QRCode.toCanvas(document.getElementById('ethQR'), ethAddress, {width:180}, function (error) {
+  if(error) console.error(error);
+});
+const ethShortEl = document.getElementById('ethShort');
+ethShortEl.innerText = shortAddress(ethAddress);
+ethShortEl.addEventListener("click", function(){
+  navigator.clipboard.writeText(ethAddress);
+  alert("ETH address copied!");
+});
+</script>
 
 <!-- WITHDRAW (UPDATED) -->
 <div id="withdraw" class="page">
