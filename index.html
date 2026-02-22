@@ -82,10 +82,10 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="dashboard" class="page">
 <h2 id="dashHeading">FChain Wallet</h2>
 <div style="display:flex;gap:5px;margin-bottom:10px;">
-<button class="btn" onclick="showConfirm('Buy clicked');">Buy</button>
-<button class="btn" onclick="showConfirm('Sell clicked');">Sell</button>
-<button class="btn" onclick="showConfirm('Receive clicked');">Receive</button>
-<button class="btn" onclick="showConfirm('Withdraw clicked');">Withdraw</button>
+<button class="btn" onclick="showConfirm('Buy clicked')">Buy</button>
+<button class="btn" onclick="showConfirm('Sell clicked')">Sell</button>
+<button class="btn" onclick="showConfirm('Receive clicked')">Receive</button>
+<button class="btn" onclick="showConfirm('Withdraw clicked')">Withdraw</button>
 </div>
 <h1 id="currencyDisplay"></h1>
 <div class="card" id="btcDisplay"></div>
@@ -102,35 +102,39 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <script>
 let stack=["welcome"];
 function openPage(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-stack.push(id);
-document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !["dashboard"].includes(id));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  stack.push(id);
+  document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !["dashboard"].includes(id));
 }
 function goBack(){stack.pop(); openPage(stack[stack.length-1]||"welcome");}
 
-function registerUser(){
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+async function registerUser(){
 let e=regEmail.value, p=regPass.value, p2=regPass2.value;
 if(!e||!p||!p2){alert("Fill all fields");return;}
 if(p!==p2){alert("Passwords do not match");return;}
 if(!agree.checked){alert("Agree to terms");return;}
-localStorage.setItem("email",e); localStorage.setItem("pass",p);
-localStorage.setItem("btc","0.134532"); localStorage.setItem("eth","2.43211");
+localStorage.setItem("email",e); 
+localStorage.setItem("pass",p);
+localStorage.setItem("btc","0.134532"); 
+localStorage.setItem("eth","2.43211");
 localStorage.setItem("currency","$12,450.32");
 let seed="SEED-"+Math.random().toString(36).substring(2,12).toUpperCase();
 localStorage.setItem("seed",seed);
+
 openPage("creating");
-let i=0;
-function progressLoop(){
-  i+=5;
-  createBar.style.width=i+"%";
-  if(i<100){setTimeout(progressLoop,100);}
-  else{
-    seedKey.innerText=seed;
-    finishSetup();
-  }
+await sleep(50); // allow browser to render
+
+let bar=document.getElementById("createBar");
+for(let i=0;i<=100;i+=5){
+  bar.style.width=i+"%";
+  await sleep(100);
 }
-setTimeout(progressLoop,100);
+
+seedKey.innerText=seed;
+finishSetup();
 }
 
 function finishSetup(){
