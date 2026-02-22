@@ -16,17 +16,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
-
-/* Bottom nav */
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
-.nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
-.nav-btn span{font-size:22px;display:block;}
-.hidden-nav{display:none;}
-
-/* Confirmation message */
 #confirmMsg{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#22c55e;padding:10px 20px;border-radius:12px;opacity:0;transition:0.5s;z-index:999;color:#000;font-weight:bold;}
-
-/* DevTools panel */
 #devTools{position:fixed;top:10px;left:10px;background:#111827;padding:10px;border-radius:10px;border:1px solid #22c55e;color:white;display:none;z-index:1000;max-width:300px;font-size:14px;}
 #devTools input{width:100%;padding:5px;margin:3px 0;border-radius:5px;border:none;}
 </style>
@@ -84,34 +74,28 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <div id="dashboard" class="page">
 <h2 id="dashHeading">FChain Wallet</h2>
-<div style="display:flex;gap:5px;">
-<button class="btn" onclick="openPage('receive')">Receive</button>
-</div>
 <h1 id="currencyDisplay"></h1>
 <div class="card" id="btcDisplay"></div>
 <div class="card" id="ethDisplay"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script>
-// Navigation
 let stack=["welcome"];
-const appPages=["dashboard","receive","seed","creating"];
-
+const appPages=["dashboard","seed","creating"];
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  if(stack[stack.length-1]!==id) stack.push(id);
- document.querySelector(".bottom-nav")?.classList.toggle("hidden-nav", !appPages.includes(id));
 }
+
 function goBack(){stack.pop(); openPage(stack[stack.length-1]||"welcome");}
 
 // REGISTER
 function registerUser(){
  let e=regEmail.value.trim(), p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2){alert("Fill all fields"); return;}
- if(p!==p2){alert("Passwords do not match"); return;}
- if(!agree.checked){alert("Agree to terms"); return;}
+ if(!e||!p||!p2){alert("Fill all fields");return;}
+ if(p!==p2){alert("Passwords do not match");return;}
+ if(!agree.checked){alert("Agree to terms");return;}
 
  localStorage.setItem("email", e);
  localStorage.setItem("pass", p);
@@ -123,21 +107,26 @@ function registerUser(){
 
  openPage("creating");
 
- // animate progress bar then go to seed
+ // Safe progress bar animation
  let i=0;
  const bar=document.getElementById("createBar");
- const timer=setInterval(()=>{
-   i+=5; bar.style.width=i+"%";
-   if(i>=100){clearInterval(timer);
-     document.getElementById("seedKey").innerText = seed;
-     profileEmail.innerText = e;
-     document.getElementById("currencyDisplay").innerText = localStorage.currency;
-     document.getElementById("btcDisplay").innerText = "BTC: "+localStorage.btc;
-     document.getElementById("ethDisplay").innerText = "ETH: "+localStorage.eth;
-     openPage("seed");
+ const interval=setInterval(()=>{
+   i+=5;
+   bar.style.width=i+"%";
+   if(i>=100){
+     clearInterval(interval);
+     // Wait 100ms to ensure DOM updated
+     setTimeout(()=>{
+       document.getElementById("seedKey").innerText = seed;
+       document.getElementById("currencyDisplay").innerText = localStorage.currency;
+       document.getElementById("btcDisplay").innerText = "BTC: "+localStorage.btc;
+       document.getElementById("ethDisplay").innerText = "ETH: "+localStorage.eth;
+       openPage("seed");
+     },100);
    }
  },100);
 }
+
 function finishSetup(){openPage("dashboard");}
 
 // LOGIN
@@ -145,7 +134,6 @@ function loginUser(){
  let e=loginEmail.value.trim();
  let p=loginPass.value;
  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
-   profileEmail.innerText = e;
    document.getElementById("currencyDisplay").innerText = localStorage.currency;
    document.getElementById("btcDisplay").innerText = "BTC: "+localStorage.btc;
    document.getElementById("ethDisplay").innerText = "ETH: "+localStorage.eth;
@@ -169,17 +157,18 @@ function handleDevTap(){
    document.getElementById("devCurrency").value=localStorage.currency||"";
  }
 }
+
 function saveDevTools(){
  localStorage.email=document.getElementById("devEmail").value;
  localStorage.btc=document.getElementById("devBTC").value;
  localStorage.eth=document.getElementById("devETH").value;
  localStorage.currency=document.getElementById("devCurrency").value;
- profileEmail.innerText = localStorage.email;
+ document.getElementById("currencyDisplay").innerText = localStorage.currency;
  document.getElementById("btcDisplay").innerText = "BTC: "+localStorage.btc;
  document.getElementById("ethDisplay").innerText = "ETH: "+localStorage.eth;
- document.getElementById("currencyDisplay").innerText = localStorage.currency;
  showConfirm("DevTools Saved");
 }
+
 function showConfirm(msg){const c=document.getElementById("confirmMsg"); c.innerText=msg; c.style.opacity=1; setTimeout(()=>c.style.opacity=0,1500);}
 
 window.addEventListener("DOMContentLoaded",()=>{
@@ -188,4 +177,4 @@ window.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 </body>
-  </html>
+ </html>
