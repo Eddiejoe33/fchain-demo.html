@@ -10,7 +10,7 @@ body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
 h2{text-align:center;}
-.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;}
+.btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
 .card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
@@ -68,16 +68,86 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <p id="seedKey" style="font-size:18px;font-weight:bold;color:#22c55e"></p>
 <p style="color:red;font-size:12px">Never share this key. Real wallets never show seed after setup.</p>
 </div>
-<button class="btn" onclick="openPage('dashboard')">I Saved It</button>
+<button class="btn" onclick="finishSetup()">I Saved It</button>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page">
 <h2>FChain Wallet</h2>
+<div style="display:flex;gap:5px;margin-bottom:10px;">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
 <h1>$12,450.32</h1>
 <div class="card">BTC: 0.134532</div>
 <div class="card">ETH: 2.43211</div>
 <button class="btn" onclick="openPage('withdraw')">Withdraw</button>
+</div>
+
+<!-- BUY -->
+<div id="buy" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<div class="card" onclick="selectBuy('BTC')">Bitcoin</div>
+<div class="card" onclick="selectBuy('ETH')">Ethereum</div>
+</div>
+
+<div id="buyPay" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Payment</h2>
+<div class="card" onclick="confirmBuy()">Bank Transfer</div>
+<div class="card" onclick="confirmBuy()">Card Payment</div>
+</div>
+
+<div id="buyConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Purchase</h2>
+<p id="buyInfo"></p>
+<button class="btn" onclick="alert('Transaction Submitted')">Confirm</button>
+</div>
+
+<!-- SELL -->
+<div id="sell" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Sell Crypto</h2>
+<div class="card" onclick="selectSell('BTC')">Bitcoin</div>
+<div class="card" onclick="selectSell('ETH')">Ethereum</div>
+</div>
+
+<div id="sellBank" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Bank</h2>
+<div class="card" onclick="confirmSell()">Access Bank</div>
+<div class="card" onclick="confirmSell()">GTBank</div>
+<div class="card" onclick="confirmSell()">Opay</div>
+</div>
+
+<div id="sellConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Sell</h2>
+<p id="sellInfo"></p>
+<button class="btn" onclick="alert('Sell Order Placed')">Confirm</button>
+</div>
+
+<!-- RECEIVE -->
+<div id="receive" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
+</div>
+
+<div id="receiveBTC" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>BTC Address</h2>
+<div class="card">bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf</div>
+</div>
+
+<div id="receiveETH" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>ETH Address</h2>
+<div class="card">0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
 </div>
 
 <!-- WITHDRAW -->
@@ -120,9 +190,9 @@ function goBack(){
 // register
 function registerUser(){
  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2) return;
- if(p!==p2) return;
- if(!agree.checked) return;
+ if(!e||!p||!p2){alert("Fill all fields"); return;}
+ if(p!==p2){alert("Passwords do not match"); return;}
+ if(!agree.checked){alert("You must agree to terms"); return;}
 
  localStorage.setItem("email",e);
  localStorage.setItem("pass",p);
@@ -130,6 +200,7 @@ function registerUser(){
  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
  localStorage.setItem("seed",seed);
 
+ // show creating
  openPage("creating");
  let i=0;
  let int=setInterval(()=>{
@@ -142,6 +213,11 @@ function registerUser(){
  },100);
 }
 
+// finish seed setup → full dashboard
+function finishSetup(){
+ openPage("dashboard");
+}
+
 // login
 function loginUser(){
  let e=loginEmail.value;
@@ -149,9 +225,15 @@ function loginUser(){
  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
    profileEmail.innerText=e;
    openPage("dashboard");
- }
+ } else {alert("Invalid credentials");}
 }
+
+// Buy/Sell select
+function selectBuy(t){buyInfo?buyInfo.innerText="Buying "+t:null; openPage("buyPay");}
+function confirmBuy(){openPage("buyConfirm");}
+function selectSell(t){sellInfo?sellInfo.innerText="Selling "+t:null; openPage("sellBank");}
+function confirmSell(){openPage("sellConfirm");}
 </script>
 
 </body>
-  </html>
+ </html>
