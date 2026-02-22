@@ -43,7 +43,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 }
 .nav-btn:hover{color:#22c55e;}
 
-/* HIDE NAV CLASS */
+/* hide nav */
 .hidden-nav{display:none;}
 </style>
 </head>
@@ -175,16 +175,22 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="card">0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
 </div>
 
-<!-- WITHDRAW -->
+<!-- WITHDRAW (UPDATED) -->
 <div id="withdraw" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Withdraw Funds</h2>
+
 <div class="card">
-<p>Status: <span style="color:orange">LOCKED</span></p>
-<p>Unlock Fee Required: <b>$120 Gas Fee</b></p>
-<button class="btn" disabled>Pay Gas Fee</button>
-<p style="color:red;font-size:12px">⚠️ Real crypto NEVER requires unlock fees.</p>
+<input id="withdrawAddress" placeholder="Wallet Address">
+<input id="withdrawAmount" type="number" placeholder="Amount to Withdraw">
+<button class="btn" onclick="processWithdraw()">Withdraw</button>
 </div>
+</div>
+
+<!-- FAKE LOADING -->
+<div id="withdrawLoading" class="page">
+<h2>Processing Withdrawal...</h2>
+<div class="progress"><div id="withdrawBar" class="bar"></div></div>
 </div>
 
 <!-- PROFILE -->
@@ -225,7 +231,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <script>
 // navigation
 let stack=["welcome"];
-let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","profile","settings","network"];
+let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
 
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -289,6 +295,27 @@ function selectBuy(t){buyInfo.innerText="Buying "+t;openPage("buyPay");}
 function confirmBuy(){openPage("buyConfirm");}
 function selectSell(t){sellInfo.innerText="Selling "+t;openPage("sellBank");}
 function confirmSell(){openPage("sellConfirm");}
+
+// Withdraw fake Binance animation
+function processWithdraw(){
+ let addr=withdrawAddress.value;
+ let amt=withdrawAmount.value;
+ if(!addr || !amt){alert("Enter address and amount");return;}
+
+ openPage("withdrawLoading");
+ let i=0;
+ let int=setInterval(()=>{
+   i+=4;
+   withdrawBar.style.width=i+"%";
+   if(i>=100){
+     clearInterval(int);
+     alert("Withdrawal Submitted\nAddress: "+addr+"\nAmount: "+amt);
+     withdrawAddress.value="";
+     withdrawAmount.value="";
+     openPage("dashboard");
+   }
+ },100);
+}
 </script>
 
 </body>
