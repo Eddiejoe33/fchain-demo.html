@@ -11,19 +11,33 @@ body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .active{display:block;}
 h2{text-align:center;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
+.btn:hover{background:#1e40af;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;cursor:pointer;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
-.bottom-nav{
-  position:fixed;bottom:0;width:100%;display:flex;
-  background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
-}
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
 .hidden-nav{display:none;}
+
+/* RECEIVE STYLE */
+.qr-card{
+  text-align:center;
+  background: linear-gradient(135deg,#f7931a,#ffb347);
+  border-radius:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  padding:20px;
+  margin-top:15px;
+  color:#fff;
+  font-weight:bold;
+}
+.qr-card p{cursor:pointer;user-select:none;font-size:16px;margin-top:10px;}
+.qr-card small{display:block;color:rgba(255,255,255,0.7);margin-top:5px;}
+.qr-card span{display:block;font-size:12px;color:red;margin-top:5px;}
 </style>
 </head>
 
@@ -31,12 +45,14 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
 
+<!-- WELCOME -->
 <div id="welcome" class="page active">
 <h2>Welcome to FChain Wallet</h2>
 <button class="btn" onclick="openPage('register')">Create New Wallet</button>
 <button class="btn" onclick="openPage('login')">I Already Have a Wallet</button>
 </div>
 
+<!-- REGISTER -->
 <div id="register" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Create Wallet</h2>
@@ -47,6 +63,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="registerUser()">Create Wallet</button>
 </div>
 
+<!-- LOGIN -->
 <div id="login" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Login</h2>
@@ -55,17 +72,20 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="loginUser()">Login</button>
 </div>
 
+<!-- CREATING -->
 <div id="creating" class="page">
 <h2>Creating Wallet...</h2>
 <div class="progress"><div id="createBar" class="bar"></div></div>
 </div>
 
+<!-- SEED -->
 <div id="seed" class="page">
 <h2>Backup Seed</h2>
 <div class="card"><b id="seedKey"></b></div>
 <button class="btn" onclick="finishSetup()">Continue</button>
 </div>
 
+<!-- DASHBOARD -->
 <div id="dashboard" class="page">
 <h2>FChain Wallet</h2>
 <div style="display:flex;gap:5px;">
@@ -79,6 +99,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="openPage('withdraw')">Withdraw</button>
 </div>
 
+<!-- BUY -->
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy</h2>
@@ -99,6 +120,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="alert('Purchase Submitted')">Confirm</button>
 </div>
 
+<!-- SELL -->
 <div id="sell" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <div class="card" onclick="selectSell('BTC')">Bitcoin</div>
@@ -116,24 +138,37 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="alert('Sell Submitted')">Confirm</button>
 </div>
 
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
 <div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
 <div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
+<!-- RECEIVE BTC -->
 <div id="receiveBTC" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<canvas id="btcQR"></canvas>
-<p id="btcShort"></p>
+<h2>Receive Bitcoin</h2>
+<div class="qr-card" id="btcCard">
+  <canvas id="btcQR"></canvas>
+  <p id="btcShort"></p>
+  <small>Tap to copy full BTC address</small>
+</div>
 </div>
 
+<!-- RECEIVE ETH -->
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<canvas id="ethQR"></canvas>
-<p id="ethShort"></p>
+<h2>Receive Ethereum</h2>
+<div class="qr-card" id="ethCard">
+  <canvas id="ethQR"></canvas>
+  <p id="ethShort"></p>
+  <small>Tap to copy full ETH address</small>
+</div>
 </div>
 
+<!-- WITHDRAW -->
 <div id="withdraw" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <input id="withdrawAddress" placeholder="Address">
@@ -146,10 +181,34 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="progress"><div id="withdrawBar" class="bar"></div></div>
 </div>
 
-<div id="profile" class="page"><h2>Profile</h2><div id="profileEmail"></div></div>
-<div id="settings" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Settings</h2></div>
-<div id="network" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Network</h2></div>
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2>Profile</h2>
+<div>Email: <span id="profileEmail"></span></div>
+</div>
 
+<!-- SETTINGS -->
+<div id="settings" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Settings</h2>
+<div class="card">Security</div>
+<div class="card">Backup Wallet</div>
+<div class="card">Display Currency</div>
+<div class="card">Notifications</div>
+</div>
+
+<!-- NETWORK -->
+<div id="network" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Network</h2>
+<div class="card">Ethereum Mainnet</div>
+<div class="card">Bitcoin Network</div>
+<div class="card">BSC Smart Chain</div>
+<div class="card">Polygon</div>
+<div class="card">Add Custom Network</div>
+</div>
+
+<!-- BOTTOM NAV -->
 <div class="bottom-nav hidden-nav">
   <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
   <div class="nav-btn" onclick="openPage('profile')"><span>👤</span>Profile</div>
@@ -160,44 +219,29 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 
 <script>
-/* NAV SYSTEM FIXED */
+/* NAVIGATION */
 let historyStack=["welcome"];
 const appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
-
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
-
  if(historyStack[historyStack.length-1]!==id) historyStack.push(id);
-
- let nav=document.querySelector(".bottom-nav");
- nav.classList.toggle("hidden-nav", !appPages.includes(id));
+ document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
-
-function goBack(){
- historyStack.pop();
- let prev=historyStack[historyStack.length-1]||"welcome";
- openPage(prev);
-}
+function goBack(){historyStack.pop(); openPage(historyStack[historyStack.length-1]||"welcome");}
 
 /* REGISTER */
 function registerUser(){
  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2||!agree.checked) return alert("Fill all");
- if(p!==p2) return alert("Password mismatch");
-
+ if(!e||!p||!p2||!agree.checked){alert("Fill all fields / Agree"); return;}
+ if(p!==p2){alert("Passwords mismatch"); return;}
  localStorage.email=e; localStorage.pass=p;
  let seed="SEED-"+Math.random().toString(36).slice(2,12).toUpperCase();
  localStorage.seed=seed;
-
  openPage("creating");
  let i=0;
- let timer=setInterval(()=>{
-  i+=5; createBar.style.width=i+"%";
-  if(i>=100){clearInterval(timer); seedKey.innerText=seed; profileEmail.innerText=e; openPage("seed");}
- },100);
+ let timer=setInterval(()=>{i+=5; createBar.style.width=i+"%"; if(i>=100){clearInterval(timer); seedKey.innerText=seed; profileEmail.innerText=e; openPage("seed");}},100);
 }
-
 function finishSetup(){openPage("dashboard");}
 
 /* LOGIN */
@@ -208,7 +252,7 @@ function loginUser(){
  } else alert("Invalid login");
 }
 
-/* BUY SELL */
+/* BUY/SELL */
 function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
 function confirmBuy(){openPage("buyConfirm");}
 function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
@@ -218,19 +262,23 @@ function confirmSell(){openPage("sellConfirm");}
 function processWithdraw(){
  openPage("withdrawLoading");
  let i=0;
- let t=setInterval(()=>{i+=4; withdrawBar.style.width=i+"%"; if(i>=100){clearInterval(t); openPage("dashboard");}},100);
+ let t=setInterval(()=>{i+=4; withdrawBar.style.width=i+"%"; if(i>=100){clearInterval(t); alert("Withdrawal Submitted"); openPage("dashboard");}},100);
 }
 
-/* QR LOAD AFTER PAGE LOAD */
+/* QR AND COPY */
 window.onload=function(){
  const btc="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
  const eth="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
 
- new QRious({element:btcQR,value:btc,size:120});
+ const btcQR = new QRious({element:document.getElementById('btcQR'), value:btc, size:150});
+ const btcShort=document.getElementById('btcShort');
  btcShort.innerText=btc.slice(0,6)+"..."+btc.slice(-6);
+ btcShort.onclick=()=>{navigator.clipboard.writeText(btc); btcShort.style.opacity=0.5; setTimeout(()=>btcShort.style.opacity=1,300);}
 
- new QRious({element:ethQR,value:eth,size:120});
+ const ethQR = new QRious({element:document.getElementById('ethQR'), value:eth, size:150});
+ const ethShort=document.getElementById('ethShort');
  ethShort.innerText=eth.slice(0,6)+"..."+eth.slice(-6);
+ ethShort.onclick=()=>{navigator.clipboard.writeText(eth); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300);}
 }
 </script>
 
