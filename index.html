@@ -18,14 +18,14 @@ h2{text-align:center;cursor:pointer;}
 .nav-btn:hover{color:white;}
 .ticker{position:fixed;bottom:45px;width:100%;background:#111827;padding:5px;font-size:12px;color:#22c55e;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
-.hiddenPanel{display:none;background:#020617;padding:10px;border:1px solid red;margin-top:10px;font-size:12px;}
+.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
 <!-- CREATE WALLET -->
-<div id="loginPage" class="page active">
+<div id="createPage" class="page active">
 <h2 id="fchainTitle">FChain Wallet</h2>
 <p>Create New Wallet</p>
 <input id="emailInput" placeholder="Email">
@@ -33,28 +33,23 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="createWallet()">Create Wallet</button>
 </div>
 
-<!-- RETURNING USER -->
-<div id="returnLogin" class="page">
+<!-- RETURN LOGIN -->
+<div id="returnPage" class="page">
 <h2>Welcome Back</h2>
-<p id="returnEmail"></p>
-<input id="returnPin" type="password" placeholder="Security PIN">
-<button class="btn" onclick="unlockWallet()">Unlock</button>
+<p id="foundEmail" style="color:#22c55e"></p>
+<input id="pinInput" type="password" placeholder="Security PIN">
+<button class="btn" onclick="unlockWallet()">Unlock Wallet</button>
+<button class="btn" onclick="openPage('createPage')">Use Another Account</button>
 </div>
 
-<!-- PASSKEY PAGE -->
+<!-- PASSKEY SCREEN -->
 <div id="passkeyPage" class="page">
 <h2>Backup Passkey</h2>
 <div class="card">
-<p id="passkeyDisplay" style="color:#22c55e;font-weight:bold"></p>
+<p id="passkeyText" style="color:#22c55e;font-weight:bold"></p>
 <button class="btn" onclick="copyPasskey()">Copy Passkey</button>
 </div>
 <button class="btn" onclick="openPage('home')">Continue</button>
-
-<!-- TEACHER SECRET PANEL -->
-<div id="secretPanel" class="hiddenPanel">
-<p><b>Teacher Panel (Hidden)</b></p>
-<p>PIN: <span id="teacherPin"></span></p>
-</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -100,21 +95,28 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <!-- FAKE WITHDRAW SCAM -->
 <div id="withdraw" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Withdraw Funds</h2>
+<h2>Withdraw</h2>
 <div class="card">
 <p>Status: LOCKED</p>
-<p>Unlock Fee: <b>$75 Gas Fee</b></p>
+<p>Unlock Fee Required: <b>$75 Gas Fee</b></p>
 <button class="btn" disabled>Pay Fee</button>
 <p style="color:red;font-size:12px">Educational Scam Simulation</p>
 </div>
 </div>
 
-<!-- NETWORK TICKER -->
+<!-- TICKER -->
 <div id="ticker" class="ticker">Connecting to blockchain...</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+<div class="nav-btn" onclick="openPage('home')">Home</div>
+<div class="nav-btn" onclick="openPage('buy')">Buy</div>
+<div class="nav-btn" onclick="openPage('sell')">Sell</div>
+</div>
 
 <script>
 // NAVIGATION
-let stack=["loginPage"];
+let stack=["createPage"];
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
@@ -127,7 +129,7 @@ function goBack(){
  document.getElementById(last).classList.add("active");
 }
 
-// CREATE WALLET (REALISTIC)
+// CREATE WALLET
 function createWallet(){
  let email=emailInput.value;
  let pass=passwordInput.value;
@@ -135,43 +137,41 @@ function createWallet(){
 
  localStorage.setItem("walletEmail",email);
 
- // fake passkey
+ // Fake passkey
  let key="0x"+crypto.getRandomValues(new Uint32Array(4)).join("");
  localStorage.setItem("walletKey",key);
 
- // silent PIN
+ // Silent PIN
  let pin=Math.floor(1000+Math.random()*9000);
  localStorage.setItem("walletPin",pin);
 
- passkeyDisplay.innerText=key;
- teacherPin.innerText=pin;
-
+ passkeyText.innerText=key;
  openPage("passkeyPage");
 }
 
 // COPY PASSKEY
 function copyPasskey(){
- navigator.clipboard.writeText(passkeyDisplay.innerText);
+ navigator.clipboard.writeText(passkeyText.innerText);
 }
 
-// RETURNING USER AUTO LOGIN SCREEN
+// AUTO RETURN LOGIN
 window.onload=function(){
  let saved=localStorage.getItem("walletEmail");
  if(saved){
-   returnEmail.innerText="Account Found: "+saved;
-   openPage("returnLogin");
+   foundEmail.innerText="Account Found: "+saved;
+   openPage("returnPage");
  }
 }
 
 // UNLOCK WALLET
 function unlockWallet(){
- let pin=returnPin.value;
+ let pin=pinInput.value;
  if(pin===localStorage.getItem("walletPin")){
    openPage("home");
  }
 }
 
-// FAKE NETWORK ACTIVITY
+// FAKE BLOCKCHAIN TICKER
 const msgs=["Syncing nodes","Broadcasting TX","Confirming block","Mempool pending"];
 setInterval(()=>{
  ticker.innerText=msgs[Math.floor(Math.random()*msgs.length)]+" #"+Math.floor(Math.random()*999999);
@@ -181,15 +181,14 @@ setInterval(()=>{
 <!-- DEV CONSOLE -->
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
-// TAP TITLE 5X TO OPEN HACKER PANEL
-let tap=0;
+let taps=0;
 document.getElementById("fchainTitle").addEventListener("click",()=>{
- tap++;
- if(tap==5){
+ taps++;
+ if(taps==5){
   eruda.init();
-  document.getElementById("secretPanel").style.display="block";
+  console.log("Teacher Mode Activated");
  }
- setTimeout(()=>tap=0,1500);
+ setTimeout(()=>taps=0,1500);
 });
 </script>
 
