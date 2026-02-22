@@ -166,7 +166,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script>
-// NAVIGATION
+/* NAVIGATION */
 let historyStack=["welcome"];
 const appPages=["dashboard","receive","receiveBTC","receiveETH"];
 
@@ -182,11 +182,14 @@ function goBack(){
  openPage(historyStack[historyStack.length-1]||"welcome");
 }
 
-// REGISTER / LOGIN
+/* REGISTER */
 function registerUser(){
  if(!regEmail.value||!regPass.value||!regPass2.value||!agree.checked){alert("Fill all fields");return;}
  if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
  localStorage.email=regEmail.value; localStorage.pass=regPass.value;
+ localStorage.btc="0.134532";
+ localStorage.eth="2.43211";
+ localStorage.currency="$12,450.32";
  let seed="SEED-"+Math.random().toString(36).slice(2,12).toUpperCase();
  localStorage.seed=seed;
  openPage("creating");
@@ -198,68 +201,76 @@ function registerUser(){
 
 function finishSetup(){openPage("dashboard");}
 
+/* LOGIN */
 function loginUser(){
- if(loginEmail.value===localStorage.email && loginPass.value===localStorage.pass){
-    profileEmail.innerText = localStorage.email;
-    btcDisplay.innerText = "BTC: " + (localStorage.btc || "0.134532");
-    ethDisplay.innerText = "ETH: " + (localStorage.eth || "2.43211");
-    currencyDisplay.innerText = localStorage.currency || "$12,450.32";
-    openPage("dashboard");
+ const storedEmail = localStorage.email;
+ const storedPass  = localStorage.pass;
+ if(!storedEmail || !storedPass){ alert("No wallet found. Please create one."); openPage("welcome"); return; }
+ if(loginEmail.value === storedEmail && loginPass.value === storedPass){
+  profileEmail.innerText = storedEmail;
+  btcDisplay.innerText = "BTC: "+(localStorage.btc||"0.134532");
+  ethDisplay.innerText = "ETH: "+(localStorage.eth||"2.43211");
+  currencyDisplay.innerText = localStorage.currency||"$12,450.32";
+  openPage("dashboard");
  } else alert("Invalid login");
 }
 
-// DEVTOOLS
-let devTap=0; let devTapTimer=null;
-function handleDevTap() {
-  devTap++;
-  clearTimeout(devTapTimer);
-  devTapTimer=setTimeout(()=>{ devTap=0; },1500);
-  if(devTap>=5){
-    document.getElementById("devTools").style.display="block";
-    devTap=0; showConfirm("DevTools Enabled");
-    // populate current values
-    document.getElementById("devEmail").value = localStorage.email || "";
-    document.getElementById("devBTC").value = localStorage.btc || "0.134532";
-    document.getElementById("devETH").value = localStorage.eth || "2.43211";
-    document.getElementById("devCurrency").value = localStorage.currency || "$12,450.32";
-  }
-}
-window.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("mainHeading").addEventListener("click", handleDevTap);
-  document.getElementById("dashHeading").addEventListener("click", handleDevTap);
-});
-
-function saveDevTools(){
-  localStorage.email=document.getElementById("devEmail").value;
-  localStorage.btc=document.getElementById("devBTC").value;
-  localStorage.eth=document.getElementById("devETH").value;
-  localStorage.currency=document.getElementById("devCurrency").value;
-
-  profileEmail.innerText=localStorage.email;
-  btcDisplay.innerText="BTC: "+localStorage.btc;
-  ethDisplay.innerText="ETH: "+localStorage.eth;
-  currencyDisplay.innerText=localStorage.currency;
-  showConfirm("DevTools Saved");
-}
-
-// QR
+/* QR */
 const btcAddress="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
 const ethAddress="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
-window.onload=function(){
+
+window.addEventListener("DOMContentLoaded",()=>{
  new QRious({element:btcQR,value:btcAddress,size:150});
  btcShort.innerText=btcAddress.slice(0,6)+"..."+btcAddress.slice(-6);
  btcShort.onclick=()=>{navigator.clipboard.writeText(btcAddress);showConfirm("BTC Copied");}
  new QRious({element:ethQR,value:ethAddress,size:150});
  ethShort.innerText=ethAddress.slice(0,6)+"..."+ethAddress.slice(-6);
  ethShort.onclick=()=>{navigator.clipboard.writeText(ethAddress);showConfirm("ETH Copied");}
-}
+});
 
-// Confirmation message
+/* CONFIRM MESSAGE */
 function showConfirm(msg){
  const c=document.getElementById("confirmMsg");
  c.innerText=msg; c.style.opacity=1;
  setTimeout(()=>{c.style.opacity=0;},1500);
 }
+
+/* DEVTOOLS TAP FIXED */
+let devTap=0, devTapTimer=null;
+function handleDevTap() {
+  devTap++;
+  clearTimeout(devTapTimer);
+  devTapTimer=setTimeout(()=>{ devTap=0; },1500);
+  if(devTap>=5){
+    document.getElementById("devTools").style.display="block";
+    devTap=0;
+    showConfirm("DevTools Enabled");
+    document.getElementById("devEmail").value = localStorage.email || "";
+    document.getElementById("devBTC").value = localStorage.btc || "";
+    document.getElementById("devETH").value = localStorage.eth || "";
+    document.getElementById("devCurrency").value = localStorage.currency || "";
+  }
+}
+
+function saveDevTools(){
+ localStorage.email = document.getElementById("devEmail").value;
+ localStorage.btc = document.getElementById("devBTC").value;
+ localStorage.eth = document.getElementById("devETH").value;
+ localStorage.currency = document.getElementById("devCurrency").value;
+ profileEmail.innerText = localStorage.email;
+ btcDisplay.innerText = "BTC: "+localStorage.btc;
+ ethDisplay.innerText = "ETH: "+localStorage.eth;
+ currencyDisplay.innerText = localStorage.currency;
+ showConfirm("DevTools Saved");
+}
+
+/* Attach dev tap */
+window.addEventListener("DOMContentLoaded", ()=>{
+  const mainH=document.getElementById("mainHeading");
+  const dashH=document.getElementById("dashHeading");
+  if(mainH) mainH.addEventListener("click", handleDevTap);
+  if(dashH) mainH.addEventListener("click", handleDevTap);
+});
 </script>
 
 </body>
