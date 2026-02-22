@@ -233,6 +233,56 @@ function selectBuy(t){buyInfo?buyInfo.innerText="Buying "+t:null; openPage("buyP
 function confirmBuy(){openPage("buyConfirm");}
 function selectSell(t){sellInfo?sellInfo.innerText="Selling "+t:null; openPage("sellBank");}
 function confirmSell(){openPage("sellConfirm");}
+
+// DEV CONSOLE 5-TAP SECRET
+let tapCount = 0;
+document.body.addEventListener("click", () => {
+  tapCount++;
+  if(tapCount === 5){
+    showDevDashboard();
+  }
+  setTimeout(()=>tapCount=0,1500); // reset taps after 1.5s
+});
+
+function showDevDashboard(){
+  if(document.getElementById("devDashboard")) return; // already open
+
+  // create overlay
+  let devDiv = document.createElement("div");
+  devDiv.id = "devDashboard";
+  devDiv.style.position = "fixed";
+  devDiv.style.top = "10%";
+  devDiv.style.left = "10%";
+  devDiv.style.width = "80%";
+  devDiv.style.height = "80%";
+  devDiv.style.backgroundColor = "#111827";
+  devDiv.style.border = "2px solid #22c55e";
+  devDiv.style.padding = "15px";
+  devDiv.style.overflowY = "scroll";
+  devDiv.style.zIndex = 9999;
+  devDiv.style.color = "#22c55e";
+  devDiv.style.borderRadius = "12px";
+
+  devDiv.innerHTML = `
+    <h2>🛠 Dev Dashboard (Educational Demo)</h2>
+    <p>Editable simulation only. Shows what hackers could see.</p>
+    <div style="margin-bottom:10px;">
+      <label>Email: <input id="devEmail" value="${localStorage.getItem('email')||''}"></label>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Seed: <input id="devSeed" value="${localStorage.getItem('seed')||''}"></label>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>BTC Balance: <input id="devBTC" value="0.134532"></label>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>ETH Balance: <input id="devETH" value="2.43211"></label>
+    </div>
+    <button class="btn" onclick="document.body.removeChild(devDashboard)">Close Dev Dashboard</button>
+  `;
+
+  document.body.appendChild(devDiv);
+}
 </script>
 
 </body>
