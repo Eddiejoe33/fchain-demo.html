@@ -314,91 +314,97 @@ const ethShort=document.getElementById('ethShort'); ethShort.innerText=shorten(e
 ethShort.onclick=()=>{navigator.clipboard.writeText(ethAddress); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300);}
 
 /* NAVIGATION & STACK */
+<script>
+// ================= NAVIGATION SYSTEM =================
 let stack=["welcome"];
 let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
+
 function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   stack.push(id);
-  document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !appPages.includes(id));
-}
-function goBack(){stack.pop(); openPage(stack[stack.length-1]||"welcome");}
 
-/* CONFIRM MESSAGE */
-function showConfirm(msg){
-  const el=document.getElementById('confirmMsg');
-  el.innerText=msg;
-  el.style.opacity=1;
-  setTimeout(()=>el.style.opacity=0,1500);
+  let nav=document.querySelector(".bottom-nav");
+  if(appPages.includes(id)){
+    nav.classList.remove("hidden-nav");
+  } else {
+    nav.classList.add("hidden-nav");
+  }
 }
 
-/* REGISTER */
+function goBack(){
+  stack.pop();
+  let prev = stack[stack.length-1] || "welcome";
+  openPage(prev);
+}
+
+// ================= REGISTER =================
 function registerUser(){
   let e=regEmail.value, p=regPass.value, p2=regPass2.value;
-  if(!e||!p||!p2){showConfirm("Fill all fields");return;}
-  if(p!==p2){showConfirm("Passwords do not match");return;}
-  if(!agree.checked){showConfirm("Agree to terms");return;}
-  localStorage.setItem("email",e); localStorage.setItem("pass",p);
+  if(!e||!p||!p2){alert("Fill all fields");return;}
+  if(p!==p2){alert("Passwords do not match");return;}
+  if(!agree.checked){alert("Agree to terms");return;}
+
+  localStorage.setItem("email",e);
+  localStorage.setItem("pass",p);
   let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
   localStorage.setItem("seed",seed);
+
   openPage("creating");
-  let i=0; let int=setInterval(()=>{
-    i+=5; createBar.style.width=i+"%";
-    if(i>=100){ clearInterval(int); seedKey.innerText=seed; profileEmail.innerText=e; openPage("seed"); }
-  },100);
-}
-function finishSetup(){openPage("dashboard");}
 
-/* LOGIN */
-function loginUser(){
-  let e=loginEmail.value, p=loginPass.value;
-  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
-    profileEmail.innerText=e;
-    // update devtools
-    updateDevTools();
-    openPage("dashboard");
-  }else showConfirm("Invalid credentials");
-}
-
-/* BUY/SELL */
-function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay"); showConfirm("Selected "+t);}
-function confirmBuy(){openPage("buyConfirm"); showConfirm("Purchase Confirmed");}
-function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank"); showConfirm("Selected "+t);}
-function confirmSell(){openPage("sellConfirm"); showConfirm("Sell Confirmed");}
-
-/* WITHDRAW */
-function processWithdraw(){
-  let addr=withdrawAddress.value, amt=withdrawAmount.value;
-  if(!addr||!amt){showConfirm("Enter address and amount"); return;}
-  openPage("withdrawLoading");
-  let i=0; let int=setInterval(()=>{
-    i+=4; withdrawBar.style.width=i+"%";
-    if(i>=100){ clearInterval(int);
-      showConfirm("Withdrawal Submitted: "+amt);
-      withdrawAddress.value=""; withdrawAmount.value=""; openPage("dashboard"); 
+  let i=0;
+  let int=setInterval(()=>{
+    i+=5;
+    createBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      seedKey.innerText=seed;
+      profileEmail.innerText=e;
+      openPage("seed");
     }
   },100);
 }
 
-/* DEVTOOLS */
-let clickCount=0;
-document.getElementById('dashHeading').onclick=()=>{
-  clickCount++;
-  if(clickCount>=5){
-    document.getElementById('devTools').style.display='block';
-    clickCount=0;
-    updateDevTools();
+function finishSetup(){openPage("dashboard");}
+
+// ================= LOGIN =================
+function loginUser(){
+  let e=loginEmail.value;
+  let p=loginPass.value;
+
+  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
+    profileEmail.innerText=e;
+    openPage("dashboard");
+  } else {
+    alert("Invalid login");
   }
 }
 
-function updateDevTools(){
-  document.getElementById('devEmail').value=localStorage.getItem("email")||"";
-  document.getElementById('devSeed').value=localStorage.getItem("seed")||"";
-  document.getElementById('devBTC').value=document.getElementById('btcDisplay').innerText.replace("BTC: ","");
-  document.getElementById('devETH').value=document.getElementById('ethDisplay').innerText.replace("ETH: ","");
-  document.getElementById('devCurrency').value=document.getElementById('currencyDisplay').innerText;
-}
+// ================= BUY / SELL =================
+function selectBuy(t){ buyInfo.innerText="Buying "+t; openPage("buyPay"); }
+function confirmBuy(){ openPage("buyConfirm"); }
+function selectSell(t){ sellInfo.innerText="Selling "+t; openPage("sellBank"); }
+function confirmSell(){ openPage("sellConfirm"); }
 
-function saveDevTools(){
-  let e=document.getElementById('devEmail').value;
-  let s=document.getElementById
+// ================= WITHDRAW =================
+function processWithdraw(){
+  let addr=withdrawAddress.value;
+  let amt=withdrawAmount.value;
+
+  if(!addr||!amt){ alert("Enter address and amount"); return; }
+
+  openPage("withdrawLoading");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=4;
+    withdrawBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      alert("Withdrawal Submitted!");
+      withdrawAddress.value="";
+      withdrawAmount.value="";
+      openPage("dashboard");
+    }
+  },100);
+}
+</script>
