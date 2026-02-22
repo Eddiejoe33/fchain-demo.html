@@ -9,57 +9,49 @@
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;cursor:pointer;}
+h2{text-align:center;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
-.btn:hover{background:#1e40af;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;cursor:pointer;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
+/* Bottom Nav */
 .bottom-nav{
- position:fixed;bottom:0;width:100%;display:flex;
- background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
+position:fixed;bottom:0;width:100%;display:flex;
+background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
 }
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
 .hidden-nav{display:none;}
 
-#confirmMsg{
- position:fixed;bottom:70px;left:50%;
- transform:translateX(-50%);
- background:#22c55e;padding:10px 20px;border-radius:12px;
- opacity:0;transition:.4s;color:black;font-weight:bold;z-index:999;
-}
-
+/* DevTools */
 #devTools{
- position:fixed;top:10px;left:10px;background:#111827;padding:10px;
- border-radius:10px;border:1px solid #22c55e;display:none;z-index:1000;
- max-width:300px;font-size:14px;
+position:fixed;top:10px;left:10px;background:#111827;
+padding:10px;border-radius:10px;border:1px solid #22c55e;
+display:none;z-index:9999;
 }
-#devTools input{width:100%;padding:5px;margin:4px 0;border-radius:5px;border:none;}
+#devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
 </style>
 </head>
 
 <body>
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
-<div id="confirmMsg"></div>
 
-<!-- DEV TOOLS -->
+<!-- DEVTOOLS -->
 <div id="devTools">
 <h3>Dev Tools</h3>
-Email <input id="devEmail"><br>
 BTC <input id="devBTC"><br>
 ETH <input id="devETH"><br>
-Balance <input id="devBalance"><br>
+USD <input id="devUSD"><br>
 <button class="btn" onclick="saveDev()">Save</button>
 </div>
 
 <!-- WELCOME -->
 <div id="welcome" class="page active">
-<h2 id="tapHeading">Welcome to FChain Wallet</h2>
+<h2 id="tapLogo">Welcome to FChain Wallet</h2>
 <button class="btn" onclick="openPage('register')">Create Wallet</button>
 <button class="btn" onclick="openPage('login')">Login</button>
 </div>
@@ -67,21 +59,18 @@ Balance <input id="devBalance"><br>
 <!-- REGISTER -->
 <div id="register" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Create Wallet</h2>
 <input id="regEmail" placeholder="Email">
 <input id="regPass" type="password" placeholder="Password">
-<input id="regPass2" type="password" placeholder="Confirm Password">
-<label><input type="checkbox" id="agree"> I Agree</label>
-<button class="btn" onclick="register()">Create</button>
+<input id="regPass2" type="password" placeholder="Confirm">
+<button class="btn" onclick="registerUser()">Create</button>
 </div>
 
 <!-- LOGIN -->
 <div id="login" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Login</h2>
 <input id="loginEmail" placeholder="Email">
 <input id="loginPass" type="password" placeholder="Password">
-<button class="btn" onclick="login()">Login</button>
+<button class="btn" onclick="loginUser()">Login</button>
 </div>
 
 <!-- CREATING -->
@@ -90,145 +79,115 @@ Balance <input id="devBalance"><br>
 <div class="progress"><div id="bar" class="bar"></div></div>
 </div>
 
-<!-- SEED -->
-<div id="seed" class="page">
-<h2>Backup Seed</h2>
-<div class="card"><b id="seedKey"></b></div>
-<button class="btn" onclick="openPage('dashboard')">Continue</button>
-</div>
-
 <!-- DASHBOARD -->
 <div id="dashboard" class="page">
 <h2 id="dashTap">FChain Wallet</h2>
 
-<div style="display:flex;gap:5px;">
+<div style="display:flex;gap:6px;">
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('sell')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<h1 id="bal">$12,450.32</h1>
-<div class="card" id="btc">BTC: 0.134532</div>
-<div class="card" id="eth">ETH: 2.43211</div>
+<h1 id="usd">$12,450</h1>
+<div class="card" id="btc">BTC: 0.13</div>
+<div class="card" id="eth">ETH: 2.43</div>
 </div>
 
-<!-- BUY / SELL / RECEIVE -->
-<div id="buy" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Buy</h2></div>
-<div id="sell" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Sell</h2></div>
+<!-- BUY -->
+<div id="buy" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<div class="card" onclick="alert('Network busy')">Buy BTC</div>
+<div class="card" onclick="alert('Network busy')">Buy ETH</div>
+</div>
 
+<!-- SELL -->
+<div id="sell" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<div class="card" onclick="alert('Liquidity error')">Sell BTC</div>
+<div class="card" onclick="alert('Liquidity error')">Sell ETH</div>
+</div>
+
+<!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Receive</h2>
-<div class="card" onclick="copyAddr('BTC')">Bitcoin Address</div>
-<div class="card" onclick="copyAddr('ETH')">Ethereum Address</div>
+<div class="card">BTC Address: bc1qf99...urf</div>
+<div class="card">ETH Address: 0xE6A4...189</div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- Bottom Nav -->
 <div class="bottom-nav hidden-nav" id="nav">
 <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
 <div class="nav-btn" onclick="openPage('buy')"><span>💳</span>Buy</div>
-<div class="nav-btn" onclick="openPage('sell')"><span>💰</span>Sell</div>
+<div class="nav-btn" onclick="openPage('sell')"><span>💱</span>Sell</div>
 <div class="nav-btn" onclick="openPage('receive')"><span>📥</span>Receive</div>
 </div>
 
 <script>
-// NAV
-let stack=["welcome"];
-const appPages=["dashboard","buy","sell","receive"];
+// PAGE SYSTEM
+let history=["welcome"];
+let appPages=["dashboard","buy","sell","receive"];
 
 function openPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 
- if(stack[stack.length-1]!==id) stack.push(id);
+if(history[history.length-1]!==id) history.push(id);
 
- document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
+document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
 
 function goBack(){
- stack.pop();
- openPage(stack[stack.length-1]||"welcome");
+history.pop();
+openPage(history.pop() || "welcome");
 }
 
 // REGISTER
-function register(){
- if(!regEmail.value||!regPass.value||regPass.value!==regPass2.value||!agree.checked){
-  alert("Fill form correctly");return;
- }
- localStorage.email=regEmail.value;
- localStorage.pass=regPass.value;
- localStorage.btc="0.134532";
- localStorage.eth="2.43211";
- localStorage.balance="$12,450.32";
- let seed="SEED-"+Math.random().toString(36).slice(2,12).toUpperCase();
- seedKey.innerText=seed;
+function registerUser(){
+if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
+localStorage.email=regEmail.value;
+localStorage.pass=regPass.value;
 
- openPage("creating");
- let i=0;
- let t=setInterval(()=>{
-  i+=10; bar.style.width=i+"%";
-  if(i>=100){clearInterval(t); openPage("seed");}
- },100);
+openPage("creating");
+let i=0;
+let t=setInterval(()=>{
+i+=5; bar.style.width=i+"%";
+if(i>=100){clearInterval(t); openPage("dashboard");}
+},80);
 }
 
 // LOGIN
-function login(){
- if(loginEmail.value===localStorage.email && loginPass.value===localStorage.pass){
-  loadDashboard();
-  openPage("dashboard");
- }else alert("Wrong login");
+function loginUser(){
+if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){
+openPage("dashboard");
+}else alert("Wrong login");
 }
 
-// LOAD DASHBOARD DATA
-function loadDashboard(){
- btc.innerText="BTC: "+(localStorage.btc||"0.0");
- eth.innerText="ETH: "+(localStorage.eth||"0.0");
- bal.innerText=localStorage.balance||"$0";
+// DEVTOOLS TAP 5 TIMES
+let tap=0,timer;
+function tapDev(){
+tap++;
+clearTimeout(timer);
+timer=setTimeout(()=>tap=0,1200);
+if(tap>=5){
+document.getElementById("devTools").style.display="block";
+tap=0;
 }
-
-// COPY
-function copyAddr(type){
- let addr = type==="BTC" ? "bc1qxxxx" : "0xXXXX";
- navigator.clipboard.writeText(addr);
- showMsg(type+" copied");
 }
+document.getElementById("tapLogo").onclick=tapDev;
+document.getElementById("dashTap").onclick=tapDev;
 
-// CONFIRM MSG
-function showMsg(m){
- confirmMsg.innerText=m;
- confirmMsg.style.opacity=1;
- setTimeout(()=>confirmMsg.style.opacity=0,1500);
-}
-
-// DEV TOOLS TAP
-let taps=0, timer=null;
-function devTap(){
- taps++;
- clearTimeout(timer);
- timer=setTimeout(()=>taps=0,1200);
- if(taps>=5){
-  devTools.style.display="block";
-  devEmail.value=localStorage.email||"";
-  devBTC.value=localStorage.btc||"";
-  devETH.value=localStorage.eth||"";
-  devBalance.value=localStorage.balance||"";
-  showMsg("DevTools Opened");
-  taps=0;
- }
-}
-tapHeading.onclick=devTap;
-dashTap.onclick=devTap;
-
-// SAVE DEV TOOLS
+// DEV SAVE
 function saveDev(){
- localStorage.email=devEmail.value;
- localStorage.btc=devBTC.value;
- localStorage.eth=devETH.value;
- localStorage.balance=devBalance.value;
- loadDashboard();
- showMsg("Saved");
+localStorage.btc=devBTC.value;
+localStorage.eth=devETH.value;
+localStorage.usd=devUSD.value;
+btc.innerText="BTC: "+devBTC.value;
+eth.innerText="ETH: "+devETH.value;
+usd.innerText=devUSD.value;
+alert("Saved");
 }
 </script>
 
 </body>
-  </html>
+                       </html>
