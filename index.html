@@ -1,70 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;cursor:pointer;}
+h2{text-align:center;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
 .card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
-.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;cursor:pointer;}
-.nav-btn:hover{color:white;}
-.ticker{position:fixed;bottom:45px;width:100%;background:#111827;padding:5px;font-size:12px;color:#22c55e;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
-.hidden{display:none;}
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;}
+.nav-btn{flex:1;text-align:center;padding:10px;color:#94a3b8;}
+.nav-btn:hover{color:white;}
+.progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
+.bar{height:12px;background:#22c55e;width:0%;}
+.banner{background:red;padding:6px;font-size:12px;text-align:center;}
 </style>
 </head>
 
 <body>
 
-<!-- CREATE WALLET -->
-<div id="createPage" class="page active">
-<h2 id="fchainTitle">FChain Wallet</h2>
-<p>Create New Wallet</p>
-<input id="emailInput" placeholder="Email">
-<input id="passwordInput" type="password" placeholder="Password">
-<button class="btn" onclick="createWallet()">Create Wallet</button>
+<div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
+
+<!-- WELCOME -->
+<div id="welcome" class="page active">
+<h2>Welcome to FChain Wallet</h2>
+<button class="btn" onclick="openPage('register')">Create New Wallet</button>
+<button class="btn" onclick="openPage('login')">I Already Have a Wallet</button>
 </div>
 
-<!-- RETURN LOGIN -->
-<div id="returnPage" class="page">
-<h2>Welcome Back</h2>
-<p id="foundEmail" style="color:#22c55e"></p>
-<input id="pinInput" type="password" placeholder="Security PIN">
-<button class="btn" onclick="unlockWallet()">Unlock Wallet</button>
-<button class="btn" onclick="openPage('createPage')">Use Another Account</button>
+<!-- REGISTER -->
+<div id="register" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Create Wallet</h2>
+<input id="regEmail" placeholder="Email">
+<input id="regPass" type="password" placeholder="Password">
+<input id="regPass2" type="password" placeholder="Confirm Password">
+<label><input type="checkbox" id="agree"> I agree to Terms</label>
+<button class="btn" onclick="registerUser()">Create Wallet</button>
 </div>
 
-<!-- PASSKEY SCREEN -->
-<div id="passkeyPage" class="page">
+<!-- LOGIN -->
+<div id="login" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+<button class="btn" onclick="loginUser()">Login</button>
+</div>
+
+<!-- CREATING -->
+<div id="creating" class="page">
+<h2>Creating Wallet...</h2>
+<p>Generating keys and syncing blockchain</p>
+<div class="progress"><div id="createBar" class="bar"></div></div>
+</div>
+
+<!-- SEED -->
+<div id="seed" class="page">
 <h2>Backup Passkey</h2>
 <div class="card">
-<p id="passkeyText" style="color:#22c55e;font-weight:bold"></p>
-<button class="btn" onclick="copyPasskey()">Copy Passkey</button>
+<p id="seedKey" style="font-size:18px;font-weight:bold;color:#22c55e"></p>
+<p style="color:red;font-size:12px">Never share this key. Real wallets never show seed after setup.</p>
 </div>
-<button class="btn" onclick="openPage('home')">Continue</button>
+<button class="btn" onclick="finishSetup()">I Saved It</button>
 </div>
 
 <!-- DASHBOARD -->
-<div id="home" class="page">
-<h2>Wallet Dashboard</h2>
-<h1>$0.00</h1>
-<div class="card">BTC: 0.000000</div>
-<div class="card">ETH: 0.000000</div>
-
-<div style="display:flex;gap:5px;">
+<div id="dashboard" class="page">
+<h2>FChain Wallet</h2>
+<div style="display:flex;gap:5px;margin-bottom:10px;">
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('sell')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
-
+<h1>$12,450.32</h1>
+<div class="card">BTC: 0.134532</div>
+<div class="card">ETH: 2.43211</div>
 <button class="btn" onclick="openPage('withdraw')">Withdraw</button>
 </div>
 
@@ -72,51 +89,94 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card">Bitcoin</div>
-<div class="card">Ethereum</div>
+<div class="card" onclick="selectBuy('BTC')">Bitcoin</div>
+<div class="card" onclick="selectBuy('ETH')">Ethereum</div>
+</div>
+
+<div id="buyPay" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Payment</h2>
+<div class="card" onclick="confirmBuy()">Bank Transfer</div>
+<div class="card" onclick="confirmBuy()">Card Payment</div>
+</div>
+
+<div id="buyConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Purchase</h2>
+<p id="buyInfo"></p>
+<button class="btn" onclick="alert('Transaction Submitted')">Confirm</button>
 </div>
 
 <!-- SELL -->
 <div id="sell" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Crypto</h2>
-<div class="card">Bitcoin</div>
-<div class="card">Ethereum</div>
+<div class="card" onclick="selectSell('BTC')">Bitcoin</div>
+<div class="card" onclick="selectSell('ETH')">Ethereum</div>
+</div>
+
+<div id="sellBank" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Select Bank</h2>
+<div class="card" onclick="confirmSell()">Access Bank</div>
+<div class="card" onclick="confirmSell()">GTBank</div>
+<div class="card" onclick="confirmSell()">Opay</div>
+</div>
+
+<div id="sellConfirm" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Confirm Sell</h2>
+<p id="sellInfo"></p>
+<button class="btn" onclick="alert('Sell Order Placed')">Confirm</button>
 </div>
 
 <!-- RECEIVE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
-<div class="card">BTC: bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf</div>
-<div class="card">ETH: 0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
+<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
-<!-- FAKE WITHDRAW SCAM -->
+<div id="receiveBTC" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>BTC Address</h2>
+<div class="card">bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf</div>
+</div>
+
+<div id="receiveETH" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>ETH Address</h2>
+<div class="card">0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</div>
+</div>
+
+<!-- WITHDRAW -->
 <div id="withdraw" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Withdraw</h2>
+<h2>Withdraw Funds</h2>
 <div class="card">
-<p>Status: LOCKED</p>
-<p>Unlock Fee Required: <b>$75 Gas Fee</b></p>
-<button class="btn" disabled>Pay Fee</button>
-<p style="color:red;font-size:12px">Educational Scam Simulation</p>
+<p>Status: <span style="color:orange">LOCKED</span></p>
+<p>Unlock Fee Required: <b>$120 Gas Fee</b></p>
+<button class="btn" disabled>Pay Gas Fee</button>
+<p style="color:red;font-size:12px">⚠️ REAL crypto never requires unlock fees. This is a scam trick.</p>
 </div>
 </div>
 
-<!-- TICKER -->
-<div id="ticker" class="ticker">Connecting to blockchain...</div>
+<!-- PROFILE -->
+<div id="profile" class="page">
+<h2>Profile</h2>
+<div class="card">Email: <span id="profileEmail"></span></div>
+</div>
 
-<!-- BOTTOM NAV -->
+<!-- NAV -->
 <div class="bottom-nav">
-<div class="nav-btn" onclick="openPage('home')">Home</div>
-<div class="nav-btn" onclick="openPage('buy')">Buy</div>
-<div class="nav-btn" onclick="openPage('sell')">Sell</div>
+<div class="nav-btn" onclick="openPage('dashboard')">Home</div>
+<div class="nav-btn" onclick="openPage('profile')">Profile</div>
 </div>
 
 <script>
-// NAVIGATION
-let stack=["createPage"];
+// navigation
+let stack=["welcome"];
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
@@ -124,72 +184,55 @@ function openPage(id){
 }
 function goBack(){
  stack.pop();
- let last=stack[stack.length-1];
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(last).classList.add("active");
+ openPage(stack[stack.length-1] || "welcome");
 }
 
-// CREATE WALLET
-function createWallet(){
- let email=emailInput.value;
- let pass=passwordInput.value;
- if(!email||!pass)return;
+// register
+function registerUser(){
+ let e=regEmail.value, p=regPass.value, p2=regPass2.value;
+ if(!e||!p||!p2){alert("Fill all fields"); return;}
+ if(p!==p2){alert("Passwords do not match"); return;}
+ if(!agree.checked){alert("You must agree to terms"); return;}
 
- localStorage.setItem("walletEmail",email);
+ localStorage.setItem("email",e);
+ localStorage.setItem("pass",p);
 
- // Fake passkey
- let key="0x"+crypto.getRandomValues(new Uint32Array(4)).join("");
- localStorage.setItem("walletKey",key);
+ let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
+ localStorage.setItem("seed",seed);
 
- // Silent PIN
- let pin=Math.floor(1000+Math.random()*9000);
- localStorage.setItem("walletPin",pin);
-
- passkeyText.innerText=key;
- openPage("passkeyPage");
+ // show creating
+ openPage("creating");
+ let i=0;
+ let int=setInterval(()=>{
+   i+=5; createBar.style.width=i+"%";
+   if(i>=100){clearInterval(int);
+     seedKey.innerText=seed;
+     profileEmail.innerText=e;
+     openPage("seed");
+   }
+ },100);
 }
 
-// COPY PASSKEY
-function copyPasskey(){
- navigator.clipboard.writeText(passkeyText.innerText);
+// finish seed setup → full dashboard
+function finishSetup(){
+ openPage("dashboard");
 }
 
-// AUTO RETURN LOGIN
-window.onload=function(){
- let saved=localStorage.getItem("walletEmail");
- if(saved){
-   foundEmail.innerText="Account Found: "+saved;
-   openPage("returnPage");
- }
+// login
+function loginUser(){
+ let e=loginEmail.value;
+ let p=loginPass.value;
+ if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
+   profileEmail.innerText=e;
+   openPage("dashboard");
+ } else {alert("Invalid credentials");}
 }
 
-// UNLOCK WALLET
-function unlockWallet(){
- let pin=pinInput.value;
- if(pin===localStorage.getItem("walletPin")){
-   openPage("home");
- }
-}
-
-// FAKE BLOCKCHAIN TICKER
-const msgs=["Syncing nodes","Broadcasting TX","Confirming block","Mempool pending"];
-setInterval(()=>{
- ticker.innerText=msgs[Math.floor(Math.random()*msgs.length)]+" #"+Math.floor(Math.random()*999999);
-},2000);
-</script>
-
-<!-- DEV CONSOLE -->
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>
-let taps=0;
-document.getElementById("fchainTitle").addEventListener("click",()=>{
- taps++;
- if(taps==5){
-  eruda.init();
-  console.log("Teacher Mode Activated");
- }
- setTimeout(()=>taps=0,1500);
-});
+// Buy/Sell select
+function selectBuy(t){buyInfo?buyInfo.innerText="Buying "+t:null; openPage("buyPay");}
+function confirmBuy(){openPage("buyConfirm");}
+function selectSell(t){sellInfo?sellInfo.innerText="Selling "+t:null; openPage("sellBank");}
+function confirmSell(){openPage("sellConfirm");}
 </script>
 
 </body>
