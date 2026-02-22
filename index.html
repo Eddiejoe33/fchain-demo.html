@@ -301,69 +301,118 @@ function goBack(){
 }
 
 // register
+<script>
+// navigation
+let stack=["welcome"];
+let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
+
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  stack.push(id);
+
+  let nav=document.querySelector(".bottom-nav");
+  if(appPages.includes(id)){
+    nav.classList.remove("hidden-nav");
+  }else{
+    nav.classList.add("hidden-nav");
+  }
+}
+
+function goBack(){
+  stack.pop();
+  openPage(stack[stack.length-1]||"welcome");
+}
+
+// Helper function to show inline messages
+function showMessage(container, msg){
+  let el = container.querySelector(".msg");
+  if(!el){
+    el = document.createElement("p");
+    el.className = "msg";
+    el.style.color = "red";
+    el.style.fontSize = "12px";
+    container.appendChild(el);
+  }
+  el.innerText = msg;
+}
+
+// register
 function registerUser(){
- let e=regEmail.value, p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2){alert("Fill all fields");return;}
- if(p!==p2){alert("Passwords do not match");return;}
- if(!agree.checked){alert("Agree to terms");return;}
+  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
+  let container = document.getElementById("register");
 
- localStorage.setItem("email",e);
- localStorage.setItem("pass",p);
- let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
- localStorage.setItem("seed",seed);
+  if(!e||!p||!p2){ showMessage(container,"Please fill all fields"); return; }
+  if(p!==p2){ showMessage(container,"Passwords do not match"); return; }
+  if(!agree.checked){ showMessage(container,"You must agree to Terms"); return; }
 
- openPage("creating");
- let i=0;
- let int=setInterval(()=>{
-   i+=5; createBar.style.width=i+"%";
-   if(i>=100){
-     clearInterval(int);
-     seedKey.innerText=seed;
-     profileEmail.innerText=e;
-     openPage("seed");
-   }
- },100);
+  localStorage.setItem("email",e);
+  localStorage.setItem("pass",p);
+  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
+  localStorage.setItem("seed",seed);
+
+  openPage("creating");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=5; createBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      seedKey.innerText=seed;
+      profileEmail.innerText=e;
+      openPage("seed");
+    }
+  },100);
 }
 
 function finishSetup(){openPage("dashboard");}
 
 // login
 function loginUser(){
- let e=loginEmail.value;
- let p=loginPass.value;
- if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
-   profileEmail.innerText=e;
-   openPage("dashboard");
- }else{
-   alert("Invalid credentials");
- }
+  let e=loginEmail.value;
+  let p=loginPass.value;
+  let container = document.getElementById("login");
+
+  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
+    profileEmail.innerText=e;
+    openPage("dashboard");
+  }else{
+    showMessage(container,"Invalid credentials");
+  }
 }
 
 // Buy/Sell
-function selectBuy(t){buyInfo.innerText="Buying "+t;openPage("buyPay");}
-function confirmBuy(){openPage("buyConfirm");}
-function selectSell(t){sellInfo.innerText="Selling "+t;openPage("sellBank");}
-function confirmSell(){openPage("sellConfirm");}
+function selectBuy(t){ buyInfo.innerText="Buying "+t; openPage("buyPay"); }
+function confirmBuy(){ openPage("buyConfirm"); }
+function selectSell(t){ sellInfo.innerText="Selling "+t; openPage("sellBank"); }
+function confirmSell(){ openPage("sellConfirm"); }
 
 // Withdraw fake Binance animation
 function processWithdraw(){
- let addr=withdrawAddress.value;
- let amt=withdrawAmount.value;
- if(!addr || !amt){alert("Enter address and amount");return;}
+  let addr=withdrawAddress.value;
+  let amt=withdrawAmount.value;
+  let container = document.getElementById("withdraw");
 
- openPage("withdrawLoading");
- let i=0;
- let int=setInterval(()=>{
-   i+=4;
-   withdrawBar.style.width=i+"%";
-   if(i>=100){
-     clearInterval(int);
-     alert("Withdrawal Submitted\nAddress: "+addr+"\nAmount: "+amt);
-     withdrawAddress.value="";
-     withdrawAmount.value="";
-     openPage("dashboard");
-   }
- },100);
+  // silently ignore if empty
+  if(!addr || !amt){
+    showMessage(container,"Please enter address and amount");
+    return;
+  }
+
+  openPage("withdrawLoading");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=4;
+    withdrawBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      // remove inline message
+      let msg = container.querySelector(".msg");
+      if(msg) msg.innerText = "";
+      withdrawAddress.value="";
+      withdrawAmount.value="";
+      openPage("dashboard");
+    }
+  },100);
 }
 </script>
 
