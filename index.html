@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
+
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
@@ -16,14 +17,37 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
-.nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
-.nav-btn span{font-size:22px;display:block;}
+
+/* RETROS STYLE BOTTOM NAV */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  background:#020617;
+  border-top:1px solid #1e293b;
+  height:65px;
+  z-index:999;
+}
+.nav-btn{
+  flex:1;
+  text-align:center;
+  padding-top:6px;
+  font-size:11px;
+  color:#94a3b8;
+  cursor:pointer;
+}
+.nav-btn span{
+  font-size:22px;
+  display:block;
+}
 .nav-btn:hover{color:#22c55e;}
+
+/* hide nav */
 .hidden-nav{display:none;}
-.msg{color:red;font-size:12px;margin-top:5px;}
 </style>
 </head>
+
 <body>
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
@@ -92,7 +116,6 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <h2>Buy Crypto</h2>
 <div class="card" onclick="selectBuy('BTC')">Bitcoin</div>
 <div class="card" onclick="selectBuy('ETH')">Ethereum</div>
-<p id="buyInfo" style="margin-top:10px;"></p>
 </div>
 
 <div id="buyPay" class="page">
@@ -106,7 +129,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Confirm Purchase</h2>
 <p id="buyInfo"></p>
-<button class="btn" onclick="confirmBuy()">Confirm</button>
+<button class="btn" onclick="alert('Transaction Submitted')">Confirm</button>
 </div>
 
 <!-- SELL -->
@@ -115,7 +138,6 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <h2>Sell Crypto</h2>
 <div class="card" onclick="selectSell('BTC')">Bitcoin</div>
 <div class="card" onclick="selectSell('ETH')">Ethereum</div>
-<p id="sellInfo" style="margin-top:10px;"></p>
 </div>
 
 <div id="sellBank" class="page">
@@ -130,7 +152,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Confirm Sell</h2>
 <p id="sellInfo"></p>
-<button class="btn" onclick="confirmSell()">Confirm</button>
+<button class="btn" onclick="alert('Sell Order Placed')">Confirm</button>
 </div>
 
 <!-- RECEIVE -->
@@ -145,24 +167,24 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div id="receiveBTC" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Bitcoin Address</h2>
-<div class="card" style="text-align:center; background: linear-gradient(135deg, #f7931a, #ffb347); border-radius:20px; box-shadow:0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+<div class="card" style="text-align:center; background: linear-gradient(135deg, #f7931a, #ffb347); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
 <canvas id="btcQR"></canvas>
-<p id="btcShort" style="font-size:16px;font-weight:bold;cursor:pointer;user-select:none;margin-top:10px;"></p>
-<small style="display:block;color:rgba(0,0,0,0.6);margin-top:5px;">Tap the address to copy full BTC address</small>
+<p id="btcShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select:none; margin-top:10px;"></p>
+<small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full BTC address</small>
 </div>
-<p style="color:red;font-size:12px;margin-top:10px;">Only send BTC to this address.</p>
+<p style="color:red;font-size:12px; margin-top:10px;">Only send BTC to this address.</p>
 </div>
 
 <!-- RECEIVE ETH -->
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Ethereum Address</h2>
-<div class="card" style="text-align:center; background: linear-gradient(135deg, #3c3cbd, #627eea); border-radius:20px; box-shadow:0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+<div class="card" style="text-align:center; background: linear-gradient(135deg, #3c3cbd, #627eea); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
 <canvas id="ethQR"></canvas>
-<p id="ethShort" style="font-size:16px;font-weight:bold;cursor:pointer;user-select:none;margin-top:10px;"></p>
-<small style="display:block;color:rgba(0,0,0,0.6);margin-top:5px;">Tap the address to copy full ETH address</small>
+<p id="ethShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select:none; margin-top:10px;"></p>
+<small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full ETH address</small>
 </div>
-<p style="color:red;font-size:12px;margin-top:10px;">Only send ETH to this address.</p>
+<p style="color:red;font-size:12px; margin-top:10px;">Only send ETH to this address.</p>
 </div>
 
 <!-- WITHDRAW -->
@@ -173,6 +195,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <input id="withdrawAddress" placeholder="Wallet Address">
 <input id="withdrawAmount" type="number" placeholder="Amount to Withdraw">
 <button class="btn" onclick="processWithdraw()">Withdraw</button>
+<p class="msg" style="color:red;font-size:12px;"></p>
 </div>
 </div>
 
@@ -219,63 +242,137 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script>
-// Full addresses
+const appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
+let stack=["welcome"];
+
+// NAVIGATION
+function openPage(id, replace=false){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  if(replace){
+    stack[stack.length-1] = id;
+  }else{
+    if(stack[stack.length-1] !== id){
+      stack.push(id);
+    }
+  }
+
+  let nav = document.querySelector(".bottom-nav");
+  if(appPages.includes(id)){
+    nav.classList.remove("hidden-nav");
+  } else {
+    nav.classList.add("hidden-nav");
+  }
+}
+
+function goBack(){
+  if(stack.length <= 1){
+    openPage("welcome", true);
+    return;
+  }
+  stack.pop();
+  openPage(stack[stack.length-1], true);
+}
+
+// Helper message
+function showMessage(container,msg){
+  let el = container.querySelector(".msg");
+  if(!el){
+    el = document.createElement("p");
+    el.className="msg";
+    el.style.color="red";
+    el.style.fontSize="12px";
+    container.appendChild(el);
+  }
+  el.innerText = msg;
+}
+
+// REGISTER / LOGIN
+function registerUser(){
+  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
+  let container = document.getElementById("register");
+
+  if(!e||!p||!p2){ showMessage(container,"Please fill all fields"); return; }
+  if(p!==p2){ showMessage(container,"Passwords do not match"); return; }
+  if(!agree.checked){ showMessage(container,"You must agree to Terms"); return; }
+
+  localStorage.setItem("email",e);
+  localStorage.setItem("pass",p);
+  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
+  localStorage.setItem("seed",seed);
+
+  openPage("creating");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=5; createBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      seedKey.innerText=seed;
+      profileEmail.innerText=e;
+      openPage("seed");
+    }
+  },100);
+}
+
+function finishSetup(){ openPage("dashboard"); }
+
+function loginUser(){
+  let e=loginEmail.value, p=loginPass.value;
+  let container = document.getElementById("login");
+  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
+    profileEmail.innerText=e;
+    openPage("dashboard");
+  }else{
+    showMessage(container,"Invalid credentials");
+  }
+}
+
+// BUY / SELL
+function selectBuy(t){ buyInfo.innerText="Buying "+t; openPage("buyPay"); }
+function confirmBuy(){ openPage("buyConfirm"); }
+function selectSell(t){ sellInfo.innerText="Selling "+t; openPage("sellBank"); }
+function confirmSell(){ openPage("sellConfirm"); }
+
+// WITHDRAW
+function processWithdraw(){
+  let addr=withdrawAddress.value;
+  let amt=withdrawAmount.value;
+  let container = document.getElementById("withdraw");
+
+  if(!addr || !amt){ showMessage(container,"Please enter address and amount"); return; }
+
+  openPage("withdrawLoading");
+  let i=0;
+  let int=setInterval(()=>{
+    i+=4; withdrawBar.style.width=i+"%";
+    if(i>=100){
+      clearInterval(int);
+      let msg = container.querySelector(".msg");
+      if(msg) msg.innerText="";
+      withdrawAddress.value="";
+      withdrawAmount.value="";
+      openPage("dashboard");
+    }
+  },100);
+}
+
+// QR RECEIVE
 const btcAddress="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
 const ethAddress="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
-// Shorten function
+
 function shorten(addr){ return addr.slice(0,6)+"..."+addr.slice(-6); }
-// BTC QR
-const btcQR = new QRious({element:document.getElementById('btcQR'),value:btcAddress,size:150});
-const btcShort=document.getElementById('btcShort');
-btcShort.innerText=shorten(btcAddress);
-btcShort.onclick=()=>{ navigator.clipboard.writeText(btcAddress); btcShort.style.opacity=0.5; setTimeout(()=>btcShort.style.opacity=1,300); }
-// ETH QR
-const ethQR = new QRious({element:document.getElementById('ethQR'),value:ethAddress,size:150});
-const ethShort=document.getElementById('ethShort');
-ethShort.innerText=shorten(ethAddress);
-ethShort.onclick=()=>{ navigator.clipboard.writeText(ethAddress); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300); }
 
-// Navigation
-let stack=["welcome"];
-let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
-function openPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");stack.push(id);let nav=document.querySelector(".bottom-nav");if(appPages.includes(id)){nav.classList.remove("hidden-nav");}else{nav.classList.add("hidden-nav");}}
-function goBack(){stack.pop();openPage(stack[stack.length-1]||"welcome");}
+const btcQR = new QRious({element:document.getElementById('btcQR'), value:btcAddress, size:150});
+const btcShort = document.getElementById('btcShort');
+btcShort.innerText = shorten(btcAddress);
+btcShort.onclick = () => { navigator.clipboard.writeText(btcAddress); btcShort.style.opacity=0.5; setTimeout(()=>btcShort.style.opacity=1,300); }
 
-// Inline messages helper
-function showMessage(container,msg){let el=container.querySelector(".msg");if(!el){el=document.createElement("p");el.className="msg";el.style.color="red";el.style.fontSize="12px";container.appendChild(el);}el.innerText=msg;}
+const ethQR = new QRious({element:document.getElementById('ethQR'), value:ethAddress, size:150});
+const ethShort = document.getElementById('ethShort');
+ethShort.innerText = shorten(ethAddress);
+ethShort.onclick = () => { navigator.clipboard.writeText(ethAddress); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300); }
 
-// Register
-function registerUser(){
-  let e=regEmail.value,p=regPass.value,p2=regPass2.value,container=document.getElementById("register");
-  if(!e||!p||!p2){showMessage(container,"Please fill all fields");return;}
-  if(p!==p2){showMessage(container,"Passwords do not match");return;}
-  if(!agree.checked){showMessage(container,"You must agree to Terms");return;}
-  localStorage.setItem("email",e);localStorage.setItem("pass",p);
-  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();localStorage.setItem("seed",seed);
-  openPage("creating");
-  let i=0;let int=setInterval(()=>{i+=5;createBar.style.width=i+"%";if(i>=100){clearInterval(int);seedKey.innerText=seed;profileEmail.innerText=e;openPage("seed");}},100);
-}
-function finishSetup(){openPage("dashboard");}
-
-// Login
-function loginUser(){
-  let e=loginEmail.value,p=loginPass.value,container=document.getElementById("login");
-  if(e===localStorage.getItem("email")&&p===localStorage.getItem("pass")){profileEmail.innerText=e;openPage("dashboard");}
-  else{showMessage(container,"Invalid credentials");}
-}
-
-// Buy/Sell
-function selectBuy(t){buyInfo.innerText="Buying "+t;openPage("buyPay");}
-function confirmBuy(){openPage("buyConfirm");}
-function selectSell(t){sellInfo.innerText="Selling "+t;openPage("sellBank");}
-function confirmSell(){openPage("sellConfirm");}
-
-// Withdraw
-function processWithdraw(){
-  let addr=withdrawAddress.value,amt=withdrawAmount.value,container=document.getElementById("withdraw");
-  if(!addr||!amt){showMessage(container,"Please enter address and amount");return;}
-  openPage("withdrawLoading");let i=0;let int=setInterval(()=>{i+=4;withdrawBar.style.width=i+"%";if(i>=100){clearInterval(int);let msg=container.querySelector(".msg");if(msg) msg.innerText="";withdrawAddress.value="";withdrawAmount.value="";openPage("dashboard");}},100);
-}
 </script>
 </body>
   </html>
