@@ -41,10 +41,9 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
   font-size:22px;
   display:block;
 }
-.nav-btn:hover{color:#22c55e;}
-
-/* HIDE NAV CLASS */
-.hidden-nav{display:none;}
+.nav-btn:hover{
+  color:#22c55e;
+}
 </style>
 </head>
 
@@ -64,8 +63,8 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Create Wallet</h2>
 <input id="regEmail" placeholder="Email">
-<input id="regPass" type="password" placeholder="Password">
-<input id="regPass2" type="password" placeholder="Confirm Password">
+<input id="regPass" type="password" placeholder="Password" autocomplete="new-password">
+<input id="regPass2" type="password" placeholder="Confirm Password" autocomplete="new-password">
 <label><input type="checkbox" id="agree"> I agree to Terms</label>
 <button class="btn" onclick="registerUser()">Create Wallet</button>
 </div>
@@ -75,7 +74,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Login</h2>
 <input id="loginEmail" placeholder="Email">
-<input id="loginPass" type="password" placeholder="Password">
+<input id="loginPass" type="password" placeholder="Password" autocomplete="current-password">
 <button class="btn" onclick="loginUser()">Login</button>
 </div>
 
@@ -180,10 +179,12 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Withdraw Funds</h2>
 <div class="card">
-<p>Status: <span style="color:orange">LOCKED</span></p>
-<p>Unlock Fee Required: <b>$120 Gas Fee</b></p>
-<button class="btn" disabled>Pay Gas Fee</button>
-<p style="color:red;font-size:12px">⚠️ Real crypto NEVER requires unlock fees.</p>
+<label>Recipient Address</label>
+<input id="withdrawAddress" placeholder="Enter address">
+<label>Amount</label>
+<input id="withdrawAmount" placeholder="Enter amount">
+<button class="btn" onclick="processWithdraw()">Withdraw</button>
+<p id="withdrawStatus" style="color:#22c55e;font-weight:bold;margin-top:5px;"></p>
 </div>
 </div>
 
@@ -214,46 +215,45 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="card">Add Custom Network</div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav hidden-nav">
-  <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
-  <div class="nav-btn" onclick="openPage('profile')"><span>👤</span>Profile</div>
-  <div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
-  <div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
+<!-- RETROS ICON BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="nav-btn" onclick="openPage('dashboard')">
+    <span>🏠</span>Home
+  </div>
+  <div class="nav-btn" onclick="openPage('profile')">
+    <span>👤</span>Profile
+  </div>
+  <div class="nav-btn" onclick="openPage('settings')">
+    <span>⚙️</span>Settings
+  </div>
+  <div class="nav-btn" onclick="openPage('network')">
+    <span>🌐</span>Network
+  </div>
 </div>
 
 <script>
 // navigation
 let stack=["welcome"];
-let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","profile","settings","network"];
-
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
  stack.push(id);
-
- let nav=document.querySelector(".bottom-nav");
- if(appPages.includes(id)){
-   nav.classList.remove("hidden-nav");
- }else{
-   nav.classList.add("hidden-nav");
- }
 }
-
 function goBack(){
  stack.pop();
- openPage(stack[stack.length-1]||"welcome");
+ openPage(stack[stack.length-1] || "welcome");
 }
 
 // register
 function registerUser(){
  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2){alert("Fill all fields");return;}
- if(p!==p2){alert("Passwords do not match");return;}
- if(!agree.checked){alert("Agree to terms");return;}
+ if(!e||!p||!p2){alert("Fill all fields"); return;}
+ if(p!==p2){alert("Passwords do not match"); return;}
+ if(!agree.checked){alert("You must agree to terms"); return;}
 
  localStorage.setItem("email",e);
  localStorage.setItem("pass",p);
+
  let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
  localStorage.setItem("seed",seed);
 
@@ -261,8 +261,7 @@ function registerUser(){
  let i=0;
  let int=setInterval(()=>{
    i+=5; createBar.style.width=i+"%";
-   if(i>=100){
-     clearInterval(int);
+   if(i>=100){clearInterval(int);
      seedKey.innerText=seed;
      profileEmail.innerText=e;
      openPage("seed");
@@ -270,7 +269,11 @@ function registerUser(){
  },100);
 }
 
-function finishSetup(){openPage("dashboard");}
+// finish seed setup → full dashboard
+function finishSetup(){
+  document.activeElement.blur(); // remove floating password popup
+  openPage("dashboard");
+}
 
 // login
 function loginUser(){
@@ -279,16 +282,24 @@ function loginUser(){
  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
    profileEmail.innerText=e;
    openPage("dashboard");
- }else{
-   alert("Invalid credentials");
- }
+ } else {alert("Invalid credentials");}
 }
 
 // Buy/Sell
-function selectBuy(t){buyInfo.innerText="Buying "+t;openPage("buyPay");}
+function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
 function confirmBuy(){openPage("buyConfirm");}
-function selectSell(t){sellInfo.innerText="Selling "+t;openPage("sellBank");}
+function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
 function confirmSell(){openPage("sellConfirm");}
+
+// Withdraw function
+function processWithdraw(){
+  const addr = document.getElementById("withdrawAddress").value;
+  const amt = document.getElementById("withdrawAmount").value;
+  if(!addr||!amt){alert("Enter address and amount"); return;}
+  document.getElementById("withdrawStatus").innerText="Withdraw of "+amt+" submitted to "+addr;
+  document.getElementById("withdrawAddress").value="";
+  document.getElementById("withdrawAmount").value="";
+}
 </script>
 
 </body>
