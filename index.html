@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FChain Wallet (Educational)</title>
+<title>FChain Wallet 
 
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
@@ -174,11 +174,9 @@ function loginUser(){
 
  let fakeKey="PASSKEY-"+Math.random().toString(36).substring(2,12).toUpperCase();
  localStorage.setItem("fakePasskey",fakeKey);
-
- let pin=Math.floor(1000+Math.random()*9000);
- localStorage.setItem("userPin",pin);
- alert("Security PIN (training): "+pin);
-
+let pin=Math.floor(1000+Math.random()*9000);
+localStorage.setItem("userPin",pin);
+console.log("Training PIN:", pin);
  simUserEmail.innerText=email;
  simPasskey.innerText=fakeKey;
 
