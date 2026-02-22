@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
-
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
-h2{text-align:center;}
+h2{text-align:center;cursor:pointer;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
 .card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
@@ -17,37 +16,15 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
-
-/* RETROS STYLE BOTTOM NAV */
 .bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  display:flex;
-  background:#020617;
-  border-top:1px solid #1e293b;
-  height:65px;
-  z-index:999;
+  position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
 }
-.nav-btn{
-  flex:1;
-  text-align:center;
-  padding-top:6px;
-  font-size:11px;
-  color:#94a3b8;
-  cursor:pointer;
-}
-.nav-btn span{
-  font-size:22px;
-  display:block;
-}
+.nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
+.nav-btn span{font-size:22px;display:block;}
 .nav-btn:hover{color:#22c55e;}
-
-/* hide nav */
 .hidden-nav{display:none;}
 </style>
 </head>
-
 <body>
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
@@ -157,34 +134,34 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <!-- RECEIVE -->
 <div id="receive" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Receive Crypto</h2>
-<div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
-<div class="card" onclick="openPage('receiveETH')">Ethereum</div>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Receive Crypto</h2>
+  <div class="card" onclick="openPage('receiveBTC')">Bitcoin</div>
+  <div class="card" onclick="openPage('receiveETH')">Ethereum</div>
 </div>
 
 <!-- RECEIVE BTC -->
 <div id="receiveBTC" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Bitcoin Address</h2>
-<div class="card" style="text-align:center; background: linear-gradient(135deg, #f7931a, #ffb347); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
-<canvas id="btcQR"></canvas>
-<p id="btcShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select:none; margin-top:10px;"></p>
-<small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full BTC address</small>
-</div>
-<p style="color:red;font-size:12px; margin-top:10px;">Only send BTC to this address.</p>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Bitcoin Address</h2>
+  <div class="card" style="text-align:center; background: linear-gradient(135deg, #f7931a, #ffb347); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+    <canvas id="btcQR"></canvas>
+    <p id="btcShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select: none; margin-top:10px;"></p>
+    <small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full BTC address</small>
+  </div>
+  <p style="color:red;font-size:12px; margin-top:10px;">Only send BTC to this address.</p>
 </div>
 
 <!-- RECEIVE ETH -->
 <div id="receiveETH" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Ethereum Address</h2>
-<div class="card" style="text-align:center; background: linear-gradient(135deg, #3c3cbd, #627eea); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
-<canvas id="ethQR"></canvas>
-<p id="ethShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select:none; margin-top:10px;"></p>
-<small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full ETH address</small>
-</div>
-<p style="color:red;font-size:12px; margin-top:10px;">Only send ETH to this address.</p>
+  <button class="btn" onclick="goBack()">⬅ Back</button>
+  <h2>Ethereum Address</h2>
+  <div class="card" style="text-align:center; background: linear-gradient(135deg, #3c3cbd, #627eea); border-radius:20px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); padding:20px;">
+    <canvas id="ethQR"></canvas>
+    <p id="ethShort" style="font-size:16px; font-weight:bold; cursor:pointer; user-select: none; margin-top:10px;"></p>
+    <small style="display:block; color:rgba(0,0,0,0.6); margin-top:5px;">Tap the address to copy full ETH address</small>
+  </div>
+  <p style="color:red;font-size:12px; margin-top:10px;">Only send ETH to this address.</p>
 </div>
 
 <!-- WITHDRAW -->
@@ -234,145 +211,137 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav hidden-nav">
-<div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
-<div class="nav-btn" onclick="openPage('profile')"><span>👤</span>Profile</div>
-<div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
-<div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
+  <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
+  <div class="nav-btn" onclick="openPage('profile')"><span>👤</span>Profile</div>
+  <div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
+  <div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
 <script>
-const appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
-let stack=["welcome"];
+// Full addresses
+const btcAddress = "bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
+const ethAddress = "0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
 
-// NAVIGATION
-function openPage(id, replace=false){
+// Shorten function
+function shorten(addr){ return addr.slice(0,6)+"..."+addr.slice(-6); }
+
+// BTC QR
+new QRious({element: document.getElementById('btcQR'), value: btcAddress, size:150});
+const btcShort = document.getElementById('btcShort');
+btcShort.innerText = shorten(btcAddress);
+btcShort.onclick = ()=>{navigator.clipboard.writeText(btcAddress); btcShort.style.opacity=0.5; setTimeout(()=>btcShort.style.opacity=1,300);};
+
+// ETH QR
+new QRious({element: document.getElementById('ethQR'), value: ethAddress, size:150});
+const ethShort = document.getElementById('ethShort');
+ethShort.innerText = shorten(ethAddress);
+ethShort.onclick = ()=>{navigator.clipboard.writeText(ethAddress); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300);};
+
+// Navigation
+let stack=["welcome"];
+let appPages=["dashboard","buy","buyPay","buyConfirm","sell","sellBank","sellConfirm","receive","receiveBTC","receiveETH","withdraw","withdrawLoading","profile","settings","network"];
+
+function openPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-
-  if(replace){
-    stack[stack.length-1] = id;
-  }else{
-    if(stack[stack.length-1] !== id){
-      stack.push(id);
-    }
-  }
-
-  let nav = document.querySelector(".bottom-nav");
-  if(appPages.includes(id)){
-    nav.classList.remove("hidden-nav");
-  } else {
-    nav.classList.add("hidden-nav");
-  }
+  stack.push(id);
+  let nav=document.querySelector(".bottom-nav");
+  if(appPages.includes(id)) nav.classList.remove("hidden-nav");
+  else nav.classList.add("hidden-nav");
 }
 
 function goBack(){
-  if(stack.length <= 1){
-    openPage("welcome", true);
-    return;
-  }
   stack.pop();
-  openPage(stack[stack.length-1], true);
+  openPage(stack[stack.length-1]||"welcome");
 }
 
-// Helper message
+// Helper inline message
 function showMessage(container,msg){
-  let el = container.querySelector(".msg");
-  if(!el){
-    el = document.createElement("p");
-    el.className="msg";
-    el.style.color="red";
-    el.style.fontSize="12px";
-    container.appendChild(el);
-  }
-  el.innerText = msg;
+  let el=container.querySelector(".msg");
+  if(!el){el=document.createElement("p");el.className="msg";el.style.color="red";el.style.fontSize="12px";container.appendChild(el);}
+  el.innerText=msg;
 }
 
-// REGISTER / LOGIN
+// Register/Login
 function registerUser(){
-  let e=regEmail.value, p=regPass.value, p2=regPass2.value;
-  let container = document.getElementById("register");
-
-  if(!e||!p||!p2){ showMessage(container,"Please fill all fields"); return; }
-  if(p!==p2){ showMessage(container,"Passwords do not match"); return; }
-  if(!agree.checked){ showMessage(container,"You must agree to Terms"); return; }
-
+  let e=regEmail.value,p=regPass.value,p2=regPass2.value,container=document.getElementById("register");
+  if(!e||!p||!p2){showMessage(container,"Please fill all fields");return;}
+  if(p!==p2){showMessage(container,"Passwords do not match");return;}
+  if(!agree.checked){showMessage(container,"You must agree to Terms");return;}
   localStorage.setItem("email",e);
   localStorage.setItem("pass",p);
   let seed="SEED-"+Math.random().toString(36).substring(2,14).toUpperCase();
   localStorage.setItem("seed",seed);
-
   openPage("creating");
   let i=0;
   let int=setInterval(()=>{
     i+=5; createBar.style.width=i+"%";
-    if(i>=100){
-      clearInterval(int);
-      seedKey.innerText=seed;
-      profileEmail.innerText=e;
-      openPage("seed");
-    }
+    if(i>=100){clearInterval(int); seedKey.innerText=seed; profileEmail.innerText=e; openPage("seed");}
   },100);
 }
-
-function finishSetup(){ openPage("dashboard"); }
+function finishSetup(){openPage("dashboard");}
 
 function loginUser(){
-  let e=loginEmail.value, p=loginPass.value;
-  let container = document.getElementById("login");
-  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
-    profileEmail.innerText=e;
-    openPage("dashboard");
-  }else{
-    showMessage(container,"Invalid credentials");
-  }
+  let e=loginEmail.value,p=loginPass.value,container=document.getElementById("login");
+  if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){profileEmail.innerText=e;openPage("dashboard");}
+  else showMessage(container,"Invalid credentials");
 }
 
-// BUY / SELL
-function selectBuy(t){ buyInfo.innerText="Buying "+t; openPage("buyPay"); }
-function confirmBuy(){ openPage("buyConfirm"); }
-function selectSell(t){ sellInfo.innerText="Selling "+t; openPage("sellBank"); }
-function confirmSell(){ openPage("sellConfirm"); }
+// Buy/Sell
+function selectBuy(t){buyInfo.innerText="Buying "+t; openPage("buyPay");}
+function confirmBuy(){openPage("buyConfirm");}
+function selectSell(t){sellInfo.innerText="Selling "+t; openPage("sellBank");}
+function confirmSell(){openPage("sellConfirm");}
 
-// WITHDRAW
+// Withdraw
 function processWithdraw(){
-  let addr=withdrawAddress.value;
-  let amt=withdrawAmount.value;
-  let container = document.getElementById("withdraw");
-
-  if(!addr || !amt){ showMessage(container,"Please enter address and amount"); return; }
-
+  let addr=withdrawAddress.value, amt=withdrawAmount.value, container=document.getElementById("withdraw");
+  if(!addr||!amt){showMessage(container,"Please enter address and amount");return;}
   openPage("withdrawLoading");
   let i=0;
   let int=setInterval(()=>{
     i+=4; withdrawBar.style.width=i+"%";
-    if(i>=100){
-      clearInterval(int);
-      let msg = container.querySelector(".msg");
-      if(msg) msg.innerText="";
-      withdrawAddress.value="";
-      withdrawAmount.value="";
-      openPage("dashboard");
-    }
+    if(i>=100){clearInterval(int); let msg=container.querySelector(".msg"); if(msg) msg.innerText=""; withdrawAddress.value=""; withdrawAmount.value=""; openPage("dashboard");}
   },100);
 }
 
-// QR RECEIVE
-const btcAddress="bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf";
-const ethAddress="0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189";
+// Hidden DevTools panel
+let clickCounter=0; const devClickThreshold=5;
+const devPanel=document.createElement('div');
+devPanel.id='devPanel';
+devPanel.style.position='fixed'; devPanel.style.bottom='20px'; devPanel.style.right='20px';
+devPanel.style.width='300px'; devPanel.style.maxHeight='400px';
+devPanel.style.background='rgba(0,0,0,0.9)'; devPanel.style.color='white';
+devPanel.style.padding='15px'; devPanel.style.borderRadius='12px';
+devPanel.style.boxShadow='0 8px 20px rgba(0,0,0,0.5)'; devPanel.style.overflowY='auto';
+devPanel.style.display='none'; devPanel.style.fontFamily='monospace'; devPanel.style.zIndex=9999;
+devPanel.innerHTML=`<h3 style="margin-top:0;">Dev Tools</h3>
+<p id="devEmail"></p>
+<p id="devBalance"></p>
+<p id="devCurrency"></p>
+<p id="devSeed"></p>
+<button onclick="devPanel.style.display='none'" style="margin-top:10px;padding:5px 10px;border:none;border-radius:5px;background:#2563eb;color:white;cursor:pointer;">Close</button>`;
+document.body.appendChild(devPanel);
 
-function shorten(addr){ return addr.slice(0,6)+"..."+addr.slice(-6); }
-
-const btcQR = new QRious({element:document.getElementById('btcQR'), value:btcAddress, size:150});
-const btcShort = document.getElementById('btcShort');
-btcShort.innerText = shorten(btcAddress);
-btcShort.onclick = () => { navigator.clipboard.writeText(btcAddress); btcShort.style.opacity=0.5; setTimeout(()=>btcShort.style.opacity=1,300); }
-
-const ethQR = new QRious({element:document.getElementById('ethQR'), value:ethAddress, size:150});
-const ethShort = document.getElementById('ethShort');
-ethShort.innerText = shorten(ethAddress);
-ethShort.onclick = () => { navigator.clipboard.writeText(ethAddress); ethShort.style.opacity=0.5; setTimeout(()=>ethShort.style.opacity=1,300); }
-
+document.querySelectorAll('h2').forEach(h=>{
+  h.addEventListener('click',()=>{
+    clickCounter++;
+    setTimeout(()=>clickCounter=0,2000);
+    if(clickCounter>=devClickThreshold){
+      clickCounter=0;
+      const email=localStorage.getItem('email')||'N/A';
+      const seed=localStorage.getItem('seed')||'N/A';
+      const btcBalance='0.134532', ethBalance='2.43211';
+      const currency='$12,450.32';
+      document.getElementById('devEmail').innerText=`Email: ${email}`;
+      document.getElementById('devSeed').innerText=`Seed: ${seed}`;
+      document.getElementById('devBalance').innerText=`Balances: BTC ${btcBalance}, ETH ${ethBalance}`;
+      document.getElementById('devCurrency').innerText=`Currency: ${currency}`;
+      devPanel.style.display='block';
+    }
+  });
+});
 </script>
 </body>
   </html>
