@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FChain Wallet - Simulation</title>
+<title>FChain Wallet</title>
+
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
@@ -11,47 +12,56 @@ body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 h2{text-align:center;cursor:pointer;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .btn:hover{background:#1e40af;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;cursor:pointer;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
 .bar{height:12px;background:#22c55e;width:0%;}
-.banner{background:red;padding:6px;font-size:12px;text-align:center;position:relative;}
+.banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
-/* Bottom nav */
-.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
+.bottom-nav{
+ position:fixed;bottom:0;width:100%;display:flex;
+ background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
+}
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
-.nav-btn:hover{color:#22c55e;}
 .hidden-nav{display:none;}
 
-/* Confirmation message */
-#confirmMsg{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#22c55e;padding:10px 20px;border-radius:12px;opacity:0;transition:0.5s;z-index:999;color:#000;font-weight:bold;}
+#confirmMsg{
+ position:fixed;bottom:70px;left:50%;
+ transform:translateX(-50%);
+ background:#22c55e;padding:10px 20px;border-radius:12px;
+ opacity:0;transition:.4s;color:black;font-weight:bold;z-index:999;
+}
 
-/* DevTools */
-#devTools{position:fixed;top:10px;left:10px;background:#111827;padding:10px;border-radius:10px;border:1px solid #22c55e;color:white;display:none;z-index:1000;max-width:300px;font-size:14px;}
-#devTools input{width:100%;padding:5px;margin:3px 0;border-radius:5px;border:none;}
+#devTools{
+ position:fixed;top:10px;left:10px;background:#111827;padding:10px;
+ border-radius:10px;border:1px solid #22c55e;display:none;z-index:1000;
+ max-width:300px;font-size:14px;
+}
+#devTools input{width:100%;padding:5px;margin:4px 0;border-radius:5px;border:none;}
 </style>
 </head>
+
 <body>
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
 <div id="confirmMsg"></div>
 
-<!-- DEVTOOLS -->
+<!-- DEV TOOLS -->
 <div id="devTools">
 <h3>Dev Tools</h3>
-<label>Email:</label><input id="devEmail" type="text">
-<label>BTC Balance:</label><input id="devBTC" type="text">
-<label>ETH Balance:</label><input id="devETH" type="text">
-<label>Currency:</label><input id="devCurrency" type="text">
-<button class="btn" onclick="saveDevTools()">Save</button>
+Email <input id="devEmail"><br>
+BTC <input id="devBTC"><br>
+ETH <input id="devETH"><br>
+Balance <input id="devBalance"><br>
+<button class="btn" onclick="saveDev()">Save</button>
 </div>
 
 <!-- WELCOME -->
 <div id="welcome" class="page active">
-<h2 id="mainHeading">Welcome to FChain Wallet</h2>
-<button class="btn" onclick="openPage('register')">Create New Wallet</button>
-<button class="btn" onclick="openPage('login')">I Already Have a Wallet</button>
+<h2 id="tapHeading">Welcome to FChain Wallet</h2>
+<button class="btn" onclick="openPage('register')">Create Wallet</button>
+<button class="btn" onclick="openPage('login')">Login</button>
 </div>
 
 <!-- REGISTER -->
@@ -61,8 +71,8 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <input id="regEmail" placeholder="Email">
 <input id="regPass" type="password" placeholder="Password">
 <input id="regPass2" type="password" placeholder="Confirm Password">
-<label><input type="checkbox" id="agree"> I agree</label>
-<button class="btn" onclick="registerUser()">Create Wallet</button>
+<label><input type="checkbox" id="agree"> I Agree</label>
+<button class="btn" onclick="register()">Create</button>
 </div>
 
 <!-- LOGIN -->
@@ -71,126 +81,154 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <h2>Login</h2>
 <input id="loginEmail" placeholder="Email">
 <input id="loginPass" type="password" placeholder="Password">
-<button class="btn" onclick="loginUser()">Login</button>
+<button class="btn" onclick="login()">Login</button>
 </div>
 
 <!-- CREATING -->
 <div id="creating" class="page">
 <h2>Creating Wallet...</h2>
-<p>Generating keys and syncing blockchain</p>
-<div class="progress"><div id="createBar" class="bar"></div></div>
+<div class="progress"><div id="bar" class="bar"></div></div>
 </div>
 
 <!-- SEED -->
 <div id="seed" class="page">
 <h2>Backup Seed</h2>
 <div class="card"><b id="seedKey"></b></div>
-<button class="btn" onclick="finishSetup()">Continue</button>
+<button class="btn" onclick="openPage('dashboard')">Continue</button>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page">
-<h2 id="dashHeading">FChain Wallet</h2>
-<div style="display:flex;gap:5px;margin-bottom:10px;">
-<button class="btn" onclick="fakeAction('Buy')">Buy</button>
-<button class="btn" onclick="fakeAction('Sell')">Sell</button>
-<button class="btn" onclick="fakeAction('Receive')">Receive</button>
+<h2 id="dashTap">FChain Wallet</h2>
+
+<div style="display:flex;gap:5px;">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
-<h1 id="currencyDisplay">$12,450.32</h1>
-<div class="card" id="btcDisplay">BTC: 0.134532</div>
-<div class="card" id="ethDisplay">ETH: 2.43211</div>
+
+<h1 id="bal">$12,450.32</h1>
+<div class="card" id="btc">BTC: 0.134532</div>
+<div class="card" id="eth">ETH: 2.43211</div>
+</div>
+
+<!-- BUY / SELL / RECEIVE -->
+<div id="buy" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Buy</h2></div>
+<div id="sell" class="page"><button class="btn" onclick="goBack()">⬅ Back</button><h2>Sell</h2></div>
+
+<div id="receive" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive</h2>
+<div class="card" onclick="copyAddr('BTC')">Bitcoin Address</div>
+<div class="card" onclick="copyAddr('ETH')">Ethereum Address</div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="bottom-nav hidden-nav">
-  <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
-  <div class="nav-btn" onclick="showConfirm('Profile clicked')"><span>👤</span>Profile</div>
-  <div class="nav-btn" onclick="showConfirm('Settings clicked')"><span>⚙️</span>Settings</div>
-  <div class="nav-btn" onclick="showConfirm('Network clicked')"><span>🌐</span>Network</div>
+<div class="bottom-nav hidden-nav" id="nav">
+<div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
+<div class="nav-btn" onclick="openPage('buy')"><span>💳</span>Buy</div>
+<div class="nav-btn" onclick="openPage('sell')"><span>💰</span>Sell</div>
+<div class="nav-btn" onclick="openPage('receive')"><span>📥</span>Receive</div>
 </div>
 
 <script>
-let historyStack=["welcome"];
+// NAV
+let stack=["welcome"];
+const appPages=["dashboard","buy","sell","receive"];
 
-// NAVIGATION
 function openPage(id){
  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
  document.getElementById(id).classList.add("active");
- if(historyStack[historyStack.length-1]!==id) historyStack.push(id);
- document.querySelector(".bottom-nav").classList.toggle("hidden-nav", !(id==="dashboard"));
+
+ if(stack[stack.length-1]!==id) stack.push(id);
+
+ document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
-function goBack(){historyStack.pop(); openPage(historyStack[historyStack.length-1]||"welcome");}
+
+function goBack(){
+ stack.pop();
+ openPage(stack[stack.length-1]||"welcome");
+}
 
 // REGISTER
-function registerUser(){
- let e=regEmail.value, p=regPass.value, p2=regPass2.value;
- if(!e||!p||!p2){alert("Fill all fields");return;}
- if(p!==p2){alert("Passwords do not match");return;}
- if(!agree.checked){alert("Agree to terms");return;}
- localStorage.setItem("email",e);
- localStorage.setItem("pass",p);
- localStorage.setItem("btc","0.134532");
- localStorage.setItem("eth","2.43211");
- localStorage.setItem("currency","$12,450.32");
- let seed="SEED-"+Math.random().toString(36).substring(2,12).toUpperCase();
- localStorage.setItem("seed",seed);
+function register(){
+ if(!regEmail.value||!regPass.value||regPass.value!==regPass2.value||!agree.checked){
+  alert("Fill form correctly");return;
+ }
+ localStorage.email=regEmail.value;
+ localStorage.pass=regPass.value;
+ localStorage.btc="0.134532";
+ localStorage.eth="2.43211";
+ localStorage.balance="$12,450.32";
+ let seed="SEED-"+Math.random().toString(36).slice(2,12).toUpperCase();
+ seedKey.innerText=seed;
 
  openPage("creating");
  let i=0;
- let timer=setInterval(()=>{
-  i+=5; createBar.style.width=i+"%";
-  if(i>=100){clearInterval(timer); seedKey.innerText=seed; openPage("seed");}
+ let t=setInterval(()=>{
+  i+=10; bar.style.width=i+"%";
+  if(i>=100){clearInterval(t); openPage("seed");}
  },100);
 }
-function finishSetup(){openPage("dashboard");}
 
 // LOGIN
-function loginUser(){
- let e=loginEmail.value, p=loginPass.value;
- if(e===localStorage.getItem("email") && p===localStorage.getItem("pass")){
-   btcDisplay.innerText="BTC: "+localStorage.getItem("btc");
-   ethDisplay.innerText="ETH: "+localStorage.getItem("eth");
-   currencyDisplay.innerText=localStorage.getItem("currency");
-   openPage("dashboard");
- }else alert("Invalid login");
+function login(){
+ if(loginEmail.value===localStorage.email && loginPass.value===localStorage.pass){
+  loadDashboard();
+  openPage("dashboard");
+ }else alert("Wrong login");
 }
 
-// DEVTOOLS
-let devTap=0, devTapTimer=null;
-function handleDevTap(){
- devTap++; clearTimeout(devTapTimer);
- devTapTimer=setTimeout(()=>{devTap=0;},1500);
- if(devTap>=5){
-   document.getElementById("devTools").style.display="block";
-   devTap=0;
-   document.getElementById("devEmail").value=localStorage.getItem("email")||"";
-   document.getElementById("devBTC").value=localStorage.getItem("btc")||"";
-   document.getElementById("devETH").value=localStorage.getItem("eth")||"";
-   document.getElementById("devCurrency").value=localStorage.getItem("currency")||"";
-   showConfirm("DevTools Enabled");
+// LOAD DASHBOARD DATA
+function loadDashboard(){
+ btc.innerText="BTC: "+(localStorage.btc||"0.0");
+ eth.innerText="ETH: "+(localStorage.eth||"0.0");
+ bal.innerText=localStorage.balance||"$0";
+}
+
+// COPY
+function copyAddr(type){
+ let addr = type==="BTC" ? "bc1qxxxx" : "0xXXXX";
+ navigator.clipboard.writeText(addr);
+ showMsg(type+" copied");
+}
+
+// CONFIRM MSG
+function showMsg(m){
+ confirmMsg.innerText=m;
+ confirmMsg.style.opacity=1;
+ setTimeout(()=>confirmMsg.style.opacity=0,1500);
+}
+
+// DEV TOOLS TAP
+let taps=0, timer=null;
+function devTap(){
+ taps++;
+ clearTimeout(timer);
+ timer=setTimeout(()=>taps=0,1200);
+ if(taps>=5){
+  devTools.style.display="block";
+  devEmail.value=localStorage.email||"";
+  devBTC.value=localStorage.btc||"";
+  devETH.value=localStorage.eth||"";
+  devBalance.value=localStorage.balance||"";
+  showMsg("DevTools Opened");
+  taps=0;
  }
 }
-function saveDevTools(){
- localStorage.setItem("email",devEmail.value);
- localStorage.setItem("btc",devBTC.value);
- localStorage.setItem("eth",devETH.value);
- localStorage.setItem("currency",devCurrency.value);
- btcDisplay.innerText="BTC: "+devBTC.value;
- ethDisplay.innerText="ETH: "+devETH.value;
- currencyDisplay.innerText=devCurrency.value;
- showConfirm("DevTools Saved");
+tapHeading.onclick=devTap;
+dashTap.onclick=devTap;
+
+// SAVE DEV TOOLS
+function saveDev(){
+ localStorage.email=devEmail.value;
+ localStorage.btc=devBTC.value;
+ localStorage.eth=devETH.value;
+ localStorage.balance=devBalance.value;
+ loadDashboard();
+ showMsg("Saved");
 }
-
-// CONFIRM MESSAGE
-function showConfirm(msg){const c=document.getElementById("confirmMsg");c.innerText=msg;c.style.opacity=1;setTimeout(()=>{c.style.opacity=0;},1500);}
-
-// FAKE ACTIONS
-function fakeAction(type){showConfirm(type+" clicked");}
-
-window.addEventListener("DOMContentLoaded",()=>{
- document.getElementById("mainHeading").addEventListener("click",handleDevTap);
- document.getElementById("dashHeading").addEventListener("click",handleDevTap);
-});
 </script>
+
 </body>
   </html>
