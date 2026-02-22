@@ -134,7 +134,20 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <div class="qr-box">Scanning...</div>
 <p>0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</p>
 </div>
+<!-- FAKE WITHDRAW PAGE -->
+<div id="simWithdraw" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Withdraw Funds</h2>
 
+<div class="card">
+<p>Status: <span style="color:orange">LOCKED</span></p>
+<p>Withdrawal Fee Required: <b>$75 Gas Fee</b></p>
+<button class="btn" disabled>Pay Gas Fee</button>
+<p style="color:red;font-size:12px">
+Real crypto NEVER asks for unlock fees. This is a scam trick.
+</p>
+</div>
+</div>
 <!-- PROFILE -->
 <div id="profile" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
@@ -187,21 +200,23 @@ function loginUser(){
     localStorage.setItem("userEmail",email);
     profileUser.innerText=email.split("@")[0];
     profileEmail.innerText=email;
-    openPage("home");
+
+    // Generate FAKE passkey
+    let fakeKey="PASSKEY-"+Math.random().toString(36).substring(2,12).toUpperCase();
+    localStorage.setItem("fakePasskey",fakeKey);
+
+    simUserEmail.innerText=email;
+    simPasskey.innerText=fakeKey;
+
+    openPage("simDashboard");
   } else {
     alert("Enter email and password");
   }
 }
-
-window.onload=()=>{
-  let u=localStorage.getItem("userEmail");
-  if(u){
-    profileUser.innerText=u.split("@")[0];
-    profileEmail.innerText=u;
-    openPage("home");
+function copySimPasskey(){
+  navigator.clipboard.writeText(simPasskey.innerText);
+  alert("Fake passkey copied (training simulation)");
   }
-};
-
 // NAVIGATION
 let stack=["loginPage"];
 function openPage(id){
