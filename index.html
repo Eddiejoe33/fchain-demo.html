@@ -18,19 +18,13 @@ h2{text-align:center;}
 .ticker{position:fixed;bottom:45px;width:100%;background:#111827;padding:5px;font-size:12px;color:#22c55e;}
 .qr-box{width:180px;height:180px;background:#111;border:2px solid #333;margin:20px auto;display:flex;align-items:center;justify-content:center;border-radius:12px;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
-
-/* ADMIN PANEL */
-#adminPanel{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:#020617;z-index:9999;padding:15px;display:none;
-}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="loginPage" class="page active">
-<h2 id="walletTitle">FChain Wallet Login</h2>
+<h2>FChain Wallet Login</h2>
 <input id="emailInput" placeholder="Email">
 <input id="passwordInput" type="password" placeholder="Password">
 <button class="btn" onclick="loginUser()">Login</button>
@@ -38,27 +32,42 @@ background:#020617;z-index:9999;padding:15px;display:none;
 
 <!-- HOME -->
 <div id="home" class="page">
-<h2 id="walletTitle2">FChain Wallet</h2>
-
+<h2>FChain Wallet</h2>
 <div style="display:flex;gap:5px;">
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('sell')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
+<h1>$0.00</h1>
+<div class="card">BTC: 0.000000</div>
+<div class="card">ETH: 0.000000</div>
+</div>
+<!-- FCHAIN DASHBOARD -->
+<div id="simDashboard" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>FChain Dashboard</h2>
 
-<h1 id="totalBalance">$0.00</h1>
-
-<div class="card">BTC: <span id="btcBal">0.000000</span></div>
-<div class="card">ETH: <span id="ethBal">0.000000</span></div>
-<div class="card">USDT: 0.0000</div>
-<div class="card">BNB: 0.0000</div>
-<div class="card">SOL: 0.0000</div>
-<div class="card">XRP: 0.0000</div>
-<div class="card">TRX: 0.0000</div>
-<div class="card">DOGE: 0.0000</div>
-<div class="card">SHIB: 0.00000000</div>
+<div class="card">
+<h3>Fchain Account Created</h3>
+<p>Email: <span id="simUserEmail"></span></p>
+<p>Status: Account Verified (DONE)</p>
 </div>
 
+<div class="card">
+<h3>Fchain Passkey</h3>
+<p id="simPasskey" style="font-weight:bold;color:#22c55e"></p>
+<button class="btn" onclick="copySimPasskey()">Copy Passkey</button>
+<p style="color:red;font-size:12px">Real passkeys are  shown.</p>
+</div>
+
+<div class="card">
+<h3>Fchain Wallet Balance</h3>
+<h1>$0.00</h1>
+<p style="color:red;font-size:12px">UI Only. Blockchain = $0</p>
+</div>
+
+<button class="btn" onclick="openPage('simWithdraw')">Withdraw</button>
+  </div>
 <!-- BUY -->
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
@@ -116,14 +125,14 @@ background:#020617;z-index:9999;padding:15px;display:none;
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>BTC Address</h2>
 <div class="qr-box">Scanning...</div>
-<p>[bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf]</p>
+<p>bc1qf99u08mchql3l7uxfylvneed8c8zkj58epgurf</p>
 </div>
 
 <div id="receiveETH" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>ETH Address</h2>
 <div class="qr-box">Scanning...</div>
-<p>[0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189]</p>
+<p>0xE6A4BA46ae547A2C9b42012E5437A29D4E94a189</p>
 </div>
 
 <!-- PROFILE -->
@@ -138,40 +147,12 @@ background:#020617;z-index:9999;padding:15px;display:none;
 <div id="settings" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
-<div class="card" onclick="openPage('setPin')">🔐 Set PIN</div>
-<div class="card" onclick="openPage('changePin')">🔁 Change PIN</div>
-<div class="card" onclick="openPage('networkSettings')">🌐 Network Settings</div>
-<div class="card" onclick="openPage('currencySettings')">💱 Display Currency</div>
-<div class="card" onclick="openPage('themeSettings')">🎨 Theme Mode</div>
+<div class="card" onclick="openPage('setPin')">Set PIN</div>
+<div class="card" onclick="openPage('changePin')">Change PIN</div>
+<div class="card">Network Settings</div>
+<div class="card">Display Currency</div>
 </div>
 
-<!-- NEW SETTINGS PAGES -->
-<div id="networkSettings" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Network Settings</h2>
-<div class="card" onclick="setNetwork('Mainnet')">Mainnet</div>
-<div class="card" onclick="setNetwork('Testnet')">Testnet</div>
-<div class="card" onclick="setNetwork('Custom RPC')">Custom RPC</div>
-<p id="netStatus"></p>
-</div>
-
-<div id="currencySettings" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Display Currency</h2>
-<div class="card" onclick="setCurrency('USD')">USD ($)</div>
-<div class="card" onclick="setCurrency('NGN')">NGN (₦)</div>
-<div class="card" onclick="setCurrency('EUR')">EUR (€)</div>
-<p id="curStatus"></p>
-</div>
-
-<div id="themeSettings" class="page">
-<button class="btn" onclick="goBack()">⬅ Back</button>
-<h2>Theme Mode</h2>
-<div class="card" onclick="setTheme('dark')">Dark Mode</div>
-<div class="card" onclick="setTheme('light')">Light Mode</div>
-</div>
-
-<!-- PIN -->
 <div id="setPin" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Set PIN</h2>
@@ -187,18 +168,10 @@ background:#020617;z-index:9999;padding:15px;display:none;
 <button class="btn" onclick="changePin()">Change</button>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel">
-<h2>🔐 Admin Panel</h2>
-<input id="adminTotal" placeholder="Total Balance e.g 100000">
-<input id="adminBTC" placeholder="BTC Balance">
-<input id="adminETH" placeholder="ETH Balance">
-<button class="btn" onclick="saveAdmin()">Save Balance</button>
-<button class="btn" onclick="closeAdmin()">Close</button>
-</div>
-
+<!-- NETWORK TICKER -->
 <div id="ticker" class="ticker">Connecting to blockchain network...</div>
 
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <div class="nav-btn" onclick="openPage('home')">Home</div>
   <div class="nav-btn" onclick="openPage('profile')">Profile</div>
@@ -208,15 +181,26 @@ background:#020617;z-index:9999;padding:15px;display:none;
 <script>
 // LOGIN
 function loginUser(){
- let email=emailInput.value;
- let pass=passwordInput.value;
- if(email && pass){
-  localStorage.setItem("userEmail",email);
-  profileUser.innerText=email.split("@")[0];
-  profileEmail.innerText=email;
-  openPage("home");
- }
+  let email=emailInput.value;
+  let pass=passwordInput.value;
+  if(email && pass){
+    localStorage.setItem("userEmail",email);
+    profileUser.innerText=email.split("@")[0];
+    profileEmail.innerText=email;
+    openPage("home");
+  } else {
+    alert("Enter email and password");
+  }
 }
+
+window.onload=()=>{
+  let u=localStorage.getItem("userEmail");
+  if(u){
+    profileUser.innerText=u.split("@")[0];
+    profileEmail.innerText=u;
+    openPage("home");
+  }
+};
 
 // NAVIGATION
 let stack=["loginPage"];
@@ -236,6 +220,7 @@ function goBack(){
 let selectedToken="";
 function selectBuy(t){selectedToken=t; openPage("buyPay");}
 function confirmBuy(){ buyInfo.innerText="Buying "+selectedToken; openPage("buyConfirm");}
+
 function selectSell(t){selectedToken=t; openPage("sellBank");}
 function confirmSell(){ sellInfo.innerText="Selling "+selectedToken; openPage("sellConfirm");}
 
@@ -248,79 +233,28 @@ function changePin(){
  } else alert("Wrong PIN");
 }
 
-// SETTINGS FUNCTIONS
-function setNetwork(net){
- localStorage.setItem("network", net);
- netStatus.innerText="Network set to: "+net;
- alert("Network changed to "+net);
-}
-
-function setCurrency(cur){
- localStorage.setItem("currency", cur);
- curStatus.innerText="Currency set to: "+cur;
- alert("Currency changed to "+cur);
-}
-
-function setTheme(mode){
- if(mode==="light"){
-  document.body.style.background="#f1f5f9";
-  document.body.style.color="black";
- }else{
-  document.body.style.background="#0f172a";
-  document.body.style.color="white";
- }
- localStorage.setItem("theme", mode);
- alert("Theme: "+mode);
-}
-
-// LOAD SAVED DATA
-window.onload=()=>{
- let u=localStorage.getItem("userEmail");
- if(u){profileUser.innerText=u.split("@")[0];profileEmail.innerText=u;openPage("home");}
-
- totalBalance.innerText=localStorage.getItem("totalBal")||"$0.00";
- btcBal.innerText=localStorage.getItem("btcBal")||"0.000000";
- ethBal.innerText=localStorage.getItem("ethBal")||"0.000000";
-
- let theme=localStorage.getItem("theme");
- if(theme==="light"){setTheme("light");}
-};
-
-// FAKE NETWORK TICKER
+// NETWORK TICKER
 const msgs=["Confirming block #","Broadcasting TX","Syncing nodes","Pending mempool"];
 setInterval(()=>{
- ticker.innerText=msgs[Math.floor(Math.random()*msgs.length)]+" "+Math.floor(Math.random()*999999);
+ let m=msgs[Math.floor(Math.random()*msgs.length)];
+ ticker.innerText=m+" "+Math.floor(Math.random()*999999);
 },2000);
-
-// ===== SECRET 5 TAP ADMIN =====
-let tap=0; let timer;
-function addTap(el){
- el.addEventListener("click",()=>{
-  tap++;
-  clearTimeout(timer);
-  timer=setTimeout(()=>tap=0,1000);
-  if(tap>=5){
-    tap=0;
-    document.getElementById("adminPanel").style.display="block";
-  }
- });
-}
-addTap(walletTitle);
-addTap(walletTitle2);
-
-// ADMIN SAVE
-function saveAdmin(){
- totalBalance.innerText="$"+adminTotal.value;
- btcBal.innerText=adminBTC.value;
- ethBal.innerText=adminETH.value;
-
- localStorage.setItem("totalBal","$"+adminTotal.value);
- localStorage.setItem("btcBal",adminBTC.value);
- localStorage.setItem("ethBal",adminETH.value);
-
- alert("Balance Updated");
-}
-function closeAdmin(){ adminPanel.style.display="none"; }
 </script>
+
+<!-- DEV CONSOLE (5 TAP SECRET) -->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+let tapCount = 0;
+document.body.addEventListener("click", () => {
+  tapCount++;
+  if (tapCount === 5) {
+    eruda.init();
+    alert("Dev Console Opened");
+  }
+  setTimeout(()=>tapCount=0,1500);
+});
+</script>
+
 </body>
   </html>
+
