@@ -73,13 +73,45 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 <button class="btn" onclick="finishSetup()">I Saved It</button>
 </div>
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD (FIXED) -->
 <div id="dashboard" class="page">
 <h2 id="dashTitle">FChain Wallet</h2>
+
+<div style="display:flex;gap:6px;margin-bottom:10px;">
+  <button class="btn" onclick="openPage('buy')">Buy</button>
+  <button class="btn" onclick="openPage('sell')">Sell</button>
+  <button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
+
 <h1>$12,450.32</h1>
 <div class="card">BTC: 0.134532</div>
 <div class="card">ETH: 2.43211</div>
+
 <button class="btn" onclick="openPage('withdraw')">Withdraw</button>
+</div>
+
+<!-- BUY -->
+<div id="buy" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<div class="card">Bitcoin</div>
+<div class="card">Ethereum</div>
+</div>
+
+<!-- SELL -->
+<div id="sell" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Sell Crypto</h2>
+<div class="card">Bitcoin</div>
+<div class="card">Ethereum</div>
+</div>
+
+<!-- RECEIVE -->
+<div id="receive" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive</h2>
+<div class="card">BTC Address: bc1qfakeaddressdemo</div>
+<div class="card">ETH Address: 0xfakeaddressdemo</div>
 </div>
 
 <!-- WITHDRAW -->
@@ -104,7 +136,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 </div>
 
 <script>
-// Toast UI
+// Toast
 function toast(msg){
  let t=document.getElementById("toast");
  t.innerText=msg; t.style.display="block";
@@ -123,7 +155,7 @@ function goBack(){
  openPage(stack[stack.length-1] || "welcome");
 }
 
-// Register Wallet
+// Register
 function registerUser(){
  let e=regEmail.value, p=regPin.value, p2=regPin2.value;
  if(!e||!p||!p2){toast("Fill all fields"); return;}
@@ -147,19 +179,19 @@ function registerUser(){
  },120);
 }
 
-// Copy Passkey
+// Copy seed
 function copySeed(){
  navigator.clipboard.writeText(localStorage.getItem("seed"));
  toast("Passkey Copied");
 }
 
-// Finish Setup
+// Finish → FULL dashboard
 function finishSetup(){
  document.getElementById("navBar").style.display="flex";
  openPage("dashboard");
 }
 
-// Login Existing User
+// Login
 function loginUser(){
  let e=loginEmail.value;
  let p=loginPin.value;
@@ -167,13 +199,11 @@ function loginUser(){
    profileEmail.innerText=e;
    document.getElementById("navBar").style.display="flex";
    toast("Account Found");
-   setTimeout(()=>openPage("dashboard"),800);
- } else {
-   toast("Account Not Found");
- }
+   setTimeout(()=>openPage("dashboard"),600);
+ } else toast("Account Not Found");
 }
 
-/* 5 TAP DEV TOOLS */
+// 5-tap dev tools
 let tap=0;
 document.getElementById("fchainTitle").addEventListener("click",()=>{
  tap++;
@@ -189,4 +219,4 @@ document.getElementById("fchainTitle").addEventListener("click",()=>{
 </script>
 
 </body>
-                                                                 </html>
+ </html>
