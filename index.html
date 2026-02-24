@@ -182,7 +182,36 @@ if(e){devETH.value=e; eth.innerText="ETH: "+e;}
 if(u){devUSD.value=u; usd.innerText="$"+u;}
 profileEmail.innerText = localStorage.email || "guest@fchain.app";
 generateQR();
+// ================= GOOGLE SHEETS BACKEND SYNC =================
+const SHEET_API = "https://sheetdb.io/api/v1/9gai9aoh6igrg";
 
+async function loadSheetUser(){
+  try{
+    let res = await fetch(SHEET_API);
+    let data = await res.json();
+
+    let user = data.find(u => u.User == "Specialuser1");
+    if(!user) return;
+
+    // Update UI
+    document.getElementById("btc").innerText = "BTC: " + user.btc;
+    document.getElementById("eth").innerText = "ETH: " + user.eth;
+    document.getElementById("usd").innerText = "$" + user.usd;
+
+    // Update DevTools values
+    document.getElementById("devBTC").value = user.btc;
+    document.getElementById("devETH").value = user.eth;
+    document.getElementById("devUSD").value = user.usd;
+
+    console.log("Loaded from Google Sheets:", user);
+
+  }catch(e){
+    console.log("SheetDB error:", e);
+  }
+}
+
+// Refresh every 10 seconds
+setInterval(loadSheetUser, 10000);
 // Load from Google Sheets
 loadSheetUser();
 };
