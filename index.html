@@ -36,9 +36,14 @@ display:none;z-index:9999;width:220px;
 table{width:100%;border-collapse:collapse;margin-top:10px;}
 th,td{padding:8px;border-bottom:1px solid #1e293b;font-size:12px;}
 th{text-align:left;color:#22c55e;}
+
+/* Network Status Marquee */
+#networkBar{
+width:100%;background:#111827;padding:6px;font-size:12px;overflow:hidden;white-space:nowrap;margin-bottom:10px;border-radius:8px;}
+#networkBar span{display:inline-block;padding-right:50px;animation:scroll 10s linear infinite;}
+@keyframes scroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}
 </style>
 </head>
-
 <body>
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
@@ -77,25 +82,67 @@ USD <input id="devUSD">
 <button class="btn" onclick="loginUser()">Login</button>
 </div>
 
-<!-- DASHBOARD HOME -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="page">
 <h2 id="dashTap">FChain Wallet</h2>
+
+<!-- TOP ACTION BUTTONS -->
+<div style="display:flex;gap:10px;margin-bottom:10px;">
+<button class="btn" onclick="openPage('buy')">Buy</button>
+<button class="btn" onclick="openPage('sell')">Sell</button>
+<button class="btn" onclick="openPage('receive')">Receive</button>
+</div>
+
+<!-- Animated Network Bar -->
+<div id="networkBar">
+<span>Connected to FChain Mainnet | Block #4928831 | Confirmations: 3/3 | Peers: 128 | Latency: 42ms</span>
+</div>
+
 <h1 id="usd">$0</h1>
 <div class="card" id="btc">BTC: 0</div>
 <div class="card" id="eth">ETH: 0</div>
+<div class="card">USDT: 0</div>
+<div class="card">BNB: 0</div>
+<div class="card">SOL: 0</div>
+<div class="card">TRX: 0</div>
+<div class="card">MATIC: 0</div>
 </div>
 
-<!-- 🔎 EXPLORER -->
+<!-- BUY PAGE -->
+<div id="buy" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Buy Crypto</h2>
+<div class="card">Buy BTC - Payment via Chase Bank / Bank of America</div>
+<div class="card">Buy ETH - Payment via Chase Bank / Bank of America</div>
+</div>
+
+<!-- SELL PAGE -->
+<div id="sell" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Sell Crypto</h2>
+<div class="card">Sell BTC - Payout via Chase Bank / Bank of America</div>
+<div class="card">Sell ETH - Payout via Chase Bank / Bank of America</div>
+</div>
+
+<!-- RECEIVE PAGE -->
+<div id="receive" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Receive Crypto</h2>
+<div class="card" style="text-align:center;">
+<img id="qr" width="200"><br><br>
+<div id="walletAddress" style="font-size:12px;word-break:break-all;"></div>
+<button class="btn" onclick="copyAddress()">Copy Address</button>
+</div>
+</div>
+
+<!-- EXPLORER -->
 <div id="explorer" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>FChain Explorer</h2>
-
 <input placeholder="Search Tx Hash / Address / Block">
-
 <div class="card">Latest Block: <span id="blockNum">1,204,883</span></div>
 <div class="card">Gas Fee: 0.00021 ETH</div>
 <div class="card">Network Hashrate: 129.2 TH/s</div>
-
 <h3>Latest Transactions</h3>
 <table>
 <tr><th>Tx Hash</th><th>From</th><th>To</th><th>Value</th></tr>
@@ -105,7 +152,7 @@ USD <input id="devUSD">
 </table>
 </div>
 
-<!-- 🌐 NETWORK -->
+<!-- NETWORK PAGE -->
 <div id="network" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Network Status</h2>
@@ -113,13 +160,12 @@ USD <input id="devUSD">
 <div class="card">RPC: https://rpc.fchain.net</div>
 <div class="card">Latency: 42ms</div>
 <div class="card">Peers: 128</div>
-
 <h3>Network Profile</h3>
 <div class="card">Chain ID: 7777</div>
 <div class="card">Consensus: Proof of Stake</div>
 </div>
 
-<!-- ⚙️ SETTINGS -->
+<!-- SETTINGS PAGE -->
 <div id="settings" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Settings</h2>
@@ -154,9 +200,9 @@ USD <input id="devUSD">
 </div>
 
 <script>
-// Page System
+// PAGE SYSTEM
 let history=["welcome"];
-let appPages=["dashboard","explorer","network","settings"];
+let appPages=["dashboard","buy","sell","receive","explorer","network","settings"];
 
 function openPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -169,7 +215,7 @@ history.pop();
 openPage(history.pop() || "welcome");
 }
 
-// Register / Login
+// REGISTER / LOGIN
 function registerUser(){
 if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
 localStorage.email=regEmail.value;
@@ -182,7 +228,7 @@ openPage("dashboard");
 }else alert("Wrong login");
 }
 
-// Dev Tools Trigger
+// DEVTOOLS TAP 5 TIMES
 let tap=0,timer;
 function tapDev(){
 tap++; clearTimeout(timer);
@@ -192,7 +238,7 @@ if(tap>=5){devTools.style.display="block"; tap=0;}
 tapLogo.onclick=tapDev;
 dashTap.onclick=tapDev;
 
-// Save Dev Tools
+// SAVE DEVTOOLS
 function saveDev(){
 localStorage.setItem("fchain_btc", devBTC.value);
 localStorage.setItem("fchain_eth", devETH.value);
@@ -205,7 +251,20 @@ alert("Saved");
 }
 function closeDev(){devTools.style.display="none";}
 
-// Load Saved Data
+// RECEIVE QR CODE
+let walletAddr = "0xE6A4B9918F2D11223344AA8899BBCCDD11223344";
+function generateQR(){
+let url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + walletAddr;
+document.getElementById("qr").src = url;
+document.getElementById("walletAddress").innerText = walletAddr;
+}
+generateQR();
+function copyAddress(){
+navigator.clipboard.writeText(walletAddr);
+alert("Address copied!");
+}
+
+// LOAD DATA
 window.onload=function(){
 let b=localStorage.getItem("fchain_btc");
 let e=localStorage.getItem("fchain_eth");
@@ -220,4 +279,4 @@ profileEmail.innerText = localStorage.email || "guest@fchain.app";
 </script>
 
 </body>
-                                     </html>
+  </html>
