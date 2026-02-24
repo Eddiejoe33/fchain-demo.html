@@ -13,10 +13,9 @@ h2{text-align:center;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
 .card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
-.progress{width:100%;background:#1e293b;border-radius:10px;overflow:hidden;}
-.bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
+/* Bottom Nav */
 .bottom-nav{
 position:fixed;bottom:0;width:100%;display:flex;
 background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
@@ -32,6 +31,11 @@ padding:12px;border-radius:10px;border:1px solid #22c55e;
 display:none;z-index:9999;width:220px;
 }
 #devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
+
+/* Explorer Table */
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{padding:8px;border-bottom:1px solid #1e293b;font-size:12px;}
+th{text-align:left;color:#22c55e;}
 </style>
 </head>
 
@@ -39,19 +43,12 @@ display:none;z-index:9999;width:220px;
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
 
-<!-- DEV TOOLS PANEL -->
+<!-- DEV TOOLS -->
 <div id="devTools">
-<h3>🔧 FChain Dev Tools</h3>
-
-BTC Balance
-<input id="devBTC" placeholder="0.00">
-
-ETH Balance
-<input id="devETH" placeholder="0.00">
-
-USD Balance
-<input id="devUSD" placeholder="0">
-
+<h3>🔧 Dev Tools</h3>
+BTC <input id="devBTC">
+ETH <input id="devETH">
+USD <input id="devUSD">
 <button class="btn" onclick="saveDev()">Save</button>
 <button class="btn" onclick="closeDev()">Close</button>
 </div>
@@ -80,139 +77,147 @@ USD Balance
 <button class="btn" onclick="loginUser()">Login</button>
 </div>
 
-<!-- CREATING -->
-<div id="creating" class="page">
-<h2>Creating Wallet...</h2>
-<div class="progress"><div id="bar" class="bar"></div></div>
-</div>
-
-<!-- DASHBOARD -->
+<!-- DASHBOARD HOME -->
 <div id="dashboard" class="page">
 <h2 id="dashTap">FChain Wallet</h2>
-
-<div style="display:flex;gap:6px;">
-<button class="btn" onclick="openPage('buy')">Buy</button>
-<button class="btn" onclick="openPage('sell')">Sell</button>
-<button class="btn" onclick="openPage('receive')">Receive</button>
-</div>
-
 <h1 id="usd">$0</h1>
 <div class="card" id="btc">BTC: 0</div>
 <div class="card" id="eth">ETH: 0</div>
 </div>
 
-<!-- BUY -->
-<div id="buy" class="page">
+<!-- 🔎 EXPLORER -->
+<div id="explorer" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<div class="card" onclick="alert('Network busy')">Buy BTC</div>
-<div class="card" onclick="alert('Network busy')">Buy ETH</div>
+<h2>FChain Explorer</h2>
+
+<input placeholder="Search Tx Hash / Address / Block">
+
+<div class="card">Latest Block: <span id="blockNum">1,204,883</span></div>
+<div class="card">Gas Fee: 0.00021 ETH</div>
+<div class="card">Network Hashrate: 129.2 TH/s</div>
+
+<h3>Latest Transactions</h3>
+<table>
+<tr><th>Tx Hash</th><th>From</th><th>To</th><th>Value</th></tr>
+<tr><td>0x9f2a...c91</td><td>0xE6A4</td><td>0xA991</td><td>0.32 ETH</td></tr>
+<tr><td>0x77d1...221</td><td>0x99B2</td><td>0x1F88</td><td>1.02 ETH</td></tr>
+<tr><td>0x11aa...8c2</td><td>0x4C22</td><td>0x9B11</td><td>0.04 ETH</td></tr>
+</table>
 </div>
 
-<!-- SELL -->
-<div id="sell" class="page">
+<!-- 🌐 NETWORK -->
+<div id="network" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<div class="card" onclick="alert('Liquidity error')">Sell BTC</div>
-<div class="card" onclick="alert('Liquidity error')">Sell ETH</div>
+<h2>Network Status</h2>
+<div class="card">Current Network: FChain Mainnet</div>
+<div class="card">RPC: https://rpc.fchain.net</div>
+<div class="card">Latency: 42ms</div>
+<div class="card">Peers: 128</div>
+
+<h3>Network Profile</h3>
+<div class="card">Chain ID: 7777</div>
+<div class="card">Consensus: Proof of Stake</div>
 </div>
 
-<!-- RECEIVE -->
-<div id="receive" class="page">
+<!-- ⚙️ SETTINGS -->
+<div id="settings" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
-<div class="card">BTC Address: bc1qf99...urf</div>
-<div class="card">ETH Address: 0xE6A4...189</div>
+<h2>Settings</h2>
+<div class="card" onclick="openPage('profile')">👤 Profile</div>
+<div class="card" onclick="openPage('support')">🆘 Support</div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>User Profile</h2>
+<div class="card">Email: <span id="profileEmail"></span></div>
+<div class="card">Wallet ID: FC-8823-A1</div>
+<div class="card">Status: Verified</div>
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Support</h2>
+<div class="card">📧 support@fchain.app</div>
+<div class="card">💬 Live Chat: Offline</div>
+<div class="card">🌐 help.fchain.app</div>
 </div>
 
 <!-- Bottom Nav -->
 <div class="bottom-nav hidden-nav" id="nav">
 <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
-<div class="nav-btn" onclick="openPage('buy')"><span>💳</span>Buy</div>
-<div class="nav-btn" onclick="openPage('sell')"><span>💱</span>Sell</div>
-<div class="nav-btn" onclick="openPage('receive')"><span>📥</span>Receive</div>
+<div class="nav-btn" onclick="openPage('explorer')"><span>🔎</span>Explorer</div>
+<div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
+<div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
 </div>
 
 <script>
-// PAGE SYSTEM
+// Page System
 let history=["welcome"];
-let appPages=["dashboard","buy","sell","receive"];
+let appPages=["dashboard","explorer","network","settings"];
 
 function openPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
-
 if(history[history.length-1]!==id) history.push(id);
 document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
-
 function goBack(){
 history.pop();
 openPage(history.pop() || "welcome");
 }
 
-// REGISTER
+// Register / Login
 function registerUser(){
 if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
 localStorage.email=regEmail.value;
 localStorage.pass=regPass.value;
-
-openPage("creating");
-let i=0;
-let t=setInterval(()=>{
-i+=5; bar.style.width=i+"%";
-if(i>=100){clearInterval(t); openPage("dashboard");}
-},80);
+openPage("dashboard");
 }
-
-// LOGIN
 function loginUser(){
 if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){
 openPage("dashboard");
 }else alert("Wrong login");
 }
 
-// TAP 5 TIMES TO OPEN DEV TOOLS
+// Dev Tools Trigger
 let tap=0,timer;
 function tapDev(){
-tap++;
-clearTimeout(timer);
+tap++; clearTimeout(timer);
 timer=setTimeout(()=>tap=0,1200);
-if(tap>=5){
-document.getElementById("devTools").style.display="block";
-tap=0;
+if(tap>=5){devTools.style.display="block"; tap=0;}
 }
-}
-document.getElementById("tapLogo").onclick=tapDev;
-document.getElementById("dashTap").onclick=tapDev;
+tapLogo.onclick=tapDev;
+dashTap.onclick=tapDev;
 
-// SAVE DEV DATA
+// Save Dev Tools
 function saveDev(){
 localStorage.setItem("fchain_btc", devBTC.value);
 localStorage.setItem("fchain_eth", devETH.value);
 localStorage.setItem("fchain_usd", devUSD.value);
-
 btc.innerText="BTC: "+devBTC.value;
 eth.innerText="ETH: "+devETH.value;
 usd.innerText="$"+devUSD.value;
-
-document.getElementById("devTools").style.display="none";
-alert("Dev balances saved!");
+devTools.style.display="none";
+alert("Saved");
 }
+function closeDev(){devTools.style.display="none";}
 
-// CLOSE DEV PANEL
-function closeDev(){
-document.getElementById("devTools").style.display="none";
-}
+// Load Saved Data
+window.onload=function(){
+let b=localStorage.getItem("fchain_btc");
+let e=localStorage.getItem("fchain_eth");
+let u=localStorage.getItem("fchain_usd");
 
-// LOAD SAVED DATA
-window.onload = function(){
-let btcVal = localStorage.getItem("fchain_btc");
-let ethVal = localStorage.getItem("fchain_eth");
-let usdVal = localStorage.getItem("fchain_usd");
+if(b){devBTC.value=b; btc.innerText="BTC: "+b;}
+if(e){devETH.value=e; eth.innerText="ETH: "+e;}
+if(u){devUSD.value=u; usd.innerText="$"+u;}
 
-if(btcVal){devBTC.value=btcVal; btc.innerText="BTC: "+btcVal;}
-if(ethVal){devETH.value=ethVal; eth.innerText="ETH: "+ethVal;}
-if(usdVal){devUSD.value=usdVal; usd.innerText="$"+usdVal;}
+profileEmail.innerText = localStorage.email || "guest@fchain.app";
 };
 </script>
 
 </body>
-  </html>
+                                     </html>
