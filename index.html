@@ -17,7 +17,6 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .bar{height:12px;background:#22c55e;width:0%;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
-/* Bottom Nav */
 .bottom-nav{
 position:fixed;bottom:0;width:100%;display:flex;
 background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
@@ -26,11 +25,11 @@ background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
 .nav-btn span{font-size:22px;display:block;}
 .hidden-nav{display:none;}
 
-/* DevTools */
+/* Dev Tools */
 #devTools{
 position:fixed;top:10px;left:10px;background:#111827;
-padding:10px;border-radius:10px;border:1px solid #22c55e;
-display:none;z-index:9999;
+padding:12px;border-radius:10px;border:1px solid #22c55e;
+display:none;z-index:9999;width:220px;
 }
 #devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
 </style>
@@ -40,13 +39,21 @@ display:none;z-index:9999;
 
 <div class="banner">🚨 EDUCATIONAL SIMULATION – NOT A REAL WALLET</div>
 
-<!-- DEVTOOLS -->
+<!-- DEV TOOLS PANEL -->
 <div id="devTools">
-<h3>Dev Tools</h3>
-BTC <input id="devBTC"><br>
-ETH <input id="devETH"><br>
-USD <input id="devUSD"><br>
+<h3>🔧 FChain Dev Tools</h3>
+
+BTC Balance
+<input id="devBTC" placeholder="0.00">
+
+ETH Balance
+<input id="devETH" placeholder="0.00">
+
+USD Balance
+<input id="devUSD" placeholder="0">
+
 <button class="btn" onclick="saveDev()">Save</button>
+<button class="btn" onclick="closeDev()">Close</button>
 </div>
 
 <!-- WELCOME -->
@@ -61,8 +68,8 @@ USD <input id="devUSD"><br>
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <input id="regEmail" placeholder="Email">
 <input id="regPass" type="password" placeholder="Password">
-<input id="regPass2" type="password" placeholder="Confirm">
-<button class="btn" onclick="registerUser()">Create</button>
+<input id="regPass2" type="password" placeholder="Confirm Password">
+<button class="btn" onclick="registerUser()">Create Wallet</button>
 </div>
 
 <!-- LOGIN -->
@@ -89,9 +96,9 @@ USD <input id="devUSD"><br>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
 
-<h1 id="usd">$12,450</h1>
-<div class="card" id="btc">BTC: 0.13</div>
-<div class="card" id="eth">ETH: 2.43</div>
+<h1 id="usd">$0</h1>
+<div class="card" id="btc">BTC: 0</div>
+<div class="card" id="eth">ETH: 0</div>
 </div>
 
 <!-- BUY -->
@@ -133,7 +140,6 @@ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 
 if(history[history.length-1]!==id) history.push(id);
-
 document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
 
@@ -163,7 +169,7 @@ openPage("dashboard");
 }else alert("Wrong login");
 }
 
-// DEVTOOLS TAP 5 TIMES
+// TAP 5 TIMES TO OPEN DEV TOOLS
 let tap=0,timer;
 function tapDev(){
 tap++;
@@ -177,17 +183,36 @@ tap=0;
 document.getElementById("tapLogo").onclick=tapDev;
 document.getElementById("dashTap").onclick=tapDev;
 
-// DEV SAVE
+// SAVE DEV DATA
 function saveDev(){
-localStorage.btc=devBTC.value;
-localStorage.eth=devETH.value;
-localStorage.usd=devUSD.value;
+localStorage.setItem("fchain_btc", devBTC.value);
+localStorage.setItem("fchain_eth", devETH.value);
+localStorage.setItem("fchain_usd", devUSD.value);
+
 btc.innerText="BTC: "+devBTC.value;
 eth.innerText="ETH: "+devETH.value;
-usd.innerText=devUSD.value;
-alert("Saved");
+usd.innerText="$"+devUSD.value;
+
+document.getElementById("devTools").style.display="none";
+alert("Dev balances saved!");
 }
+
+// CLOSE DEV PANEL
+function closeDev(){
+document.getElementById("devTools").style.display="none";
+}
+
+// LOAD SAVED DATA
+window.onload = function(){
+let btcVal = localStorage.getItem("fchain_btc");
+let ethVal = localStorage.getItem("fchain_eth");
+let usdVal = localStorage.getItem("fchain_usd");
+
+if(btcVal){devBTC.value=btcVal; btc.innerText="BTC: "+btcVal;}
+if(ethVal){devETH.value=ethVal; eth.innerText="ETH: "+ethVal;}
+if(usdVal){devUSD.value=usdVal; usd.innerText="$"+usdVal;}
+};
 </script>
 
 </body>
-                       </html>
+  </html>
