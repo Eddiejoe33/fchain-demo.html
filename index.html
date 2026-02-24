@@ -4,32 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FChain Wallet</title>
-
 <style>
 body{margin:0;font-family:Arial;background:#0f172a;color:white;}
 .page{display:none;padding:15px;}
 .active{display:block;}
 h2{text-align:center;}
 .btn{width:100%;padding:14px;background:#2563eb;border:none;border-radius:10px;color:white;font-size:16px;margin-top:10px;cursor:pointer;}
-.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;}
+.card{background:#111827;padding:12px;border-radius:12px;margin-top:10px;cursor:pointer;}
 input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .banner{background:red;padding:6px;font-size:12px;text-align:center;}
 
 /* Bottom Nav */
-.bottom-nav{
-position:fixed;bottom:0;width:100%;display:flex;
-background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;
-}
+.bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
 .hidden-nav{display:none;}
 
 /* Dev Tools */
-#devTools{
-position:fixed;top:10px;left:10px;background:#111827;
-padding:12px;border-radius:10px;border:1px solid #22c55e;
-display:none;z-index:9999;width:220px;
-}
+#devTools{position:fixed;top:10px;left:10px;background:#111827;padding:12px;border-radius:10px;border:1px solid #22c55e;display:none;z-index:9999;width:220px;}
 #devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
 
 /* Explorer Table */
@@ -38,10 +30,14 @@ th,td{padding:8px;border-bottom:1px solid #1e293b;font-size:12px;}
 th{text-align:left;color:#22c55e;}
 
 /* Network Status Marquee */
-#networkBar{
-width:100%;background:#111827;padding:6px;font-size:12px;overflow:hidden;white-space:nowrap;margin-bottom:10px;border-radius:8px;}
+#networkBar{width:100%;background:#111827;padding:6px;font-size:12px;overflow:hidden;white-space:nowrap;margin-bottom:10px;border-radius:8px;}
 #networkBar span{display:inline-block;padding-right:50px;animation:scroll 10s linear infinite;}
 @keyframes scroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}
+
+/* Receive Tabs */
+.tab-btn{flex:1;padding:8px;border-radius:8px;background:#111827;color:white;margin-right:4px;border:none;cursor:pointer;}
+.tab-btn.active{background:#2563eb;}
+.tabs{display:flex;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -112,22 +108,28 @@ USD <input id="devUSD">
 <div id="buy" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Buy Crypto</h2>
-<div class="card">Buy BTC - Payment via Chase Bank / Bank of America</div>
-<div class="card">Buy ETH - Payment via Chase Bank / Bank of America</div>
+<div class="card">BTC - Buy via Chase / Bank of America</div>
+<div class="card">ETH - Buy via Chase / Bank of America</div>
 </div>
 
 <!-- SELL PAGE -->
 <div id="sell" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Sell Crypto</h2>
-<div class="card">Sell BTC - Payout via Chase Bank / Bank of America</div>
-<div class="card">Sell ETH - Payout via Chase Bank / Bank of America</div>
+<div class="card">BTC - Sell via Chase / Bank of America</div>
+<div class="card">ETH - Sell via Chase / Bank of America</div>
 </div>
 
 <!-- RECEIVE PAGE -->
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
+
+<div class="tabs">
+<button class="tab-btn active" onclick="selectCoin('BTC', this)">BTC</button>
+<button class="tab-btn" onclick="selectCoin('ETH', this)">ETH</button>
+</div>
+
 <div class="card" style="text-align:center;">
 <img id="qr" width="200"><br><br>
 <div id="walletAddress" style="font-size:12px;word-break:break-all;"></div>
@@ -203,17 +205,13 @@ USD <input id="devUSD">
 // PAGE SYSTEM
 let history=["welcome"];
 let appPages=["dashboard","buy","sell","receive","explorer","network","settings"];
-
 function openPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 if(history[history.length-1]!==id) history.push(id);
 document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
 }
-function goBack(){
-history.pop();
-openPage(history.pop() || "welcome");
-}
+function goBack(){history.pop();openPage(history.pop() || "welcome");}
 
 // REGISTER / LOGIN
 function registerUser(){
@@ -223,18 +221,12 @@ localStorage.pass=regPass.value;
 openPage("dashboard");
 }
 function loginUser(){
-if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){
-openPage("dashboard");
-}else alert("Wrong login");
+if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){openPage("dashboard");}else alert("Wrong login");
 }
 
 // DEVTOOLS TAP 5 TIMES
 let tap=0,timer;
-function tapDev(){
-tap++; clearTimeout(timer);
-timer=setTimeout(()=>tap=0,1200);
-if(tap>=5){devTools.style.display="block"; tap=0;}
-}
+function tapDev(){tap++; clearTimeout(timer); timer=setTimeout(()=>tap=0,1200); if(tap>=5){devTools.style.display="block"; tap=0;}}
 tapLogo.onclick=tapDev;
 dashTap.onclick=tapDev;
 
@@ -252,16 +244,19 @@ alert("Saved");
 function closeDev(){devTools.style.display="none";}
 
 // RECEIVE QR CODE
-let walletAddr = "0xE6A4B9918F2D11223344AA8899BBCCDD11223344";
+let walletAddrs = {BTC:"1FfmbHfnpaZjKFvyi1okTjJJusN455paPH",ETH:"0xE6A4B9918F2D11223344AA8899BBCCDD11223344"};
+let currentCoin="BTC";
 function generateQR(){
-let url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + walletAddr;
+let url = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + walletAddrs[currentCoin];
 document.getElementById("qr").src = url;
-document.getElementById("walletAddress").innerText = walletAddr;
+document.getElementById("walletAddress").innerText = walletAddrs[currentCoin];
 }
+function copyAddress(){navigator.clipboard.writeText(walletAddrs[currentCoin]); alert(currentCoin+" address copied!");}
+function selectCoin(coin, btn){
+currentCoin=coin;
+document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
 generateQR();
-function copyAddress(){
-navigator.clipboard.writeText(walletAddr);
-alert("Address copied!");
 }
 
 // LOAD DATA
@@ -269,12 +264,11 @@ window.onload=function(){
 let b=localStorage.getItem("fchain_btc");
 let e=localStorage.getItem("fchain_eth");
 let u=localStorage.getItem("fchain_usd");
-
 if(b){devBTC.value=b; btc.innerText="BTC: "+b;}
 if(e){devETH.value=e; eth.innerText="ETH: "+e;}
 if(u){devUSD.value=u; usd.innerText="$"+u;}
-
 profileEmail.innerText = localStorage.email || "guest@fchain.app";
+generateQR();
 };
 </script>
 
