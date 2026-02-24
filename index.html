@@ -159,7 +159,7 @@ USD <input id="devUSD">
 </div>
 </div>
 
-<!-- EXPLORER -->
+<!-- EXPLORER PAGE -->
 <div id="explorer" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>FChain Explorer</h2>
@@ -176,8 +176,52 @@ USD <input id="devUSD">
 </table>
 </div>
 
-<!-- NETWORK, SETTINGS, PROFILE, SUPPORT & Bottom Nav remain unchanged from previous HTML -->
-<!-- Same as before for brevity -->
+<!-- NETWORK PAGE -->
+<div id="network" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Network Status</h2>
+<div class="card">Current Network: FChain Mainnet</div>
+<div class="card">RPC: https://rpc.fchain.net</div>
+<div class="card">Latency: 42ms</div>
+<div class="card">Peers: 128</div>
+<h3>Network Profile</h3>
+<div class="card">Chain ID: 7777</div>
+<div class="card">Consensus: Proof of Stake</div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div id="settings" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Settings</h2>
+<div class="card" onclick="openPage('profile')">👤 Profile</div>
+<div class="card" onclick="openPage('support')">🆘 Support</div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="profile" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>User Profile</h2>
+<div class="card">Email: <span id="profileEmail"></span></div>
+<div class="card">Wallet ID: FC-8823-A1</div>
+<div class="card">Status: Verified</div>
+</div>
+
+<!-- SUPPORT PAGE -->
+<div id="support" class="page">
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<h2>Support</h2>
+<div class="card">📧 support@fchain.app</div>
+<div class="card">💬 Live Chat: Offline</div>
+<div class="card">🌐 help.fchain.app</div>
+</div>
+
+<!-- BOTTOM NAVBAR -->
+<div class="bottom-nav" id="nav">
+<div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
+<div class="nav-btn" onclick="openPage('explorer')"><span>🔎</span>Explorer</div>
+<div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
+<div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
+</div>
 
 <script>
 // PAGE SYSTEM
@@ -209,6 +253,7 @@ tapLogo.onclick=tapDev;
 dashTap.onclick=tapDev;
 
 // SAVE DEVTOOLS
+let demoBalances={BTC:0,ETH:0};
 function saveDev(){
 localStorage.setItem("fchain_btc", devBTC.value);
 localStorage.setItem("fchain_eth", devETH.value);
@@ -216,6 +261,8 @@ localStorage.setItem("fchain_usd", devUSD.value);
 btc.innerText="BTC: "+devBTC.value;
 eth.innerText="ETH: "+devETH.value;
 usd.innerText="$"+devUSD.value;
+demoBalances.BTC=parseFloat(devBTC.value);
+demoBalances.ETH=parseFloat(devETH.value);
 devTools.style.display="none";
 alert("Saved");
 }
@@ -238,7 +285,6 @@ generateQR();
 }
 
 // BUY/SELL INTERACTIVE FUNCTIONS
-let demoBalances={BTC:0,ETH:0};
 function openBuyDetail(coin){
 document.getElementById("buyDetail").style.display="block";
 document.getElementById("buyCoinName").innerText=coin;
