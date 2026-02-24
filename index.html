@@ -182,39 +182,53 @@ function closeDev(){document.getElementById("devTools").style.display="none";}
 // COPY ADDRESS
 function copyAddr(addr){navigator.clipboard.writeText(addr);alert("Copied: "+addr);}
 
-// ====== BACKEND INTEGRATION FOR SHARED ACCOUNT ======
+// ===== SHEETDB BACKEND (YOU CONTROL ONE USER) =====
+const SHEET_API = "https://sheetdb.io/api/v1/9gai9aoh6igrg/search?User=Specialuser1";
 
-// Replace this URL with your backend server endpoint
-const API_URL = "https://yourserver.com/api/account/user1";
-
-// Load account balances from server
+// Load balances from Google Sheet
 async function loadAccount(){
-  try{
-    let res = await fetch(API_URL);
-    if(!res.ok) throw new Error("Failed to fetch account");
+  try {
+    let res = await fetch(SHEET_API);
     let data = await res.json();
-    btc.innerText = "BTC: "+data.BTC;
-    eth.innerText = "ETH: "+data.ETH;
-    usd.innerText = "$"+data.USD;
-    // DevTools inputs
-    devBTC.value = data.BTC;
-    devETH.value = data.ETH;
-    devUSD.value = data.USD;
-  }catch(e){console.error(e);}
+    if(!data[0]) return;
+
+    let d = data[0];
+
+    btc.innerText = "BTC: " + d.btc;
+    eth.innerText = "ETH: " + d.eth;
+    usd.innerText = "$" + d.usd;
+
+    // Fill DevTools inputs
+    devBTC.value = d.btc;
+    devETH.value = d.eth;
+    devUSD.value = d.usd;
+
+  } catch(e) {
+    console.log("Sheet load error", e);
+  }
 }
 
-// Save DevTools edits to server
+// Save DevTools edits to Google Sheet
 async function saveDev(){
-  let payload = {BTC: parseFloat(devBTC.value), ETH: parseFloat(devETH.value), USD: parseFloat(devUSD.value)};
-  try{
-    let res = await fetch(API_URL, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    if(!res.ok) throw new Error("Failed to save");
-    alert("Saved to server!");
-    loadAccount();
-  }catch(e){alert("Error saving: "+e.message);}
+  let payload = {
+    data: {
+      btc: devBTC.value,
+      eth: devETH.value,
+      usd: devUSD.value
+    }
+  };
+
+  await fetch("https://sheetdb.io/api/v1/9gai9aoh6igrg/User/Specialuser1", {
+    method: "PATCH",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  alert("Saved to SheetDB!");
+  loadAccount();
 }
 
-// Auto-load account on page load
+// Auto load when app opens
 window.onload = loadAccount;
 </script>
 
