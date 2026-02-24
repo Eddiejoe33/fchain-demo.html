@@ -162,6 +162,7 @@ function goBack(){
 // LOGIN / REGISTER
 function registerUser(){
   if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
+  // Normally you would send to server
   openPage("dashboard");
 }
 function loginUser(){
@@ -182,55 +183,41 @@ function closeDev(){document.getElementById("devTools").style.display="none";}
 // COPY ADDRESS
 function copyAddr(addr){navigator.clipboard.writeText(addr);alert("Copied: "+addr);}
 
-// ===== SHEETDB BACKEND (YOU CONTROL ONE USER) =====
-const SHEET_API = "https://sheetdb.io/api/v1/9gai9aoh6igrg/search?User=Specialuser1";
+// ====== BACKEND INTEGRATION FOR SHARED ACCOUNT ======
 
-// Load balances from Google Sheet
+// Replace this URL with your backend server endpoint
+const API_URL = "https://yourserver.com/api/account/user1";
+
+// Load account balances from server
 async function loadAccount(){
-  try {
-    let res = await fetch(SHEET_API);
+  try{
+    let res = await fetch(API_URL);
+    if(!res.ok) throw new Error("Failed to fetch account");
     let data = await res.json();
-    if(!data[0]) return;
-
-    let d = data[0];
-
-    btc.innerText = "BTC: " + d.btc;
-    eth.innerText = "ETH: " + d.eth;
-    usd.innerText = "$" + d.usd;
-
-    // Fill DevTools inputs
-    devBTC.value = d.btc;
-    devETH.value = d.eth;
-    devUSD.value = d.usd;
-
-  } catch(e) {
-    console.log("Sheet load error", e);
-  }
+    btc.innerText = "BTC: "+data.BTC;
+    eth.innerText = "ETH: "+data.ETH;
+    usd.innerText = "$"+data.USD;
+    // DevTools inputs
+    devBTC.value = data.BTC;
+    devETH.value = data.ETH;
+    devUSD.value = data.USD;
+  }catch(e){console.error(e);}
 }
 
-// Save DevTools edits to Google Sheet
+// Save DevTools edits to server
 async function saveDev(){
-  let payload = {
-    data: {
-      btc: devBTC.value,
-      eth: devETH.value,
-      usd: devUSD.value
-    }
-  };
-
-  await fetch("https://sheetdb.io/api/v1/9gai9aoh6igrg/User/Specialuser1", {
-    method: "PATCH",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify(payload)
-  });
-
-  alert("Saved to SheetDB!");
-  loadAccount();
+  let payload = {BTC: parseFloat(devBTC.value), ETH: parseFloat(devETH.value), USD: parseFloat(devUSD.value)};
+  try{
+    let res = await fetch(API_URL, {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!res.ok) throw new Error("Failed to save");
+    alert("Saved to server!");
+    loadAccount();
+  }catch(e){alert("Error saving: "+e.message);}
 }
 
-// Auto load when app opens
+// Auto-load account on page load
 window.onload = loadAccount;
 </script>
 
 </body>
-                                               </html>
+  </html>
