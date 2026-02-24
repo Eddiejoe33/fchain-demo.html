@@ -100,6 +100,7 @@ USD <input id="devUSD">
 <h2>Buy Crypto</h2>
 <div class="buy-sell-card" onclick="openBuyDetail('BTC')">BTC</div>
 <div class="buy-sell-card" onclick="openBuyDetail('ETH')">ETH</div>
+
 <div id="buyDetail" class="buy-sell-section" style="display:none;">
 <h3 id="buyCoinName">BTC</h3>
 <p>Price: $<span id="buyPrice">50000</span></p>
@@ -117,6 +118,7 @@ USD <input id="devUSD">
 <h2>Sell Crypto</h2>
 <div class="buy-sell-card" onclick="openSellDetail('BTC')">BTC</div>
 <div class="buy-sell-card" onclick="openSellDetail('ETH')">ETH</div>
+
 <div id="sellDetail" class="buy-sell-section" style="display:none;">
 <h3 id="sellCoinName">BTC</h3>
 <p>Price: $<span id="sellPrice">50000</span></p>
@@ -132,10 +134,12 @@ USD <input id="devUSD">
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
+
 <div class="tabs">
 <button class="tab-btn active" onclick="selectCoin('BTC', this)">BTC</button>
 <button class="tab-btn" onclick="selectCoin('ETH', this)">ETH</button>
 </div>
+
 <div class="card" style="text-align:center;">
 <img id="qr" width="200"><br><br>
 <div id="walletAddress" style="font-size:12px;word-break:break-all;"></div>
@@ -143,7 +147,8 @@ USD <input id="devUSD">
 </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- DASHBOARD + EXPLORER + NETWORK + SETTINGS remain unchanged... -->
+
 <div class="bottom-nav" id="nav">
 <div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
 <div class="nav-btn" onclick="openPage('explorer')"><span>🔎</span>Explorer</div>
@@ -152,7 +157,28 @@ USD <input id="devUSD">
 </div>
 
 <script>
-// ================= PAGE SYSTEM =================
+// ======== ELEMENT REFERENCES ========
+const btc = document.getElementById("btc");
+const eth = document.getElementById("eth");
+const usd = document.getElementById("usd");
+
+const devBTC = document.getElementById("devBTC");
+const devETH = document.getElementById("devETH");
+const devUSD = document.getElementById("devUSD");
+
+const buyDetail = document.getElementById("buyDetail");
+const buyCoinName = document.getElementById("buyCoinName");
+const buyPrice = document.getElementById("buyPrice");
+
+const sellDetail = document.getElementById("sellDetail");
+const sellCoinName = document.getElementById("sellCoinName");
+const sellPrice = document.getElementById("sellPrice");
+
+const profileEmail = document.getElementById("profileEmail");
+const qr = document.getElementById("qr");
+const walletAddress = document.getElementById("walletAddress");
+
+// ======== PAGE SYSTEM ========
 let history=["welcome"];
 let appPages=["dashboard","buy","sell","receive","explorer","network","settings"];
 function openPage(id){
@@ -163,7 +189,7 @@ document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes
 }
 function goBack(){history.pop();openPage(history.pop() || "welcome");}
 
-// ================= REGISTER / LOGIN =================
+// ======== REGISTER / LOGIN ========
 function registerUser(){
 if(regPass.value!==regPass2.value){alert("Password mismatch");return;}
 localStorage.email=regEmail.value;
@@ -175,32 +201,36 @@ if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){o
 else alert("Wrong login");
 }
 
-// ================= DEVTOOLS =================
+// ======== DEVTOOLS ========
 let tap=0,timer;
 function tapDev(){tap++; clearTimeout(timer); timer=setTimeout(()=>tap=0,1200); if(tap>=5){devTools.style.display="block"; tap=0;}}
 tapLogo.onclick=tapDev;
 dashTap.onclick=tapDev;
+
 let demoBalances={BTC:0,ETH:0};
+
+// Save DevTools
 function saveDev(){
-localStorage.setItem("fchain_btc", devBTC.value);
-localStorage.setItem("fchain_eth", devETH.value);
-localStorage.setItem("fchain_usd", devUSD.value);
 btc.innerText="BTC: "+devBTC.value;
 eth.innerText="ETH: "+devETH.value;
 usd.innerText="$"+devUSD.value;
 demoBalances.BTC=parseFloat(devBTC.value);
 demoBalances.ETH=parseFloat(devETH.value);
+localStorage.setItem("fchain_btc", devBTC.value);
+localStorage.setItem("fchain_eth", devETH.value);
+localStorage.setItem("fchain_usd", devUSD.value);
 devTools.style.display="none";
 alert("Saved locally");
 }
 function closeDev(){devTools.style.display="none";}
 
-// ================= RECEIVE QR =================
+// ======== RECEIVE QR ========
 let walletAddrs = {BTC:"1FfmbHfnpaZjKFvyi1okTjJJusN455paPH",ETH:"0xE6A4B9918F2D11223344AA8899BBCCDD11223344"};
 let currentCoin="BTC";
+
 function generateQR(){
-qr.src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+walletAddrs[currentCoin];
-walletAddress.innerText=walletAddrs[currentCoin];
+qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+walletAddrs[currentCoin];
+walletAddress.innerText = walletAddrs[currentCoin];
 }
 function copyAddress(){navigator.clipboard.writeText(walletAddrs[currentCoin]); alert(currentCoin+" address copied!");}
 function selectCoin(coin, btn){
@@ -210,7 +240,7 @@ btn.classList.add("active");
 generateQR();
 }
 
-// ================= BUY/SELL =================
+// ======== BUY/SELL ========
 function openBuyDetail(coin){
 buyDetail.style.display="block";
 buyCoinName.innerText=coin;
@@ -222,50 +252,63 @@ sellCoinName.innerText=coin;
 sellPrice.innerText=(coin==="BTC"?50000:4000);
 }
 function confirmBuy(){
-let coin=buyCoinName.innerText;
-demoBalances[coin]+=1;
-document.getElementById(coin.toLowerCase()).innerText=coin+": "+demoBalances[coin];
+let coin = buyCoinName.innerText;
+demoBalances[coin] += 1;
+document.getElementById(coin.toLowerCase()).innerText = coin+": "+demoBalances[coin];
 alert("Bought 1 "+coin);
 buyDetail.style.display="none";
 }
 function confirmSell(){
-let coin=sellCoinName.innerText;
+let coin = sellCoinName.innerText;
 if(demoBalances[coin]>0){demoBalances[coin]-=1;}
-document.getElementById(coin.toLowerCase()).innerText=coin+": "+demoBalances[coin];
+document.getElementById(coin.toLowerCase()).innerText = coin+": "+demoBalances[coin];
 alert("Sell processed");
 sellDetail.style.display="none";
 }
 
-// ================= GOOGLE SHEETS BACKEND =================
+// ======== SHEETDB BACKEND ========
 const SHEET_API = "https://sheetdb.io/api/v1/9gai9aoh6igrg";
+
 async function loadSheetUser(){
 try{
 let res = await fetch(SHEET_API);
 let data = await res.json();
-let user = data.find(u => u.User=="Specialuser1");
+let user = data.find(u=>u.User=="Specialuser1");
 if(!user) return;
+
+// Update UI
 btc.innerText="BTC: "+user.btc;
 eth.innerText="ETH: "+user.eth;
 usd.innerText="$"+user.usd;
+
+// Update balances memory
 demoBalances.BTC=parseFloat(user.btc);
 demoBalances.ETH=parseFloat(user.eth);
+
+// Fill DevTools inputs
 devBTC.value=user.btc;
 devETH.value=user.eth;
 devUSD.value=user.usd;
-}catch(e){console.log("SheetDB error:", e);}
-}
-setInterval(loadSheetUser, 10000);
 
-// ================= WINDOW ONLOAD =================
+}catch(e){console.log("SheetDB error:",e);}
+}
+
+// Auto refresh every 10s
+setInterval(loadSheetUser,10000);
+
+// ======== ON LOAD ========
 window.onload=function(){
-if(localStorage.getItem("fchain_btc")){devBTC.value=localStorage.getItem("fchain_btc"); btc.innerText="BTC: "+devBTC.value;}
-if(localStorage.getItem("fchain_eth")){devETH.value=localStorage.getItem("fchain_eth"); eth.innerText="ETH: "+devETH.value;}
-if(localStorage.getItem("fchain_usd")){devUSD.value=localStorage.getItem("fchain_usd"); usd.innerText="$"+devUSD.value;}
-profileEmail.innerText=localStorage.email||"guest@fchain.app";
+let b=localStorage.getItem("fchain_btc");
+let e=localStorage.getItem("fchain_eth");
+let u=localStorage.getItem("fchain_usd");
+if(b){devBTC.value=b; btc.innerText="BTC: "+b; demoBalances.BTC=parseFloat(b);}
+if(e){devETH.value=e; eth.innerText="ETH: "+e; demoBalances.ETH=parseFloat(e);}
+if(u){devUSD.value=u; usd.innerText="$"+u;}
+profileEmail.innerText = localStorage.email || "guest@fchain.app";
 generateQR();
 loadSheetUser();
 };
 </script>
 
 </body>
-                 </html>
+  </html>
