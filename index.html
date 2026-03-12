@@ -16,6 +16,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
+.nav-btn.active-nav{color:#22c55e;font-weight:bold;} /* Active tab highlight */
 .hidden-nav{display:none;}
 #devTools{position:fixed;top:10px;left:10px;background:#111827;padding:12px;border-radius:10px;border:1px solid #22c55e;display:none;z-index:9999;width:220px;}
 #devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
@@ -33,8 +34,6 @@ th{text-align:left;color:#22c55e;}
 </style>
 </head>
 <body>
-
-
 
 <!-- DEV TOOLS -->
 <div id="devTools">
@@ -73,17 +72,14 @@ USD <input id="devUSD">
 <!-- DASHBOARD -->
 <div id="dashboard" class="page">
 <h2 id="dashTap">FChain Wallet</h2>
-
 <div style="display:flex;gap:10px;margin-bottom:10px;">
 <button class="btn" onclick="openPage('buy')">Buy</button>
 <button class="btn" onclick="openPage('sell')">Sell</button>
 <button class="btn" onclick="openPage('receive')">Receive</button>
 </div>
-
 <div id="networkBar">
 <span>Connected to FChain Mainnet | Block #4928831 | Confirmations: 3/3 | Peers: 128 | Latency: 42ms</span>
 </div>
-
 <h1 id="usd">$0</h1>
 <div class="card" id="btc">BTC: 0</div>
 <div class="card" id="eth">ETH: 0</div>
@@ -100,7 +96,6 @@ USD <input id="devUSD">
 <h2>Buy Crypto</h2>
 <div class="buy-sell-card" onclick="openBuyDetail('BTC')">BTC</div>
 <div class="buy-sell-card" onclick="openBuyDetail('ETH')">ETH</div>
-
 <div id="buyDetail" class="buy-sell-section" style="display:none;">
 <h3 id="buyCoinName">BTC</h3>
 <p>Price: $<span id="buyPrice">50000</span></p>
@@ -118,7 +113,6 @@ USD <input id="devUSD">
 <h2>Sell Crypto</h2>
 <div class="buy-sell-card" onclick="openSellDetail('BTC')">BTC</div>
 <div class="buy-sell-card" onclick="openSellDetail('ETH')">ETH</div>
-
 <div id="sellDetail" class="buy-sell-section" style="display:none;">
 <h3 id="sellCoinName">BTC</h3>
 <p>Price: $<span id="sellPrice">50000</span></p>
@@ -134,12 +128,10 @@ USD <input id="devUSD">
 <div id="receive" class="page">
 <button class="btn" onclick="goBack()">⬅ Back</button>
 <h2>Receive Crypto</h2>
-
 <div class="tabs">
 <button class="tab-btn active" onclick="selectCoin('BTC', this)">BTC</button>
 <button class="tab-btn" onclick="selectCoin('ETH', this)">ETH</button>
 </div>
-
 <div class="card" style="text-align:center;">
 <img id="qr" width="200"><br><br>
 <div id="walletAddress" style="font-size:12px;word-break:break-all;"></div>
@@ -205,10 +197,10 @@ USD <input id="devUSD">
 
 <!-- BOTTOM NAVBAR -->
 <div class="bottom-nav" id="nav">
-<div class="nav-btn" onclick="openPage('dashboard')"><span>🏠</span>Home</div>
-<div class="nav-btn" onclick="openPage('explorer')"><span>🔎</span>Explorer</div>
-<div class="nav-btn" onclick="openPage('network')"><span>🌐</span>Network</div>
-<div class="nav-btn" onclick="openPage('settings')"><span>⚙️</span>Settings</div>
+<div class="nav-btn" onclick="openPage('dashboard', this)"><span>🏠</span>Home</div>
+<div class="nav-btn" onclick="openPage('explorer', this)"><span>🔎</span>Explorer</div>
+<div class="nav-btn" onclick="openPage('network', this)"><span>🌐</span>Network</div>
+<div class="nav-btn" onclick="openPage('settings', this)"><span>⚙️</span>Settings</div>
 </div>
 
 <script>
@@ -216,31 +208,40 @@ USD <input id="devUSD">
 const btc = document.getElementById("btc");
 const eth = document.getElementById("eth");
 const usd = document.getElementById("usd");
-
 const devBTC = document.getElementById("devBTC");
 const devETH = document.getElementById("devETH");
 const devUSD = document.getElementById("devUSD");
+const navBtns = document.querySelectorAll(".nav-btn");
 
 // ================= PAGE SYSTEM =================
 let history=["welcome"];
 let appPages=["dashboard","buy","sell","receive","explorer","network","settings"];
-function openPage(id){
+function openPage(id, btn){
     document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
     document.getElementById(id).classList.add("active");
     if(history[history.length-1]!==id) history.push(id);
+
+    // Show or hide bottom nav
     document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
+
+    // Highlight active bottom nav button
+    navBtns.forEach(b=>b.classList.remove("active-nav"));
+    if(btn) btn.classList.add("active-nav");
 }
-function goBack(){history.pop();openPage(history.pop() || "welcome");}
+function goBack(){
+    history.pop();
+    openPage(history.pop() || "welcome");
+}
 
 // ================= REGISTER / LOGIN =================
 function registerUser(){
     if(regPass.value!==regPass2.value){alert("Password mismatch"); return;}
     localStorage.email=regEmail.value;
     localStorage.pass=regPass.value;
-    openPage("dashboard");
+    openPage("dashboard", navBtns[0]);
 }
 function loginUser(){
-    if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){openPage("dashboard");}
+    if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){openPage("dashboard", navBtns[0]);}
     else alert("Wrong login");
 }
 
@@ -263,7 +264,7 @@ function saveDev(){
     demoBalances.ETH=parseFloat(devETH.value);
     demoBalances.USD=parseFloat(devUSD.value);
     devTools.style.display="none";
-    alert("Saved locally");
+    alert("Saved permanently!");
 }
 function closeDev(){devTools.style.display="none";}
 
@@ -359,6 +360,5 @@ window.onload=function(){
     loadSheetUser();
 };
 </script>
-
 </body>
-  </html>
+    </html>
