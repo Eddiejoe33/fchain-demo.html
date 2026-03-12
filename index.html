@@ -241,7 +241,6 @@ function registerUser(){
 
 // ================= LOGIN =================
 function loginUser(){
-    // Always succeed and update profile email
     localStorage.email = loginEmail.value || "guest@fchain.app";
     profileEmail.innerText = localStorage.email;
     openPage("dashboard", navBtns[0]);
@@ -254,17 +253,22 @@ document.getElementById("tapLogo").onclick=tapDev;
 document.getElementById("dashTap").onclick=tapDev;
 
 let demoBalances={BTC:0, ETH:0, USD:0};
+let devManualOverride = false; // flag to prevent overwriting DevTools manually
 
 function saveDev(){
     localStorage.setItem("fchain_btc", devBTC.value);
     localStorage.setItem("fchain_eth", devETH.value);
     localStorage.setItem("fchain_usd", devUSD.value);
-    btc.innerText="BTC: "+devBTC.value;
-    eth.innerText="ETH: "+devETH.value;
-    usd.innerText="$"+devUSD.value;
-    demoBalances.BTC=parseFloat(devBTC.value);
-    demoBalances.ETH=parseFloat(devETH.value);
-    demoBalances.USD=parseFloat(devUSD.value);
+
+    btc.innerText = "BTC: "+devBTC.value;
+    eth.innerText = "ETH: "+devETH.value;
+    usd.innerText = "$"+devUSD.value;
+
+    demoBalances.BTC = parseFloat(devBTC.value);
+    demoBalances.ETH = parseFloat(devETH.value);
+    demoBalances.USD = parseFloat(devUSD.value);
+
+    devManualOverride = true; // ✅ mark as manually set
     devTools.style.display="none";
     alert("Saved permanently!");
 }
@@ -314,6 +318,7 @@ function confirmSell(){
 // ================= GOOGLE SHEETS BACKEND =================
 const SHEET_API = "https://sheetdb.io/api/v1/9gai9aoh6igrg";
 async function loadSheetUser(){
+    if(devManualOverride) return; // skip overwrite if manually set
     try{
         let res = await fetch(SHEET_API);
         let data = await res.json();
