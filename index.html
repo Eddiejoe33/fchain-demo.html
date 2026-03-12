@@ -16,7 +16,7 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none;}
 .bottom-nav{position:fixed;bottom:0;width:100%;display:flex;background:#020617;border-top:1px solid #1e293b;height:65px;z-index:999;}
 .nav-btn{flex:1;text-align:center;padding-top:6px;font-size:11px;color:#94a3b8;cursor:pointer;}
 .nav-btn span{font-size:22px;display:block;}
-.nav-btn.active-nav{color:#22c55e;font-weight:bold;} /* Active tab highlight */
+.nav-btn.active-nav{color:#22c55e;font-weight:bold;}
 .hidden-nav{display:none;}
 #devTools{position:fixed;top:10px;left:10px;background:#111827;padding:12px;border-radius:10px;border:1px solid #22c55e;display:none;z-index:9999;width:220px;}
 #devTools input{width:100%;padding:6px;margin:4px 0;border-radius:5px;border:none;}
@@ -221,10 +221,7 @@ function openPage(id, btn){
     document.getElementById(id).classList.add("active");
     if(history[history.length-1]!==id) history.push(id);
 
-    // Show or hide bottom nav
     document.getElementById("nav").classList.toggle("hidden-nav", !appPages.includes(id));
-
-    // Highlight active bottom nav button
     navBtns.forEach(b=>b.classList.remove("active-nav"));
     if(btn) btn.classList.add("active-nav");
 }
@@ -233,23 +230,28 @@ function goBack(){
     openPage(history.pop() || "welcome");
 }
 
-// ================= REGISTER / LOGIN =================
+// ================= REGISTER =================
 function registerUser(){
     if(regPass.value!==regPass2.value){alert("Password mismatch"); return;}
     localStorage.email=regEmail.value;
     localStorage.pass=regPass.value;
+    profileEmail.innerText=regEmail.value;
     openPage("dashboard", navBtns[0]);
 }
+
+// ================= LOGIN =================
 function loginUser(){
-    if(loginEmail.value==localStorage.email && loginPass.value==localStorage.pass){openPage("dashboard", navBtns[0]);}
-    else alert("Wrong login");
+    // Always succeed and update profile email
+    localStorage.email = loginEmail.value || "guest@fchain.app";
+    profileEmail.innerText = localStorage.email;
+    openPage("dashboard", navBtns[0]);
 }
 
 // ================= DEVTOOLS =================
 let tap=0,timer;
 function tapDev(){tap++; clearTimeout(timer); timer=setTimeout(()=>tap=0,1200); if(tap>=5){devTools.style.display="block"; tap=0;}}
-tapLogo.onclick=tapDev;
-dashTap.onclick=tapDev;
+document.getElementById("tapLogo").onclick=tapDev;
+document.getElementById("dashTap").onclick=tapDev;
 
 let demoBalances={BTC:0, ETH:0, USD:0};
 
